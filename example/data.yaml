@@ -1,0 +1,5 @@
+-
+    type: event
+    arguments:
+        name: user_registered
+        attributes: [user_id, email_address, encrypted_password]

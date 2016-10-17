@@ -1,0 +1,8 @@
+event:
+    arguments:
+        name: string
+        attributes: [string]
+    outputs:
+        -
+            template: example/templates/event.php
+            output: src/Events/{{ name | camelcase }}.php
