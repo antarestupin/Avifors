@@ -1,5 +1,5 @@
 {
-  "name": "Avifors",
+  "name": "avifors",
   "version": "1.0.0-dev",
   "description": "A CLI tool to generate code from templates.",
   "scripts": {
