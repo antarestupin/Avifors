@@ -14,7 +14,7 @@ for (i in filters) nunjucksEnv.addFilter(i, filters[i])
 main(sanitizeArgs(argv))
 
 function main(args) {
-    generate(args.config, args.toGenerate)
+    generate(args.config, args.data)
 }
 
 function sanitizeArgs(argv) {
@@ -23,23 +23,23 @@ function sanitizeArgs(argv) {
     else if (!!argv['type'] && !!argv['args']) source = 'arguments'
 
     let result = {
-        config: readYaml(argv['config-src'] || '.avifors.yaml'),
+        config: getConfig(argv['config-src'] || '.avifors.yaml'),
         source: source
     }
 
     switch (source) {
         case 'cli':
-            let type = argv['type'] || getType()
-            result.toGenerate = [{
+            let type = argv['type'] || prompt('Type of the item to generate: ')
+            result.data = [{
                 type: type,
-                arguments: getArgs(result.config[type].arguments)
+                arguments: askForArgs(result.config[type].arguments)
             }]
             break
         case 'file':
-            result.toGenerate = readYaml(argv['data-src'])
+            result.data = readYaml(argv['data-src'])
             break
         case 'arguments':
-            result.toGenerate = [{
+            result.data = [{
                 type: argv['type'],
                 arguments: JSON.parse(argv['args'])
             }]
@@ -48,25 +48,45 @@ function sanitizeArgs(argv) {
     return result
 }
 
-function generate(config, toGenerate) {
-    toGenerate.forEach(item => {
+function generate(config, data) {
+    data.forEach(item => {
+        // case in which the type is a list of items of another type
+        if (config[item.type].list) {
+            config[item.type].outputs = []
+            item.arguments[item.type].forEach(argItem => {
+                config[item.type].originOutputs.forEach(output => {
+                    config[item.type].outputs.push({
+                        template: nunjucksEnv.renderString(output.template, argItem),
+                        arguments: argItem,
+                        output: nunjucksEnv.renderString(output.output, argItem)
+                    })
+                })
+            })
+        }
+
+        // compute the outputs defined by a template
+        if (typeof config[item.type].outputs == 'string') {
+            config[item.type].outputs = yaml.safeLoad(nunjucksEnv.renderString(config[item.type].outputs, item.arguments))
+        }
+
         config[item.type].outputs.forEach(output => {
+            // every arguments are passed by default
+            if (!output.arguments) {
+                output.arguments = item.arguments
+                output.arguments.globals = item.arguments
+            }
+
             let templatePath = nunjucksEnv.renderString(output.template, item.arguments)
-            let outputPath = nunjucksEnv.renderString(output.output, item.arguments)
-item.arguments['test'] = {bla: 'ok', foo: 'ijij'}
-            let rendered = renderTemplate(templatePath, item.arguments)
+            let outputPath = nunjucksEnv.renderString(output.output, output.arguments)
+
+            let rendered = nunjucksEnv.render(templatePath, output.arguments)
 
             writeFile(outputPath, rendered)
-            console.log(rendered)
         })
     })
 }
 
-function getType() {
-    return prompt('Type of the item to generate? ')
-}
-
-function getArgs(schema, namespace = '') {
+function askForArgs(schema, namespace = '') {
     // string
     if (typeof schema == 'string') {
         return prompt('Value of ' + namespace + ': ')
@@ -84,11 +104,11 @@ function getArgs(schema, namespace = '') {
             }
         } else { // list of lists / maps
             for (let continueAdding = true, i = 0; continueAdding; i++) {
-                let add = prompt('Add a value to ' + namespace + '? (y/n) ')
+                let add = prompt('Add an item to ' + namespace + '? (y/n) ')
                 switch (add.toUpperCase()) {
                     case 'Y':
                     case 'YES':
-                        args.push(getArgs(schema[0], namespace + '[' + i + ']'))
+                        args.push(askForArgs(schema[0], namespace + '[' + i + ']'))
                         break;
                     case 'N':
                     case 'NO':
@@ -104,17 +124,33 @@ function getArgs(schema, namespace = '') {
     let args = {}
     for (let i in schema) {
         let subnamespace = namespace == '' ? i: namespace + '.' + i
-        args[i] = getArgs(schema[i], subnamespace)
+        args[i] = askForArgs(schema[i], subnamespace)
     }
     return args
 }
 
-function readYaml(filePath) {
-    return yaml.safeLoad(fs.readFileSync(filePath, 'utf8'))
+function getConfig(src) {
+    let config = readYaml(src)
+
+    for (let typeName in config) {
+        // case in which the type is a list of items of another type
+        if (Array.isArray(config[typeName])) {
+            let listItemTypeName = config[typeName][0]
+            let listItemType = config[listItemTypeName]
+
+            config[typeName] = {
+                arguments: { [typeName]: [listItemType.arguments] },
+                list: true,
+                originOutputs: listItemType.outputs
+            }
+        }
+    }
+
+    return config
 }
 
-function renderTemplate(templatePath, args) {
-    return nunjucksEnv.render(templatePath, args)
+function readYaml(filePath) {
+    return yaml.safeLoad(fs.readFileSync(filePath, 'utf8'))
 }
 
 function writeFile(filePath, contents) {

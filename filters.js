@@ -1,3 +1,5 @@
+const yaml = require('js-yaml')
+
 module.exports = {
     flower: str => Array.isArray(str) ? str.map(i => flower(i)): flower(str),
     fupper: str => Array.isArray(str) ? str.map(i => fupper(i)): fupper(str),
@@ -10,7 +12,10 @@ module.exports = {
     prepend: (list, toPrepend) => list.map(str => toPrepend + str),
     append: (list, toAppend) => list.map(str => str + toAppend),
     keys: dict => Object.keys(dict),
-    values: dict => { let res = []; for (let i in dict) res.push(dict[i]); return res }
+    values: dict => { let res = []; for (let i in dict) res.push(dict[i]); return res },
+
+    json: dict => JSON.stringify(dict),
+    yaml: dict => yaml.safeDump(dict)
 }
 
 function splitVariableName(varName) {

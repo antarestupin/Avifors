@@ -9,7 +9,10 @@ class {{ name | camelcase }} extends BaseEvent {
     private ${{ attr }};
     {% endfor %}
 
-    public function __construct(${{ name | varcamelcase }}, {{ varattributes | prepend('$') | join(', ') }}) {
+    public function __construct(
+        ${{ name | varcamelcase }}{% if attributes | length %},{% endif %}
+        {{ varattributes | prepend('$') | join(', ') }}
+    ) {
         $this->name = ${{ name | varcamelcase }};
         {%- for attr in varattributes %}
         $this->{{ attr }} = ${{ attr }};

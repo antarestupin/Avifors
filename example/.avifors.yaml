@@ -6,3 +6,19 @@ event:
         -
             template: example/templates/event.php
             output: src/Events/{{ name | camelcase }}.php
+
+events: [event]
+
+events_test:
+    arguments:
+        events:
+            -
+                name: string
+                attributes: [string]
+    outputs: |
+        {% for event in events %}
+        -
+            template: example/templates/event.php
+            arguments: {{ event | json }}
+            output: src/Events/{{ event.name | camelcase }}.php
+        {% endfor %}
