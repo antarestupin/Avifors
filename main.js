@@ -8,12 +8,41 @@ const argv = require('minimist')(process.argv.slice(2))
 const prompt = require('prompt-sync')()
 const mkdirp = require('mkdirp')
 const filters = require('./filters')
+const glob = require('glob')
 
 const nunjucksEnv = nunjucks.configure({ autoescape: false })
 for (i in filters) nunjucksEnv.addFilter(i, filters[i])
-main(sanitizeArgs(argv))
+main(argv)
 
-function main(args) {
+function main(argv) {
+    if ('h' in argv || 'help' in argv) {
+        console.log(`
+Arguments:
+
+--config-src  Sets the path to the configuration file (defaults to .avifors.yaml)
+--data-src    Sets the path to the data file
+--type        Sets the type of the data item to generate
+--args        Sets the arguments of the item to generate (formatted in JSON)
+
+Here are 4 examples of how to use Avifors:
+
+# you will be asked the type and arguments of the item to generate
+avifors
+
+# same as above, but with the type already filled
+avifors --type event
+
+# everything is already filled here
+avifors --type event --args "{\"name\": \"user_created\", \"attributes\":[\"user_id\"]}"
+
+# here the data is in a YAML file (several items can be generated at once this way)
+avifors --data-src example/data.yaml
+`)
+
+        return
+    }
+
+    let args = sanitizeArgs(argv)
     generate(args.config, args.data)
 }
 
@@ -36,7 +65,12 @@ function sanitizeArgs(argv) {
             }]
             break
         case 'file':
-            result.data = readYaml(argv['data-src'])
+            result.data = argv['data-src'].split(',')
+                .map(i => i.trim())
+                .map(src => glob.sync(src, { nodir: true })) // get the list of files matching given pattern
+                .reduce((a,b) => a.concat(b)) // flatten it to one list
+                .map(src => readYaml(src))
+                .reduce((a,b) => a.concat(b))
             break
         case 'arguments':
             result.data = [{
@@ -66,7 +100,9 @@ function generate(config, data) {
 
         // compute the outputs defined by a template
         if (typeof config[item.type].outputs == 'string') {
-            config[item.type].outputs = yaml.safeLoad(nunjucksEnv.renderString(config[item.type].outputs, item.arguments))
+            config[item.type].outputs = yaml.safeLoad(
+                nunjucksEnv.renderString(config[item.type].outputs, item.arguments)
+            )
         }
 
         config[item.type].outputs.forEach(output => {

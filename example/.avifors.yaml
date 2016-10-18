@@ -5,7 +5,7 @@ event:
     outputs:
         -
             template: example/templates/event.php
-            output: src/Events/{{ name | camelcase }}.php
+            output: src/Event/{{ name | camelcase }}.php
 
 events: [event]
 
@@ -20,5 +20,15 @@ events_test:
         -
             template: example/templates/event.php
             arguments: {{ event | json }}
-            output: src/Events/{{ event.name | camelcase }}.php
+            output: src/Event/{{ event.name | camelcase }}.php
         {% endfor %}
+
+entities: [entity]
+entity:
+    arguments:
+        name: string
+        properties: [string]
+    outputs:
+        -
+            template: example/templates/entity.php
+            output: src/Entity/{{ name | camelcase }}.php

@@ -2,25 +2,18 @@
 
 {%- set varattributes = attributes | varcamelcase %}
 
-namespace Acme\Events;
+namespace Acme\Event;
 
 class {{ name | camelcase }} extends BaseEvent {
     {%- for attr in varattributes %}
     private ${{ attr }};
     {% endfor %}
 
-    public function __construct(
-        ${{ name | varcamelcase }}{% if attributes | length %},{% endif %}
-        {{ varattributes | prepend('$') | join(', ') }}
-    ) {
-        $this->name = ${{ name | varcamelcase }};
+    public function __construct({{ varattributes | prepend('$') | join(', ') }}) {
+        $this->name = '{{ name | kebabcase }}';
         {%- for attr in varattributes %}
         $this->{{ attr }} = ${{ attr }};
         {%- endfor %}
-    }
-
-    public function getName() {
-        return $this->{{ name | varcamelcase }};
     }
 
     {% for attr in attributes %}

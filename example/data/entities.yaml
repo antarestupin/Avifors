@@ -1,0 +1,10 @@
+-
+    type: entities
+    arguments:
+        entities:
+            -
+                name: user
+                properties: [email_address, encrypted_password, articles]
+            -
+                name: article
+                properties: [name, price]
