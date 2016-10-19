@@ -1,10 +1,10 @@
 <?php
 
-{%- set varattributes = attributes | varcamelcase %}
+{%- set varattributes = attributes | camelcase %}
 
 namespace Acme\Event;
 
-class {{ name | camelcase }} extends BaseEvent {
+class {{ name | pascalcase }} extends BaseEvent {
     {%- for attr in varattributes %}
     private ${{ attr }};
     {% endfor %}
@@ -17,8 +17,8 @@ class {{ name | camelcase }} extends BaseEvent {
     }
 
     {% for attr in attributes %}
-    public function get{{ attr | camelcase }}() {
-        return $this->{{ attr | varcamelcase }};
+    public function get{{ attr | pascalcase }}() {
+        return $this->{{ attr | camelcase }};
     }
     {% endfor %}
 }

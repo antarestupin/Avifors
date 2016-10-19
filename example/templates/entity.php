@@ -1,10 +1,10 @@
 <?php
 
-{%- set varproperties = properties | varcamelcase %}
+{%- set varproperties = properties | camelcase %}
 
 namespace Acme\Entity;
 
-class {{ name | camelcase }} {
+class {{ name | pascalcase }} {
     private $id;
 
     {% for attr in varproperties %}
@@ -16,12 +16,12 @@ class {{ name | camelcase }} {
     }
 
     {% for attr in properties %}
-    public function get{{ attr | camelcase }}() {
-        return $this->{{ attr | varcamelcase }};
+    public function get{{ attr | pascalcase }}() {
+        return $this->{{ attr | camelcase }};
     }
 
-    public function set{{ attr | camelcase }}($value) {
-        $this->{{ attr | varcamelcase }} = $value;
+    public function set{{ attr | pascalcase }}($value) {
+        $this->{{ attr | camelcase }} = $value;
     }
     {% endfor %}
 }
