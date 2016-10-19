@@ -7,7 +7,7 @@ namespace Acme\Entity;
 class {{ name | camelcase }} {
     private $id;
 
-    {%- for attr in varproperties %}
+    {% for attr in varproperties %}
     private ${{ attr }};
     {% endfor %}
 

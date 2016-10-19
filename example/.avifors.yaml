@@ -22,13 +22,3 @@ events_test:
             arguments: {{ event | json }}
             output: src/Event/{{ event.name | camelcase }}.php
         {% endfor %}
-
-entities: [entity]
-entity:
-    arguments:
-        name: string
-        properties: [string]
-    outputs:
-        -
-            template: example/templates/entity.php
-            output: src/Entity/{{ name | camelcase }}.php

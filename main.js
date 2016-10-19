@@ -37,6 +37,8 @@ avifors --type event --args "{\"name\": \"user_created\", \"attributes\":[\"user
 
 # here the data is in a YAML file (several items can be generated at once this way)
 avifors --data-src example/data.yaml
+
+More information in https://github.com/antarestupin/Avifors
 `)
 
         return
@@ -46,7 +48,9 @@ avifors --data-src example/data.yaml
     generate(args.config, args.data)
 }
 
+// Get the arguments needed
 function sanitizeArgs(argv) {
+    // determine the source of data
     let source = 'cli'
     if (!!argv['data-src']) source = 'file'
     else if (!!argv['type'] && !!argv['args']) source = 'arguments'
@@ -56,6 +60,7 @@ function sanitizeArgs(argv) {
         source: source
     }
 
+    // get the data
     switch (source) {
         case 'cli':
             let type = argv['type'] || prompt('Type of the item to generate: ')
@@ -70,7 +75,7 @@ function sanitizeArgs(argv) {
                 .map(src => glob.sync(src, { nodir: true })) // get the list of files matching given pattern
                 .reduce((a,b) => a.concat(b)) // flatten it to one list
                 .map(src => readYaml(src))
-                .reduce((a,b) => a.concat(b))
+                .reduce((a,b) => a.concat(b)) // merge the items
             break
         case 'arguments':
             result.data = [{
@@ -82,6 +87,7 @@ function sanitizeArgs(argv) {
     return result
 }
 
+// Generate the code
 function generate(config, data) {
     data.forEach(item => {
         // case in which the type is a list of items of another type
@@ -106,7 +112,7 @@ function generate(config, data) {
         }
 
         config[item.type].outputs.forEach(output => {
-            // every arguments are passed by default
+            // every argument is passed by default
             if (!output.arguments) {
                 output.arguments = item.arguments
                 output.arguments.globals = item.arguments
@@ -122,6 +128,7 @@ function generate(config, data) {
     })
 }
 
+// Ask for the item arguments to the user
 function askForArgs(schema, namespace = '') {
     // string
     if (typeof schema == 'string') {
@@ -165,11 +172,17 @@ function askForArgs(schema, namespace = '') {
     return args
 }
 
+// Get the config from given files and handle type lists
 function getConfig(src) {
-    let config = readYaml(src)
+    let config = src.split(',')
+        .map(i => i.trim())
+        .map(path => glob.sync(path, { nodir: true })) // get the list of files matching given pattern
+        .reduce((a,b) => a.concat(b)) // flatten it to one list
+        .map(path => readYaml(path))
+        .reduce((a,b) => Object.assign({}, a, b)) // merge the configs
 
+    // case in which the type is a list of items of another type
     for (let typeName in config) {
-        // case in which the type is a list of items of another type
         if (Array.isArray(config[typeName])) {
             let listItemTypeName = config[typeName][0]
             let listItemType = config[listItemTypeName]

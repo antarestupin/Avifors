@@ -1,0 +1,9 @@
+entities: [entity]
+entity:
+    arguments:
+        name: string
+        properties: [string]
+    outputs:
+        -
+            template: example/templates/entity.php
+            output: src/Entity/{{ name | camelcase }}.php
