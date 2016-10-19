@@ -4,7 +4,7 @@ module.exports = {
     flower: str => Array.isArray(str) ? str.map(i => flower(i)): flower(str),
     fupper: str => Array.isArray(str) ? str.map(i => fupper(i)): fupper(str),
 
-    sneakcase: str => Array.isArray(str) ? str.map(i => splitVariableName(i).join('_')): splitVariableName(str).join('_'),
+    snakecase: str => Array.isArray(str) ? str.map(i => splitVariableName(i).join('_')): splitVariableName(str).join('_'),
     kebabcase: str => Array.isArray(str) ? str.map(i => splitVariableName(i).join('-')): splitVariableName(str).join('-'),
     camelcase: str => Array.isArray(str) ? str.map(i => camelcase(i)): camelcase(str),
     varcamelcase: str => Array.isArray(str) ? str.map(i => flower(camelcase(i))): flower(camelcase(str)),
@@ -19,7 +19,7 @@ module.exports = {
 }
 
 function splitVariableName(varName) {
-    // sneak case
+    // snake case
     let split = varName.split('_')
     if (split.length > 1) return split
 
