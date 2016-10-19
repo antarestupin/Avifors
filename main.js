@@ -21,6 +21,7 @@ Arguments:
 
 --config-src  Sets the path to the configuration file (defaults to .avifors.yaml)
 --data-src    Sets the path to the data file
+--model-src   Same as above (alias)
 --type        Sets the type of the data item to generate
 --args        Sets the arguments of the item to generate (formatted in JSON)
 
@@ -52,7 +53,7 @@ More information in https://github.com/antarestupin/Avifors
 function sanitizeArgs(argv) {
     // determine the source of data
     let source = 'cli'
-    if (!!argv['data-src']) source = 'file'
+    if (!!argv['data-src'] || !!argv['model-src']) source = 'file'
     else if (!!argv['type'] && !!argv['args']) source = 'arguments'
 
     let result = {
@@ -70,7 +71,7 @@ function sanitizeArgs(argv) {
             }]
             break
         case 'file':
-            result.data = argv['data-src'].split(',')
+            result.data = (argv['data-src'] || argv['model-src']).split(',')
                 .map(i => i.trim())
                 .map(src => glob.sync(src, { nodir: true })) // get the list of files matching given pattern
                 .reduce((a,b) => a.concat(b)) // flatten it to one list
