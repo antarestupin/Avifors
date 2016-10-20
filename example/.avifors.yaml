@@ -1,24 +1,4 @@
-event:
-    arguments:
-        name: string
-        attributes: [string]
-    outputs:
-        -
-            template: example/templates/event.php
-            output: src/Event/{{ name | pascalcase }}.php
-
-events: [event]
-
-events_test:
-    arguments:
-        events:
-            -
-                name: string
-                attributes: [string]
-    outputs: |
-        {% for event in events %}
-        -
-            template: example/templates/event.php
-            arguments: {{ event | json }}
-            output: src/Event/{{ event.name | pascalcase }}.php
-        {% endfor %}
+model-src:
+    - example/model/**/*.model.yaml
+config-src:
+    - example/avifors/**/*.avifors.yaml

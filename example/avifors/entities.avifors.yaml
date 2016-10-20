@@ -5,5 +5,5 @@ entity:
         properties: [string]
     outputs:
         -
-            template: example/templates/entity.php
+            template: example/templates/entity.template.php
             output: src/Entity/{{ name | pascalcase }}.php

@@ -19,10 +19,10 @@ function main(argv) {
         console.log(`
 Arguments:
 
---config-src  Sets the path to the configuration file (defaults to .avifors.yaml)
---data-src    Sets the path to the data file
---model-src   Same as above (alias)
---type        Sets the type of the data item to generate
+--avifors-src Sets the path to Avifors' configuration file (defaults to ./.avifors.yaml)
+--config-src  Sets the path to the configuration files
+--model-src   Sets the path to the model files
+--type        Sets the type of the item to generate
 --args        Sets the arguments of the item to generate (formatted in JSON)
 
 Here are 4 examples of how to use Avifors:
@@ -32,14 +32,15 @@ avifors
 
 # same as above, but with the type already filled
 avifors --type event
+avifors event
 
 # everything is already filled here
 avifors --type event --args "{\"name\": \"user_created\", \"attributes\":[\"user_id\"]}"
 
 # here the data is in a YAML file (several items can be generated at once this way)
-avifors --data-src example/data.yaml
+avifors --model-src example/data.yaml
 
-More information in https://github.com/antarestupin/Avifors
+More information at https://github.com/antarestupin/Avifors
 `)
 
         return
@@ -51,28 +52,37 @@ More information in https://github.com/antarestupin/Avifors
 
 // Get the arguments needed
 function sanitizeArgs(argv) {
+    // get the avifors config file if it exists
+    try {
+        Object.assign(argv, readYaml(argv['avifors-src'] || '.avifors.yaml'))
+    } catch (e) {}
+
+    // transform string lists of files into actual lists of files
+    ['model-src', 'config-src'].forEach(i => {
+        if (typeof argv[i] == 'string') argv[i] = argv[i].split(',').map(path => path.trim())
+    })
+
     // determine the source of data
     let source = 'cli'
-    if (!!argv['data-src'] || !!argv['model-src']) source = 'file'
-    else if (!!argv['type'] && !!argv['args']) source = 'arguments'
+    if (!!argv['type'] && !!argv['args']) source = 'arguments'
+    else if (!!argv['model-src'] && argv._.length == 0) source = 'file'
 
     let result = {
-        config: getConfig(argv['config-src'] || '.avifors.yaml'),
+        config: getConfig(argv['config-src']),
         source: source
     }
 
     // get the data
     switch (source) {
         case 'cli':
-            let type = argv['type'] || prompt('Type of the item to generate: ')
+            let type = argv['type'] || argv._[0] || prompt('Type of the item to generate: ')
             result.data = [{
                 type: type,
                 arguments: askForArgs(result.config[type].arguments)
             }]
             break
         case 'file':
-            result.data = (argv['data-src'] || argv['model-src']).split(',')
-                .map(i => i.trim())
+            result.data = (argv['model-src'])
                 .map(src => glob.sync(src, { nodir: true })) // get the list of files matching given pattern
                 .reduce((a,b) => a.concat(b)) // flatten it to one list
                 .map(src => readYaml(src))
@@ -175,8 +185,7 @@ function askForArgs(schema, namespace = '') {
 
 // Get the config from given files and handle type lists
 function getConfig(src) {
-    let config = src.split(',')
-        .map(i => i.trim())
+    let config = src
         .map(path => glob.sync(path, { nodir: true })) // get the list of files matching given pattern
         .reduce((a,b) => a.concat(b)) // flatten it to one list
         .map(path => readYaml(path))
