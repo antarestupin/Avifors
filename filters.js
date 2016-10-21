@@ -1,6 +1,6 @@
 const yaml = require('js-yaml')
 
-module.exports = model => {
+module.exports = (model, config) => {
     return {
         flower: str => Array.isArray(str) ? str.map(i => flower(i)): flower(str),
         fupper: str => Array.isArray(str) ? str.map(i => fupper(i)): fupper(str),
@@ -20,8 +20,8 @@ module.exports = model => {
         json: dict => JSON.stringify(dict),
         yaml: dict => yaml.safeDump(dict)/*,
 
-        findinmodel: str => findInModel(str, model),
-        findoneinmodel: str => findInModel(str, model)[0]*/
+        findinmodel: str => findInModel(str, model, config),
+        findoneinmodel: str => findInModel(str, model, config)[0]*/
     }
 }
 
@@ -49,9 +49,4 @@ function flower(str) {
 
 function fupper(str) {
     return str.charAt(0).toUpperCase() + str.substr(1)
-}
-
-// entities:{entities:{name:user}}
-function findInModel(str, model) {
-    return model.filter()
 }

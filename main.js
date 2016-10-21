@@ -46,9 +46,9 @@ More information at https://github.com/antarestupin/Avifors
     }
 
     let args = sanitizeArgs(argv)
-    let filters = filtersBuilder(args.model)
+    let filters = filtersBuilder(args.model, args.config)
     for (i in filters) nunjucksEnv.addFilter(i, filters[i])
-    generate(args.config, args.data)
+    generate(args.config, args.data, args.model)
 }
 
 // Get the arguments needed
@@ -103,7 +103,7 @@ function sanitizeArgs(argv) {
 }
 
 // Generate the code
-function generate(config, data) {
+function generate(config, data, model) {
     data.forEach(item => {
         // case in which the type is a list of items of another type
         if (config[item.type].list) {
@@ -130,7 +130,8 @@ function generate(config, data) {
             // every argument is passed by default
             if (!output.arguments) {
                 output.arguments = item.arguments
-                output.arguments.globals = item.arguments
+                output.arguments._globals = item.arguments
+                output.arguments._model = model
             }
 
             let templatePath = nunjucksEnv.renderString(output.template, item.arguments)
@@ -204,6 +205,7 @@ function getConfig(src) {
             config[typeName] = {
                 arguments: { [typeName]: [listItemType.arguments] },
                 list: true,
+                origin: listItemTypeName,
                 originOutputs: listItemType.outputs
             }
         }
