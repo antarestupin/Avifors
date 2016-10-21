@@ -22,7 +22,7 @@ Arguments:
 --config-src  Sets the path to the configuration files
 --model-src   Sets the path to the model files
 --type        Sets the type of the item to generate
---args        Sets the arguments of the item to generate (formatted in JSON)
+--args        Sets the arguments of the item to generate (formatted in YAML)
 
 Here are 4 examples of how to use Avifors:
 
@@ -34,7 +34,7 @@ avifors --type event
 avifors event
 
 # everything is already filled here
-avifors --type event --args "{\"name\": \"user_created\", \"attributes\":[\"user_id\"]}"
+avifors --type event --args "{name: user_created, attributes:[user_id, email_address]}"
 
 # here the data is in a YAML file (several items can be generated at once this way)
 avifors --model-src example/data.yaml
@@ -95,7 +95,7 @@ function sanitizeArgs(argv) {
         case 'arguments':
             result.data = [{
                 type: argv['type'],
-                arguments: JSON.parse(argv['args'])
+                arguments: yaml.safeLoad(argv['args'])
             }]
     }
 
