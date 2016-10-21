@@ -7,11 +7,10 @@ const path = require('path')
 const argv = require('minimist')(process.argv.slice(2))
 const prompt = require('prompt-sync')()
 const mkdirp = require('mkdirp')
-const filters = require('./filters')
+const filtersBuilder = require('./filters')
 const glob = require('glob')
 
 const nunjucksEnv = nunjucks.configure({ autoescape: false })
-for (i in filters) nunjucksEnv.addFilter(i, filters[i])
 main(argv)
 
 function main(argv) {
@@ -47,6 +46,8 @@ More information at https://github.com/antarestupin/Avifors
     }
 
     let args = sanitizeArgs(argv)
+    let filters = filtersBuilder(args.model)
+    for (i in filters) nunjucksEnv.addFilter(i, filters[i])
     generate(args.config, args.data)
 }
 
@@ -72,6 +73,13 @@ function sanitizeArgs(argv) {
         source: source
     }
 
+    if (!argv['model-src']) argv['model-src'] = []
+    result.model = (argv['model-src'])
+        .map(src => glob.sync(src, { nodir: true })) // get the list of files matching given pattern
+        .reduce((a,b) => a.concat(b)) // flatten it to one list
+        .map(src => readYaml(src))
+        .reduce((a,b) => a.concat(b)) // merge the items
+
     // get the data
     switch (source) {
         case 'cli':
@@ -82,11 +90,7 @@ function sanitizeArgs(argv) {
             }]
             break
         case 'file':
-            result.data = (argv['model-src'])
-                .map(src => glob.sync(src, { nodir: true })) // get the list of files matching given pattern
-                .reduce((a,b) => a.concat(b)) // flatten it to one list
-                .map(src => readYaml(src))
-                .reduce((a,b) => a.concat(b)) // merge the items
+            result.data = result.model
             break
         case 'arguments':
             result.data = [{
