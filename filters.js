@@ -1,4 +1,5 @@
 const yaml = require('js-yaml')
+const fs = require('fs')
 
 module.exports = (model, config) => {
     return {
@@ -21,7 +22,9 @@ module.exports = (model, config) => {
         yaml: dict => yaml.safeDump(dict),
 
         findinmodel: str => findInModel(str, model, config),
-        findoneinmodel: str => findInModel(str, model, config)[0]
+        findoneinmodel: str => findInModel(str, model, config)[0],
+
+        readfile: path => fs.readFileSync(path, 'utf8')
     }
 }
 
