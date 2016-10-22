@@ -18,10 +18,10 @@ module.exports = (model, config) => {
         values: dict => { let res = []; for (let i in dict) res.push(dict[i]); return res },
 
         json: dict => JSON.stringify(dict),
-        yaml: dict => yaml.safeDump(dict)/*,
+        yaml: dict => yaml.safeDump(dict),
 
         findinmodel: str => findInModel(str, model, config),
-        findoneinmodel: str => findInModel(str, model, config)[0]*/
+        findoneinmodel: str => findInModel(str, model, config)[0]
     }
 }
 
@@ -49,4 +49,33 @@ function flower(str) {
 
 function fupper(str) {
     return str.charAt(0).toUpperCase() + str.substr(1)
+}
+
+// entity{name: user}
+function findInModel(request, model, config) {
+    let sepatatorIndex = request.indexOf('{')
+    let itemType = request.substr(0, sepatatorIndex)
+    let itemFilters = yaml.safeLoad(request.substr(sepatatorIndex))
+    let result = model.filter(i => i.type == itemType).map(i => i.arguments)
+    let itemListType = null
+
+    for (let i in config) {
+        if (config[i].list && config[i].origin == itemType) {
+            result = result.concat(model.filter(j => j.type == i).map(j => j.arguments[i])[0])
+        }
+    }
+
+    function filterItems(modelSubTree, filters) {
+        let res = true
+        for (let i in filters) {
+            let subTree = modelSubTree
+            i.split('.').forEach(j => subTree = subTree[j])
+
+            if (typeof subTree == 'string') res = res && subTree == filters[i]
+            else res = res && filterItems(subTree, filters[i])
+        }
+        return res
+    }
+
+    return result.filter(item => filterItems(item, itemFilters))
 }
