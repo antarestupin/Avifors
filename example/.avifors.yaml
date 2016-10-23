@@ -2,3 +2,5 @@ model-src:
     - example/model/**/*.model.yaml
 config-src:
     - example/avifors/**/*.avifors.yaml
+global:
+    company_namespace: MyCorp

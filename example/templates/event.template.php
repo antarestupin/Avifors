@@ -10,7 +10,7 @@ class {{ name | pascalcase }} extends BaseEvent {
     {% endfor %}
 
     public function __construct({{ varattributes | prepend('$') | join(', ') }}) {
-        $this->name = '{{ name | kebabcase }}';
+        $this->name = '{{ _global.company_namespace | kebabcase }}-{{ name | kebabcase }}';
         {%- for attr in varattributes %}
         $this->{{ attr }} = ${{ attr }};
         {%- endfor %}

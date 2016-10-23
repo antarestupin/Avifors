@@ -48,7 +48,7 @@ More information at https://github.com/antarestupin/Avifors
     let args = sanitizeArgs(argv)
     let filters = filtersBuilder(args.model, args.config)
     for (i in filters) nunjucksEnv.addFilter(i, filters[i])
-    generate(args.config, args.data, args.model)
+    generate(args)
 }
 
 // Get the arguments needed
@@ -70,7 +70,8 @@ function sanitizeArgs(argv) {
 
     let result = {
         config: getConfig(argv['config-src']),
-        source: source
+        source: source,
+        global: argv.global || {}
     }
 
     if (!argv['model-src']) argv['model-src'] = []
@@ -103,7 +104,7 @@ function sanitizeArgs(argv) {
 }
 
 // Generate the code
-function generate(config, data, model) {
+function generate({config: config, data: data, model: model, global: globalVar}) {
     data.forEach(item => {
         // case in which the type is a list of items of another type
         if (config[item.type].list) {
@@ -128,11 +129,12 @@ function generate(config, data, model) {
 
         config[item.type].outputs.forEach(output => {
             // every argument is passed by default
-            if (!output.arguments) {
-                output.arguments = item.arguments
-                output.arguments._globals = item.arguments
-                output.arguments._model = model
-            }
+            if (!output.arguments) output.arguments = item.arguments
+
+            // add global variables
+            output.arguments._args = item.arguments // useful for list items
+            output.arguments._model = model
+            output.arguments._global = globalVar // global variables defined in the .avifors.yaml file
 
             let templatePath = nunjucksEnv.renderString(output.template, item.arguments)
             let outputPath = nunjucksEnv.renderString(output.output, output.arguments)
