@@ -6,4 +6,4 @@ entity:
     outputs:
         -
             template: example/templates/entity.template.php
-            output: src/Entity/{{ name | pascalcase }}.php
+            output: example/output/Entity/{{ name | pascalcase }}.php

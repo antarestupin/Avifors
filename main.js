@@ -9,42 +9,59 @@ const prompt = require('prompt-sync')()
 const mkdirp = require('mkdirp')
 const filtersBuilder = require('./filters')
 const glob = require('glob')
+const chalk = require('chalk')
 
 const nunjucksEnv = nunjucks.configure({ autoescape: false })
-main(argv)
+
+if ('h' in argv || 'help' in argv) {
+    console.log(`
+${chalk.bold.underline('Arguments:')}
+
+${chalk.bgWhite.black('--avifors-src')} Sets the path to Avifors' configuration file (defaults to ${chalk.cyan('./.avifors.yaml')})
+${chalk.bgWhite.black('--config-src')}  Sets the path to the configuration files
+${chalk.bgWhite.black('--model-src')}   Sets the path to the model files
+${chalk.bgWhite.black('--type')}        Sets the type of the item to generate
+${chalk.bgWhite.black('--args')}        Sets the arguments of the item to generate (formatted in YAML)
+
+${chalk.bold.underline('Requirements:')}
+
+At least you have to indicate the path to the configuration files that will link your model with the implementation, using the ${chalk.cyan('--config-src')} option.
+
+Note that you can put this info and others in your ${chalk.cyan('.avifors.yaml')} file in order to avoid repeating yourself.
+
+${chalk.bold.underline('Examples:')}
+
+Here are somes examples of how to use Avifors:
+
+${chalk.gray('# You will be asked the type and arguments of the item to generate')}
+${chalk.cyan('avifors')}
+
+${chalk.gray('# Same as above, but with the type already filled')}
+${chalk.cyan('avifors --type event')}
+${chalk.cyan('avifors event')}
+
+${chalk.gray('# Everything is already filled here')}
+${chalk.cyan('avifors --type event --args "{name: user_created, attributes:[user_id, email_address]}"')}
+
+${chalk.gray('# Here the data is in a YAML file (several items can be generated at once this way)')}
+${chalk.cyan('avifors --model-src example/data.yaml')}
+
+More information is available at ${chalk.underline('https://github.com/antarestupin/Avifors')}
+`
+    )
+} else {
+    // main(argv)
+    try {
+        main(argv)
+        console.log(chalk.bold.green('Done, without error'))
+    }
+    catch (e) {
+        console.log(chalk.bold.red('Error: ' + e))
+        console.log('Type ' + chalk.bold('avifors -h') + ' for more help')
+    }
+}
 
 function main(argv) {
-    if ('h' in argv || 'help' in argv) {
-        console.log(`
-Arguments:
-
---avifors-src Sets the path to Avifors' configuration file (defaults to ./.avifors.yaml)
---config-src  Sets the path to the configuration files
---model-src   Sets the path to the model files
---type        Sets the type of the item to generate
---args        Sets the arguments of the item to generate (formatted in YAML)
-
-Here are 4 examples of how to use Avifors:
-
-# you will be asked the type and arguments of the item to generate
-avifors
-
-# same as above, but with the type already filled
-avifors --type event
-avifors event
-
-# everything is already filled here
-avifors --type event --args "{name: user_created, attributes:[user_id, email_address]}"
-
-# here the data is in a YAML file (several items can be generated at once this way)
-avifors --model-src example/data.yaml
-
-More information at https://github.com/antarestupin/Avifors
-`)
-
-        return
-    }
-
     let args = sanitizeArgs(argv)
     let filters = filtersBuilder(args.model, args.config)
     for (i in filters) nunjucksEnv.addFilter(i, filters[i])
@@ -74,8 +91,7 @@ function sanitizeArgs(argv) {
         global: argv.global || {}
     }
 
-    if (!argv['model-src']) argv['model-src'] = []
-    result.model = (argv['model-src'])
+    result.model = (!argv['model-src']) ? []: (argv['model-src'])
         .map(src => glob.sync(src, { nodir: true })) // get the list of files matching given pattern
         .reduce((a,b) => a.concat(b)) // flatten it to one list
         .map(src => readYaml(src))
@@ -84,10 +100,34 @@ function sanitizeArgs(argv) {
     // get the data
     switch (source) {
         case 'cli':
+            // item type
             let type = argv['type'] || argv._[0] || prompt('Type of the item to generate: ')
+            while (!result.config[type]) {
+                console.log(chalk.red('Type ' + type + ' does not exist in configuration'))
+                type = prompt('Type of the item to generate: ')
+            }
+
+            // item arguments
+            let args
+            let argsConfirmed = false
+            while (!argsConfirmed) {
+                args = askForArgs(result.config[type].arguments)
+                console.log('\n' + chalk.underline.cyan('Item arguments:') + '\n\n' + chalk.cyan(yaml.safeDump(args) + '\n'))
+                switch (prompt('Do you confirm the item arguments? (Y/n)').toUpperCase()) {
+                    case 'N':
+                    case 'NO':
+                        argsConfirmed = false
+                        break;
+                    case 'Y':
+                    case 'YES':
+                    default:
+                        argsConfirmed = true
+                }
+            }
+
             result.data = [{
                 type: type,
-                arguments: askForArgs(result.config[type].arguments)
+                arguments: args
             }]
             break
         case 'file':
@@ -165,15 +205,16 @@ function askForArgs(schema, namespace = '') {
             }
         } else { // list of lists / maps
             for (let continueAdding = true, i = 0; continueAdding; i++) {
-                let add = prompt('Add an item to ' + namespace + '? (y/n) ')
+                let add = prompt('Add an item to ' + namespace + '? (Y/n) ')
                 switch (add.toUpperCase()) {
-                    case 'Y':
-                    case 'YES':
-                        args.push(askForArgs(schema[0], namespace + '[' + i + ']'))
-                        break;
                     case 'N':
                     case 'NO':
                         continueAdding = false
+                        break;
+                    case 'Y':
+                    case 'YES':
+                    default:
+                        args.push(askForArgs(schema[0], namespace + '[' + i + ']'))
                 }
             }
         }
@@ -192,6 +233,8 @@ function askForArgs(schema, namespace = '') {
 
 // Get the config from given files and handle type lists
 function getConfig(src) {
+    if (!src) throw "You must indicate at least one config file using the 'config-src' option"
+
     let config = src
         .map(path => glob.sync(path, { nodir: true })) // get the list of files matching given pattern
         .reduce((a,b) => a.concat(b)) // flatten it to one list
