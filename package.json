@@ -3,12 +3,13 @@
   "version": "1.0.0-dev",
   "description": "A CLI tool to generate code from templates.",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "main": "node src/main.js --avifors-src example/.avifors.yaml",
+    "help": "node src/main.js -h"
   },
   "author": "",
   "license": "MIT",
   "bin": {
-    "avifors": "main.js"
+    "avifors": "src/main.js"
   },
   "dependencies": {
     "chalk": "^1.1.3",
