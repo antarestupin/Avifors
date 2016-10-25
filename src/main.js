@@ -10,21 +10,22 @@ const mkdirp = require('mkdirp')
 const filtersBuilder = require('./filters')
 const glob = require('glob')
 const chalk = require('chalk')
-const helpMessage = require('./help.js')
+const helpMessage = require('./help')
+const exceptions = require('./exceptions')
 
 const nunjucksEnv = nunjucks.configure({ autoescape: false })
 
 if ('h' in argv || 'help' in argv) {
     console.log(helpMessage)
 } else {
-    // main(argv)
     try {
         main(argv)
-        console.log(chalk.bold.green('Done, without error'))
+        console.log(chalk.bold.green('Done, without errors'))
     }
     catch (e) {
-        console.log(chalk.bold.red('Error: ' + e))
-        console.log('Type ' + chalk.bold('avifors -h') + ' for more help')
+        console.log('\n' + chalk.red(chalk.bold.underline('Error') + ':\n\n' + e))
+        console.log('\nType ' + chalk.cyan('avifors -h') + ' for more help')
+        console.log('\n' + chalk.red('Generation aborted due to error\n'))
     }
 }
 
@@ -38,9 +39,15 @@ function main(argv) {
 // Get the arguments needed
 function sanitizeArgs(argv) {
     // get the avifors config file if it exists
-    try {
-        Object.assign(argv, readYaml(argv['avifors-src'] || '.avifors.yaml'))
-    } catch (e) {}
+    if (!!argv['avifors-src']) Object.assign(argv, readYaml(argv['avifors-src']))
+    else {
+        let aviforsConfigRaw
+        try { aviforsConfigRaw = fs.readFileSync('.avifors.yaml', 'utf8') } catch(e) {}
+        if (aviforsConfigRaw) {
+            try { Object.assign(argv, yaml.safeLoad(aviforsConfigRaw)) }
+            catch (e) { throw exceptions.yamlLoadFile('.avifors.yaml', e) }
+        }
+    }
 
     // transform string lists of files into actual lists of files
     ['model-src', 'config-src'].forEach(i => {
@@ -101,10 +108,12 @@ function sanitizeArgs(argv) {
             result.data = result.model
             break
         case 'arguments':
-            result.data = [{
-                type: argv['type'],
-                arguments: yaml.safeLoad(argv['args'])
-            }]
+            try {
+                result.data = [{
+                    type: argv['type'],
+                    arguments: yaml.safeLoad(argv['args'])
+                }]
+            } catch (e) { throw exceptions.yamlLoadArgs(e) }
     }
 
     return result
@@ -117,11 +126,19 @@ function generate({config: config, data: data, model: model, global: globalVar})
         if (config[item.type].list) {
             config[item.type].outputs = []
             item.arguments[item.type].forEach(argItem => {
-                config[item.type].originOutputs.forEach(output => {
+                config[item.type].originOutputs.forEach((output, outputIndex) => {
+                    let templateValue, outputValue
+
+                    try { templateValue = nunjucksEnv.renderString(output.template, argItem) }
+                    catch (e) { throw exceptions.nunjucksRenderOption(`outputs[${outputIndex}].template`, item.type, e) }
+
+                    try { outputValue = nunjucksEnv.renderString(output.output, argItem) }
+                    catch (e) { throw exceptions.nunjucksRenderOption(`outputs[${outputIndex}].output`, item.type, e) }
+
                     config[item.type].outputs.push({
-                        template: nunjucksEnv.renderString(output.template, argItem),
+                        template: templateValue,
                         arguments: argItem,
-                        output: nunjucksEnv.renderString(output.output, argItem)
+                        output: outputValue
                     })
                 })
             })
@@ -129,12 +146,15 @@ function generate({config: config, data: data, model: model, global: globalVar})
 
         // compute the outputs defined by a template
         if (typeof config[item.type].outputs == 'string') {
-            config[item.type].outputs = yaml.safeLoad(
-                nunjucksEnv.renderString(config[item.type].outputs, item.arguments)
-            )
+            try {
+                config[item.type].outputs = yaml.safeLoad(nunjucksEnv.renderString(config[item.type].outputs, item.arguments))
+            } catch (e) {
+                if (e instanceof yaml.YAMLException) throw exceptions.yamlLoadConfigOutputs(item.type, e)
+                else throw exceptions.nunjucksRenderOption('outputs', item.type, e)
+            }
         }
 
-        config[item.type].outputs.forEach(output => {
+        config[item.type].outputs.forEach((output, outputIndex) => {
             // every argument is passed by default
             if (!output.arguments) output.arguments = item.arguments
 
@@ -143,10 +163,18 @@ function generate({config: config, data: data, model: model, global: globalVar})
             output.arguments._model = model
             output.arguments._global = globalVar // global variables defined in the .avifors.yaml file
 
-            let templatePath = nunjucksEnv.renderString(output.template, item.arguments)
-            let outputPath = nunjucksEnv.renderString(output.output, output.arguments)
+            // get template and output paths
+            let templatePath, outputPath
 
-            let rendered = nunjucksEnv.render(templatePath, output.arguments)
+            try { templatePath = nunjucksEnv.renderString(output.template, item.arguments) }
+            catch (e) { throw exceptions.nunjucksRenderOption(`outputs[${outputIndex}].template`, item.type, e) }
+
+            try { outputPath = nunjucksEnv.renderString(output.output, output.arguments) }
+            catch (e) { throw exceptions.nunjucksRenderOption(`outputs[${outputIndex}].output`, item.type, e) }
+
+            let rendered
+            try { rendered = nunjucksEnv.render(templatePath, output.arguments) }
+            catch (e) { throw exceptions.nunjucksRenderTemplate(templatePath, e) }
 
             writeFile(outputPath, rendered)
         })
@@ -200,7 +228,7 @@ function askForArgs(schema, namespace = '') {
 
 // Get the config from given files and handle type lists
 function getConfig(src) {
-    if (!src) throw "You must indicate at least one config file using the 'config-src' option"
+    if (!src) throw exceptions.noConfig()
 
     let config = src
         .map(path => glob.sync(path, { nodir: true })) // get the list of files matching given pattern
@@ -227,14 +255,23 @@ function getConfig(src) {
 }
 
 function readYaml(filePath) {
-    return yaml.safeLoad(fs.readFileSync(filePath, 'utf8'))
+    try {
+        return yaml.safeLoad(fs.readFileSync(filePath, 'utf8'))
+    } catch (e) {
+        if (e instanceof yaml.YAMLException) throw exceptions.yamlLoadFile(filePath, e)
+        else throw exceptions.readFile(filePath)
+    }
 }
 
 function writeFile(filePath, contents) {
-    // create dir if it doesn't already exist
-    let dirPath = path.dirname(filePath)
-    try { fs.statSync(dirPath) }
-    catch(e) { mkdirp.sync(dirPath) }
+    try {
+        // create dir if it doesn't already exist
+        let dirPath = path.dirname(filePath)
+        try { fs.statSync(dirPath) }
+        catch(e) { mkdirp.sync(dirPath) }
 
-    fs.writeFileSync(filePath, contents, { flag: 'w+' })
+        fs.writeFileSync(filePath, contents, { flag: 'w+' })
+    } catch (e) {
+        throw exceptions.writeFile(filePath)
+    }
 }

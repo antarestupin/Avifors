@@ -1,7 +1,7 @@
 const chalk = require('chalk')
 
 module.exports = `
-${chalk.bold.underline('Arguments:')}
+${chalk.bold.underline('Arguments')}:
 
 ${chalk.bgWhite.black('--avifors-src')} Sets the path to Avifors' configuration file (defaults to ${chalk.cyan('./.avifors.yaml')})
 ${chalk.bgWhite.black('--config-src')}  Sets the path to the configuration files
@@ -9,13 +9,13 @@ ${chalk.bgWhite.black('--model-src')}   Sets the path to the model files
 ${chalk.bgWhite.black('--type')}        Sets the type of the item to generate
 ${chalk.bgWhite.black('--args')}        Sets the arguments of the item to generate (formatted in YAML)
 
-${chalk.bold.underline('Requirements:')}
+${chalk.bold.underline('Requirements')}:
 
 At least you have to indicate the path to the configuration files that will link your model with the implementation, using the ${chalk.cyan('--config-src')} option.
 
 Note that you can put this info and others in your ${chalk.cyan('.avifors.yaml')} file in order to avoid repeating yourself.
 
-${chalk.bold.underline('Examples:')}
+${chalk.bold.underline('Examples')}:
 
 Here are somes examples of how to use Avifors:
 
