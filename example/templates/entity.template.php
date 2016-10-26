@@ -1,6 +1,6 @@
 <?php
 
-{%- set varproperties = properties | camelcase %}
+{% set varproperties = properties | camelcase -%}
 
 namespace Acme\Entity;
 
@@ -9,6 +9,7 @@ class {{ name | pascalcase }} {
 
     {% for attr in varproperties %}
     private ${{ attr }};
+    {% if loop.revindex0 != 0 %}{{ '\n' }}{% endif %}{# Alternative way to add a line -#}
     {% endfor %}
 
     public function __construct($id) {
@@ -22,6 +23,6 @@ class {{ name | pascalcase }} {
 
     public function set{{ attr | pascalcase }}($value) {
         $this->{{ attr | camelcase }} = $value;
-    }
+    }{{ _(loop.revindex0) }}
     {% endfor %}
 }

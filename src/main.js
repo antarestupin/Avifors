@@ -13,7 +13,13 @@ const chalk = require('chalk')
 const helpMessage = require('./help')
 const exceptions = require('./exceptions')
 
-const nunjucksEnv = nunjucks.configure({ autoescape: false })
+const nunjucksEnv = nunjucks.configure({
+    autoescape: false,
+    trimBlocks: true,
+    lstripBlocks: true
+})
+
+nunjucksEnv.addGlobal('_', index => index > 0 ? '\n': '')
 
 if ('h' in argv || 'help' in argv) {
     console.log(helpMessage)
