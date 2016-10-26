@@ -23,6 +23,6 @@ class {{ name | pascalcase }} {
 
     public function set{{ attr | pascalcase }}($value) {
         $this->{{ attr | camelcase }} = $value;
-    }{{ _(loop.revindex0) }}
+    }{{ _(not loop.last) }}
     {% endfor %}
 }

@@ -19,7 +19,7 @@ const nunjucksEnv = nunjucks.configure({
     lstripBlocks: true
 })
 
-nunjucksEnv.addGlobal('_', index => index > 0 ? '\n': '')
+nunjucksEnv.addGlobal('_', (cond, joiner='\n') => cond ? joiner: '')
 
 if ('h' in argv || 'help' in argv) {
     console.log(helpMessage)
