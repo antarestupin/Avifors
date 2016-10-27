@@ -17,6 +17,8 @@ module.exports = (model, config) => {
         append: (list, toAppend) => list.map(str => str + toAppend),
         keys: dict => Object.keys(dict),
         values: dict => { let res = []; for (let i in dict) res.push(dict[i]); return res },
+        findByColumn: (list, column, value) => list.filter(i => i[column] == value),
+        findOneByColumn: (list, column, value) => list.filter(i => i[column] == value)[0],
 
         json: dict => JSON.stringify(dict),
         yaml: dict => yaml.safeDump(dict),

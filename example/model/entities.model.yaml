@@ -5,6 +5,8 @@
             -
                 name: user
                 properties: [email_address, encrypted_password, articles]
+                methods:
+                    - { name: clear_basket, arguments: [] }
             -
                 name: article
                 properties: [name, price]

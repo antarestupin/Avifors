@@ -3,7 +3,17 @@ entity:
     arguments:
         name: string
         properties: [string]
+        methods:
+            -
+                name: string
+                arguments: [string]
+                return_type: string
     outputs:
         -
-            template: example/templates/entity.template.php
+            template: example/templates/entity/{{ name | snakecase }}.template.php
+            fallback: example/templates/entity.template.php
             output: example/output/Entity/{{ name | pascalcase }}.php
+        -
+            template: example/templates/entity/{{ name | snakecase }}.test.template.php
+            optional: true
+            output: example/output/Tests/Entity/{{ name | pascalcase }}Test.php

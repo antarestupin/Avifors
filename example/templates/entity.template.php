@@ -25,4 +25,6 @@ class {{ name | pascalcase }} {
         $this->{{ attr | camelcase }} = $value;
     }{{ _(not loop.last) }}
     {% endfor %}
+
+    {% block methods %}{% endblock %}
 }
