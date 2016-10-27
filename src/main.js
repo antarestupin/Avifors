@@ -127,6 +127,10 @@ function sanitizeArgs(argv) {
 
 // Generate the code
 function generate({config: config, data: data, model: model, global: globalVar}) {
+    // add global variables
+    nunjucksEnv.addGlobal('_global', globalVar) // global variables defined in the .avifors.yaml file
+    nunjucksEnv.addGlobal('_model', model)
+
     data.forEach(item => {
         // case in which the type is a list of items of another type
         if (config[item.type].list) {
@@ -171,10 +175,8 @@ function generate({config: config, data: data, model: model, global: globalVar})
             // every argument is passed by default
             if (!output.arguments) output.arguments = item.arguments
 
-            // add global variables
+            // add local variables
             output.arguments._args = item.arguments // useful for list items
-            output.arguments._model = model
-            output.arguments._global = globalVar // global variables defined in the .avifors.yaml file
 
             // get template and output paths
             let templatePath, fallbackPath, outputPath
