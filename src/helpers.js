@@ -16,15 +16,13 @@ function isScalar(val) {
 }
 
 function getArgType(schema) {
-    let argType
-    if (!!schema._type) argType = schema._type.toLowerCase() // defined by the user
-    else { // to guess
-        if (isScalar(schema)) argType = schema.toLowerCase()
-        else if (Array.isArray(schema)) argType = 'list'
-        else argType = 'map'
-    }
+    let contents = schema._contents || schema
 
-    return argType
+    if (isScalar(contents)) return contents.toLowerCase()
+
+    if (Array.isArray(contents)) return 'list'
+
+    return 'map'
 }
 
 function readYaml(filePath) {

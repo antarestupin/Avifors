@@ -16,7 +16,6 @@ events_test:
                 id: number
                 name: string
                 attributes:
-                    _type: list
                     _default: [date]
                     _contents: [string]
     outputs: |
