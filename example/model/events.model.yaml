@@ -23,3 +23,5 @@
             -
                 name: user_modified
                 attributes: [user_id, attribute_changed, new_value]
+            -
+                name: nothing_happened

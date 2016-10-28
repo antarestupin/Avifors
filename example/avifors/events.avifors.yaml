@@ -13,8 +13,12 @@ events_test:
     arguments:
         events:
             -
+                id: number
                 name: string
-                attributes: [string]
+                attributes:
+                    _type: list
+                    _default: [date]
+                    _contents: [string]
     outputs: |
         {% for event in events %}
         -

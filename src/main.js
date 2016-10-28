@@ -154,11 +154,14 @@ function generate({config: config, data: data, model: model, global: globalVar})
                         template: templatePath,
                         fallback: fallbackPath,
                         optional: output.optional,
-                        arguments: argItem,
+                        arguments: getWithDefaultArguments(argItem, config[config[item.type].origin].arguments),
                         output: outputPath
                     })
                 })
             })
+        } else { // not a list of items
+            // set default arguments
+            item.arguments = getWithDefaultArguments(item.arguments, config[item.type].arguments)
         }
 
         // compute the outputs defined by a template
@@ -171,6 +174,7 @@ function generate({config: config, data: data, model: model, global: globalVar})
             }
         }
 
+        // generate the code
         config[item.type].outputs.forEach((output, outputIndex) => {
             // every argument is passed by default
             if (!output.arguments) output.arguments = item.arguments
@@ -209,16 +213,26 @@ function generate({config: config, data: data, model: model, global: globalVar})
 
 // Ask for the item arguments to the user
 function askForArgs(schema, namespace = '') {
+    let type = getArgType(schema)
+    let schemaContents = schema._contents || schema
+
     // string
-    if (typeof schema == 'string') {
-        return prompt('Value of ' + namespace + ': ')
+    if (['string', 'number', 'boolean'].indexOf(type) !== -1) {
+        let defaultValue = schema._default || getDefaultValue(type)
+        let defaultSection = defaultValue === '' ? '': ` (${defaultValue})`
+
+        let enteredValue = prompt('Value of ' + namespace + defaultSection + ': ')
+
+        if (enteredValue === '') enteredValue = defaultValue
+
+        return enteredValue
     }
 
     // list
-    if (Array.isArray(schema)) {
+    if (type == 'list') {
         let args = []
 
-        if (typeof schema[0] == 'string') { // list of strings
+        if (isScalar(schemaContents[0])) { // list of scalars
             for (let continueAdding = true; continueAdding;) {
                 let newVal = prompt('Add a value to ' + namespace + ' (type enter to stop adding): ')
                 if (newVal == '') continueAdding = false
@@ -235,7 +249,7 @@ function askForArgs(schema, namespace = '') {
                     case 'Y':
                     case 'YES':
                     default:
-                        args.push(askForArgs(schema[0], namespace + '[' + i + ']'))
+                        args.push(askForArgs(schemaContents[0], namespace + '[' + i + ']'))
                 }
             }
         }
@@ -245,9 +259,9 @@ function askForArgs(schema, namespace = '') {
 
     // map
     let args = {}
-    for (let i in schema) {
+    for (let i in schemaContents) {
         let subnamespace = namespace == '' ? i: namespace + '.' + i
-        args[i] = askForArgs(schema[i], subnamespace)
+        args[i] = askForArgs(schemaContents[i], subnamespace)
     }
     return args
 }
@@ -278,6 +292,51 @@ function getConfig(src) {
     }
 
     return config
+}
+
+function isScalar(val) {
+    return (/string|number|boolean/).test(typeof val)
+}
+
+function getArgType(schema) {
+    let argType
+    if (!!schema._type) argType = schema._type.toLowerCase() // defined by the user
+    else { // to guess
+        if (isScalar(schema)) argType = schema.toLowerCase()
+        else if (Array.isArray(schema)) argType = 'list'
+        else argType = 'map'
+    }
+
+    return argType
+}
+
+function getDefaultValue(type) {
+    return {
+        'string': '',
+        'number': 0,
+        'boolean': false,
+        'list': [],
+        'map': {}
+    }[type]
+}
+
+function getWithDefaultArguments(arg, configArgs) {
+    let argType = getArgType(configArgs)
+
+    if (arg === undefined) {
+        if (!!configArgs._default) arg = configArgs._default
+        else arg = getDefaultValue(argType)
+    }
+
+    let configContents = !!configArgs._contents ? configArgs._contents: configArgs
+
+    if (argType == 'list') return arg.map(item => getWithDefaultArguments(item, configContents[0]))
+
+    if (argType == 'map') {
+        for (let i in configArgs) arg[i] = getWithDefaultArguments(arg[i], configArgs[i])
+    }
+
+    return arg
 }
 
 function readYaml(filePath) {
