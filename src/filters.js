@@ -73,7 +73,6 @@ function findInModel(request, model, config) {
     let itemType = request.substr(0, sepatatorIndex)
     let itemFilters = yaml.safeLoad(request.substr(sepatatorIndex))
     let result = model.filter(i => i.type == itemType).map(i => i.arguments)
-    let itemListType = null
 
     for (let i in config) {
         if (config[i].list && config[i].origin == itemType) {
