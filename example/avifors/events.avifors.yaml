@@ -4,7 +4,7 @@ event:
         attributes: [string]
     outputs:
         -
-            template: example/templates/event.template.php
+            template: example/implementation/event/event.template.php
             output: example/output/Event/{{ name | pascalcase }}.php
 
 events: [event]
@@ -21,7 +21,7 @@ events_test:
     outputs: |
         {% for event in events %}
         -
-            template: example/templates/event.template.php
+            template: example/implementation/event/event.template.php
             arguments: {{ event | json }}
             output: example/output/Event/{{ event.name | pascalcase }}.php
         {% endfor %}
