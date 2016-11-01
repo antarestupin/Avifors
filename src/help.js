@@ -8,6 +8,7 @@ ${chalk.bgWhite.black('--config-src')}  Sets the path to the configuration files
 ${chalk.bgWhite.black('--model-src')}   Sets the path to the model files
 ${chalk.bgWhite.black('--type')}        Sets the type of the item to generate
 ${chalk.bgWhite.black('--args')}        Sets the arguments of the item to generate (formatted in YAML)
+${chalk.bgWhite.black('--global')}      Add global variables (formatted in YAML)
 
 ${chalk.bold.underline('Requirements')}:
 
