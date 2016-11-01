@@ -13,6 +13,9 @@ module.exports = {
 
 // Get the arguments needed
 function sanitizeArgs(argv) {
+    // get the command line global arguments
+    let globals = argv.global
+
     // get the avifors config file if it exists
     if (!!argv['avifors-src']) Object.assign(argv, helpers.readYaml(argv['avifors-src']))
     else {
@@ -22,6 +25,11 @@ function sanitizeArgs(argv) {
             try { Object.assign(argv, yaml.safeLoad(aviforsConfigRaw)) }
             catch (e) { throw exceptions.yamlLoadFile('.avifors.yaml', e) }
         }
+    }
+
+    // merge globals
+    if (globals) {
+        Object.assign(argv.global, yaml.safeLoad(globals))
     }
 
     // transform string lists of files into actual lists of files
