@@ -13,8 +13,8 @@ module.exports = {
 
 // Get the arguments needed
 function sanitizeArgs(argv) {
-    // get the command line global arguments
-    let globals = argv.global
+    let globals = argv.global // get the command line global arguments
+    let plugins = argv.plugins // get the command line added plugins
 
     // get the avifors config file if it exists
     if (!!argv['avifors-src']) Object.assign(argv, helpers.readYaml(argv['avifors-src']))
@@ -28,9 +28,10 @@ function sanitizeArgs(argv) {
     }
 
     // merge globals
-    if (globals) {
-        Object.assign(argv.global, yaml.safeLoad(globals))
-    }
+    if (globals) Object.assign(argv.global, yaml.safeLoad(globals))
+
+    // merge plugins
+    if (plugins) argv = argv.concat(yaml.safeLoad(plugins))
 
     // transform string lists of files into actual lists of files
     ['model-src', 'config-src'].forEach(i => {
@@ -45,7 +46,8 @@ function sanitizeArgs(argv) {
     let result = {
         config: configHelper.getConfig(argv['config-src']),
         source: source,
-        global: argv.global || {}
+        global: argv.global || {},
+        plugins: argv.plugins || []
     }
 
     result.model = (!argv['model-src']) ? []: (argv['model-src'])

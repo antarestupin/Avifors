@@ -1,8 +1,8 @@
 const yaml = require('js-yaml')
 const fs = require('fs')
 
-module.exports = (model, config) => {
-    return {
+module.exports = (nunjucksEnv, model, config) => {
+    let filters = {
         flower: flower,
         fupper: flower,
 
@@ -32,6 +32,13 @@ module.exports = (model, config) => {
 
         apply: apply
     }
+
+    let functions = {
+        _: (cond, joiner='\n') => cond ? joiner: ''
+    }
+
+    for (let i in filters) nunjucksEnv.addFilter(i, filters[i])
+    for (let i in functions) nunjucksEnv.addGlobal(i, functions[i])
 }
 
 function splitVariableName(varName) {

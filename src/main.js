@@ -2,8 +2,8 @@
 
 const nunjucks = require('nunjucks')
 const argv = require('minimist')(process.argv.slice(2))
-const filtersBuilder = require('./filters')
 const chalk = require('chalk')
+const path = require('path')
 const helpMessage = require('./help')
 const argsSanitizer = require('./args')
 
@@ -14,8 +14,6 @@ const nunjucksEnv = nunjucks.configure({
 })
 
 const generator = require('./generator')(nunjucksEnv)
-
-nunjucksEnv.addGlobal('_', (cond, joiner='\n') => cond ? joiner: '')
 
 if ('h' in argv || 'help' in argv) {
     console.log(helpMessage)
@@ -33,7 +31,10 @@ if ('h' in argv || 'help' in argv) {
 
 function main(argv) {
     let args = argsSanitizer.sanitizeArgs(argv)
-    let filters = filtersBuilder(args.model, args.config)
-    for (i in filters) nunjucksEnv.addFilter(i, filters[i])
+
+    // add filters and globals
+    require('./filters')(nunjucksEnv, args.model, args.config)
+    args.plugins.forEach(modifier => require(path.resolve(modifier))(nunjucksEnv, args.model, args.config))
+
     generator.generate(args)
 }
