@@ -1,5 +1,6 @@
 model-src:
     - example/model/**/*.model.yaml
+    - example/implementation/**/*.model.yaml
 config-src:
     - example/avifors/**/*.avifors.yaml
 global:
