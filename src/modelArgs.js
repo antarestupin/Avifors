@@ -1,9 +1,31 @@
 const prompt = require('prompt-sync')({ sigint: true })
 const helpers = require('./helpers')
 const defaults = require('./defaults')
+const exceptions = require('./exceptions')
 
 module.exports = {
-    askForArgs: askForArgs
+    askForArgs: askForArgs,
+    getImplArguments: getImplArguments
+}
+
+// get implementation specific arguments
+function getImplArguments(impl, args, type, nunjucksEnv) {
+    return impl
+        .map((i, index) => {
+            let pathTemplate = i.path || i,
+                optional = i.optional !== undefined && i.optional,
+                path
+
+            try { path = nunjucksEnv.renderString(pathTemplate, args) }
+            catch (e) { throw exceptions.nunjucksRenderOption(`impl_arguments[${index}]`, type, e) }
+
+            try { return helpers.readYaml(path) }
+            catch (e) {
+                if (optional) return {}
+                else throw e
+            }
+        })
+        .reduce((a,b) => Object.assign({}, a, b)) // the latter overrides the former
 }
 
 // Ask for the item arguments to the user

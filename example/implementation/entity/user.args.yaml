@@ -1,0 +1,4 @@
+methods:
+    clear_basket: |
+        $this->articles = [];
+        return $this;

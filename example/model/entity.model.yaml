@@ -1,0 +1,7 @@
+-
+    type: entity
+    arguments:
+        name: bunny
+        properties: [weight, fluffiness]
+        methods:
+            - { name: eat, parameters: [food] }

@@ -3,6 +3,7 @@ const helpers = require('./helpers')
 const fs = require('fs')
 const exceptions = require('./exceptions')
 const defaults = require('./defaults')
+const modelArgs = require('./modelArgs')
 
 module.exports = (nunjucksEnv) => {
     return {
@@ -21,19 +22,17 @@ function generate({config: config, data: data, model: model, global: globalVar},
         if (config[item.type].list) {
             config[item.type].outputs = []
             item.arguments[item.type].forEach(argItem => {
+                // get implementation specific arguments
+                let implArgs = config[config[item.type].origin].impl_arguments
+                argItem._impl = !!implArgs ? modelArgs.getImplArguments(implArgs, argItem, item.type, nunjucksEnv): {}
+
+                // get outputs
                 config[item.type].originOutputs.forEach((output, outputIndex) => {
-                    let templatePath, fallbackPath, outputPath
+                    let templatePath = renderString(output.template, argItem, nunjucksEnv, item.type, `outputs[${outputIndex}].template`),
+                        outputPath = renderString(output.output, argItem, nunjucksEnv, item.type, `outputs[${outputIndex}].output`)
 
-                    try { templatePath = nunjucksEnv.renderString(output.template, argItem) }
-                    catch (e) { throw exceptions.nunjucksRenderOption(`outputs[${outputIndex}].template`, item.type, e) }
-
-                    if (output.fallback) {
-                        try { fallbackPath = nunjucksEnv.renderString(output.fallback, argItem) }
-                        catch (e) { throw exceptions.nunjucksRenderOption(`outputs[${outputIndex}].fallback`, item.type, e) }
-                    }
-
-                    try { outputPath = nunjucksEnv.renderString(output.output, argItem) }
-                    catch (e) { throw exceptions.nunjucksRenderOption(`outputs[${outputIndex}].output`, item.type, e) }
+                    let fallbackPath
+                    if (output.fallback) fallbackPath = renderString(output.fallback, argItem, nunjucksEnv, item.type, `outputs[${outputIndex}].fallback`)
 
                     config[item.type].outputs.push({
                         template: templatePath,
@@ -67,6 +66,13 @@ function generate({config: config, data: data, model: model, global: globalVar},
             // add local variables
             output.arguments._args = item.arguments // useful for list items
 
+            // add implementation specific arguments
+            if (!output.arguments._impl) {
+                output.arguments._impl = !!config[item.type].impl_arguments ?
+                    modelArgs.getImplArguments(config[item.type].impl_arguments, output.arguments, item.type, nunjucksEnv):
+                    {}
+            }
+
             // get template and output paths
             let templatePath, fallbackPath, outputPath
 
@@ -76,8 +82,7 @@ function generate({config: config, data: data, model: model, global: globalVar},
             }
             catch (e) { throw exceptions.nunjucksRenderOption(`outputs[${outputIndex}].template`, item.type, e) }
 
-            try { outputPath = nunjucksEnv.renderString(output.output, output.arguments) }
-            catch (e) { throw exceptions.nunjucksRenderOption(`outputs[${outputIndex}].output`, item.type, e) }
+            outputPath = renderString(output.output, output.arguments, nunjucksEnv, item.type, `outputs[${outputIndex}].output`)
 
             let template
             try { template = fs.readFileSync(templatePath, 'utf8') }
@@ -94,4 +99,9 @@ function generate({config: config, data: data, model: model, global: globalVar},
             helpers.writeFile(outputPath, rendered)
         })
     })
+}
+
+function renderString(str, args, nunjucksEnv, type, section) {
+    try { return nunjucksEnv.renderString(str, args) }
+    catch (e) { throw exceptions.nunjucksRenderOption(`outputs[${outputIndex}].template`, item.type, e) }
 }

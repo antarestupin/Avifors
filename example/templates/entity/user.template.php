@@ -2,7 +2,7 @@
 {% import 'example/templates/components/class.template.php' as class %}
 
 {% block methods %}
-    {% call class.method(methods, 'clear_basket') -%}
-        $this->articles = [];
-    {%- endcall %}
+    function test() {
+        return 'ok';
+    }
 {% endblock %}

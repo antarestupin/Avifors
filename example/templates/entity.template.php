@@ -1,5 +1,6 @@
 <?php
 
+{% import 'example/templates/components/class.template.php' as class -%}
 {% set varproperties = properties | camelcase -%}
 
 namespace Acme\Entity;
@@ -24,6 +25,12 @@ class {{ name | pascalcase }} {
     public function set{{ attr | pascalcase }}($value) {
         $this->{{ attr | camelcase }} = $value;
     }{{ _(not loop.last) }}
+    {% endfor %}
+
+    {% for method in methods %}
+        {% call class.method(methods, method.name) -%}
+            {{ _impl.methods[method.name] | indent(8) }}
+        {%- endcall %}
     {% endfor %}
 
     {% block methods %}{% endblock %}

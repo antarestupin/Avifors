@@ -6,8 +6,13 @@ entity:
         methods:
             -
                 name: string
-                arguments: [string]
+                parameters: [string]
                 return_type: string
+    impl_arguments:
+        - example/implementation/entity/args.yaml
+        -
+            path: example/implementation/entity/{{ name | snakecase }}.args.yaml
+            optional: true
     outputs:
         -
             template: example/templates/entity/{{ name | snakecase }}.template.php
