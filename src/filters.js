@@ -26,16 +26,15 @@ module.exports = (nunjucksEnv, model, config) => {
         json: jsonDump,
         yaml: yamlDump,
 
-        findinmodel: str => findInModel(str, model, config),
-        findoneinmodel: findOneInModel,
-
         readfile: readFile,
 
         apply: apply
     }
 
     let functions = {
-        _: (cond, joiner='\n') => cond ? joiner: ''
+        _: (cond, joiner='\n') => cond ? joiner: '',
+        findInModel: str => findInModel(str, model, config),
+        findOneInModel: str => findInModel(str, model, config)[0]
     }
 
     for (let i in filters) nunjucksEnv.addFilter(i, filters[i])
@@ -69,8 +68,6 @@ const filter = (collection, fn) => collection.filter(eval(fn))
 
 const jsonDump = dict => JSON.stringify(dict)
 const yamlDump = dict => yaml.safeDump(dict)
-
-const findOneInModel = str => findInModel(str, model, config)[0]
 
 const readFile = path => fs.readFileSync(path, 'utf8')
 
