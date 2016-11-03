@@ -15,6 +15,7 @@ module.exports = (nunjucksEnv, model, config) => {
 
         prepend: prepend,
         append: append,
+        surround: surround,
         keys: keys,
         values: values,
         findByColumn: findByColumn,
@@ -58,6 +59,7 @@ const fupper = str => Array.isArray(str) ? str.map(i => fupper(i)): str.charAt(0
 
 const prepend = (list, toPrepend) => list.map(str => toPrepend + str)
 const append = (list, toAppend) => list.map(str => str + toAppend)
+const surround = (list, toAdd) => list.map(str => toAdd + str + toAdd)
 const keys = dict => Object.keys(dict)
 const values = dict => { let res = []; for (let i in dict) res.push(dict[i]); return res }
 const findByColumn = (list, column, value) => list.filter(i => i[column] == value)
