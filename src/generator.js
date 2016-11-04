@@ -44,29 +44,27 @@ function generate({config: config, data: data, model: model, global: globalVar},
             let outputArguments = output.arguments || item.arguments
 
             // get template and output paths
-            let templatePath, fallbackPath, outputPath
+            let pathListOptions = ['template', 'fallback', 'output']
+            let pathList = {}
+            pathListOptions.forEach(i => {
+                if (!!output[i])
+                    pathList[i] = renderString(output[i], item.arguments, nunjucksEnv, item.type, `outputs[${outputIndex}].${i}`)
+            })
 
-            try {
-                templatePath = nunjucksEnv.renderString(output.template, item.arguments)
-                if (!!output.fallback) fallbackPath = nunjucksEnv.renderString(output.fallback, item.arguments)
-            }
-            catch (e) { throw exceptions.nunjucksRenderOption(`outputs[${outputIndex}].template`, item.type, e) }
-
-            outputPath = renderString(output.output, item.arguments, nunjucksEnv, item.type, `outputs[${outputIndex}].output`)
-
-            let template
-            try { template = fs.readFileSync(templatePath, 'utf8') }
+            let templateOption = 'template'
+            try { fs.readFileSync(pathList.template, 'utf8') }
             catch (e) {
-                if (fallbackPath) template = fs.readFileSync(fallbackPath, 'utf8')
+                templateOption = 'fallback'
+                if (pathList.fallback) fs.readFileSync(pathList.fallback, 'utf8')
                 else if (output.optional) return
                 else throw e
             }
 
             let rendered
-            try { rendered = nunjucksEnv.renderString(template, outputArguments) }
-            catch (e) { throw exceptions.nunjucksRenderTemplate(templatePath, e) }
+            try { rendered = nunjucksEnv.render(pathList[templateOption], outputArguments) }
+            catch (e) { throw exceptions.nunjucksRenderTemplate(pathList.template, e) }
 
-            helpers.writeFile(outputPath, rendered)
+            helpers.writeFile(pathList.output, rendered)
         })
     })
 }
