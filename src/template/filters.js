@@ -31,14 +31,7 @@ module.exports = (nunjucksEnv, model, config) => {
         apply: apply
     }
 
-    let functions = {
-        _: (cond, joiner='\n') => cond ? joiner: '',
-        findInModel: str => findInModel(str, model, config),
-        findOneInModel: str => findInModel(str, model, config)[0]
-    }
-
     for (let i in filters) nunjucksEnv.addFilter(i, filters[i])
-    for (let i in functions) nunjucksEnv.addGlobal(i, functions[i])
 }
 
 function splitVariableName(varName) {
@@ -72,31 +65,3 @@ const yamlDump = dict => yaml.safeDump(dict)
 const readFile = path => fs.readFileSync(path, 'utf8')
 
 const apply = (val, fn) => eval(fn)(val)
-
-// entity{name: user}
-function findInModel(request, model, config) {
-    let sepatatorIndex = request.indexOf('{')
-    let itemType = request.substr(0, sepatatorIndex)
-    let itemFilters = yaml.safeLoad(request.substr(sepatatorIndex))
-    let result = model.filter(i => i.type == itemType).map(i => i.arguments)
-
-    for (let i in config) {
-        if (config[i].list && config[i].origin == itemType) {
-            result = result.concat(model.filter(j => j.type == i).map(j => j.arguments[i])[0])
-        }
-    }
-
-    function filterItems(modelSubTree, filters) {
-        let res = true
-        for (let i in filters) {
-            let subTree = modelSubTree
-            i.split('.').forEach(j => subTree = subTree[j])
-
-            if (typeof subTree == 'string') res = res && subTree == filters[i]
-            else res = res && filterItems(subTree, filters[i])
-        }
-        return res
-    }
-
-    return result.filter(item => filterItems(item, itemFilters))
-}

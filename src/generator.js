@@ -18,37 +18,17 @@ function generate({config: config, data: data, model: model, global: globalVar},
     nunjucksEnv.addGlobal('_model', model)
 
     data.forEach(item => {
-        // case in which the type is a list of items of another type
-        if (config[item.type].list) {
-            config[item.type].outputs = []
-            item.arguments[item.type].forEach(argItem => {
-                // get implementation specific arguments
-                let implArgs = config[config[item.type].origin].impl_arguments
-                argItem._impl = !!implArgs ? modelArgs.getImplArguments(implArgs, argItem, item.type, nunjucksEnv): {}
-
-                // get outputs
-                config[item.type].originOutputs.forEach((output, outputIndex) => {
-                    let templatePath = renderString(output.template, argItem, nunjucksEnv, item.type, `outputs[${outputIndex}].template`),
-                        outputPath = renderString(output.output, argItem, nunjucksEnv, item.type, `outputs[${outputIndex}].output`)
-
-                    let fallbackPath
-                    if (output.fallback) fallbackPath = renderString(output.fallback, argItem, nunjucksEnv, item.type, `outputs[${outputIndex}].fallback`)
-
-                    config[item.type].outputs.push({
-                        template: templatePath,
-                        fallback: fallbackPath,
-                        optional: output.optional,
-                        arguments: defaults.getWithDefaultArguments(argItem, config[config[item.type].origin].arguments),
-                        output: outputPath
-                    })
-                })
-            })
-        } else { // not a list of items
-            // set default arguments
-            item.arguments = defaults.getWithDefaultArguments(item.arguments, config[item.type].arguments)
+        // set default arguments
+        item.arguments = defaults.getWithDefaultArguments(item.arguments, config[item.type].arguments)
+        item.arguments._args = item.arguments // useful for list items
+        // add implementation specific arguments
+        if (!item.arguments._impl) {
+            item.arguments._impl = !!config[item.type].impl_arguments ?
+                modelArgs.getImplArguments(config[item.type].impl_arguments, item.arguments, item.type, nunjucksEnv):
+                {}
         }
 
-        // compute the outputs defined by a template
+        // compute the outputs defined with a template
         if (typeof config[item.type].outputs == 'string') {
             try {
                 config[item.type].outputs = yaml.safeLoad(nunjucksEnv.renderString(config[item.type].outputs, item.arguments))
@@ -58,20 +38,10 @@ function generate({config: config, data: data, model: model, global: globalVar},
             }
         }
 
+
         // generate the code
         config[item.type].outputs.forEach((output, outputIndex) => {
-            // every argument is passed by default
-            if (!output.arguments) output.arguments = item.arguments
-
-            // add local variables
-            output.arguments._args = item.arguments // useful for list items
-
-            // add implementation specific arguments
-            if (!output.arguments._impl) {
-                output.arguments._impl = !!config[item.type].impl_arguments ?
-                    modelArgs.getImplArguments(config[item.type].impl_arguments, output.arguments, item.type, nunjucksEnv):
-                    {}
-            }
+            let outputArguments = output.arguments || item.arguments
 
             // get template and output paths
             let templatePath, fallbackPath, outputPath
@@ -82,7 +52,7 @@ function generate({config: config, data: data, model: model, global: globalVar},
             }
             catch (e) { throw exceptions.nunjucksRenderOption(`outputs[${outputIndex}].template`, item.type, e) }
 
-            outputPath = renderString(output.output, output.arguments, nunjucksEnv, item.type, `outputs[${outputIndex}].output`)
+            outputPath = renderString(output.output, item.arguments, nunjucksEnv, item.type, `outputs[${outputIndex}].output`)
 
             let template
             try { template = fs.readFileSync(templatePath, 'utf8') }
@@ -93,7 +63,7 @@ function generate({config: config, data: data, model: model, global: globalVar},
             }
 
             let rendered
-            try { rendered = nunjucksEnv.renderString(template, output.arguments) }
+            try { rendered = nunjucksEnv.renderString(template, outputArguments) }
             catch (e) { throw exceptions.nunjucksRenderTemplate(templatePath, e) }
 
             helpers.writeFile(outputPath, rendered)

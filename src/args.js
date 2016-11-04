@@ -55,6 +55,7 @@ function sanitizeArgs(argv) {
         .reduce((a,b) => a.concat(b)) // flatten it to one list
         .map(src => helpers.readYaml(src))
         .reduce((a,b) => a.concat(b)) // merge the items
+    result.model = modelArgs.flattenModel(result.model, result.config)
 
     // get the data
     switch (source) {
@@ -88,6 +89,7 @@ function sanitizeArgs(argv) {
                 type: type,
                 arguments: args
             }]
+            result.data = modelArgs.flattenModel(result.data, result.config)
             break
         case 'file':
             result.data = result.model
@@ -98,6 +100,7 @@ function sanitizeArgs(argv) {
                     type: argv['type'],
                     arguments: yaml.safeLoad(argv['args'])
                 }]
+                result.data = modelArgs.flattenModel(result.data, result.config)
             } catch (e) { throw exceptions.yamlLoadArgs(e) }
     }
 

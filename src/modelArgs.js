@@ -5,7 +5,24 @@ const exceptions = require('./exceptions')
 
 module.exports = {
     askForArgs: askForArgs,
-    getImplArguments: getImplArguments
+    getImplArguments: getImplArguments,
+    flattenModel: flattenModel
+}
+
+// flatten the item lists in the model
+function flattenModel(model, config) {
+    return model
+        .map(item => {
+            return config[item.type].list ?
+                item.arguments[item.type].map(i => {
+                    return {
+                        type: config[item.type].origin,
+                        arguments: i
+                    }
+                }):
+                item
+        })
+        .reduce((a,b) => a.concat(b))
 }
 
 // get implementation specific arguments

@@ -25,8 +25,7 @@ function getConfig(src) {
             config[typeName] = {
                 arguments: { [typeName]: [listItemType.arguments] },
                 list: true,
-                origin: listItemTypeName,
-                originOutputs: listItemType.outputs
+                origin: listItemTypeName
             }
         }
     }

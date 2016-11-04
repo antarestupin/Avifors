@@ -33,7 +33,8 @@ function main(argv) {
     let args = argsSanitizer.sanitizeArgs(argv)
 
     // add filters and globals
-    require('./filters')(nunjucksEnv, args.model, args.config)
+    let plugins = ['./template/filters', './template/functions']
+    plugins.forEach(i => require(i)(nunjucksEnv, args.model, args.config))
     args.plugins.forEach(modifier => require(path.resolve(modifier))(nunjucksEnv, args.model, args.config))
 
     generator.generate(args)
