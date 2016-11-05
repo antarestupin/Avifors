@@ -10,7 +10,8 @@ module.exports = (nunjucksEnv, model, config) => {
     for (let i in functions) nunjucksEnv.addGlobal(i, functions[i])
 }
 
-// entity{name: user}
+// Find in the model every item corresponding to given filter following the format type{argumentKey: value}
+// ex: entity{name: user}
 function findInModel(request, model, config) {
     let sepatatorIndex = request.indexOf('{')
     let itemType = request.substr(0, sepatatorIndex)

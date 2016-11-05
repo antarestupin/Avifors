@@ -5,9 +5,15 @@ module.exports = {
 
     // FS
 
-    readFile: filePath => `Tried to read non existent file at ${chalk.bold(filePath)}`,
+    readFile: filePath => `Tried to read non existent file ${chalk.bold(filePath)}`,
 
     writeFile: filePath => `Could not write file ${chalk.bold(filePath)}`,
+
+    readTemplateFile: (templatePath, fallbackPath, itemType) => {
+        return `Neither template or fallback template file could be read for item of type ${itemType}\n\n`
+            + `${chalk.underline('Template path')}: ${templatePath}\n\n`
+            + `${chalk.underline('Fallback path')}: ${fallbackPath}`
+    },
 
     // YAML parsing errors
 
@@ -25,7 +31,7 @@ module.exports = {
     // Nunjucks rendering errors
 
     nunjucksRenderTemplate: (templatePath, e) => {
-        return `Error while rendering the template at ${chalk.bold(templatePath)}\n\n`
+        return `Error while rendering the template ${chalk.bold(templatePath)}\n\n`
             + `${chalk.underline('Reason')}: ${e.message}`
     },
 

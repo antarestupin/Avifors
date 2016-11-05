@@ -13,30 +13,32 @@ module.exports = {
 
 // Get the arguments needed
 function sanitizeArgs(argv) {
-    let globals = argv.global // get the command line global arguments
-    let plugins = argv.plugins // get the command line added plugins
+    // command line argument
+    for (let i in argv) {
+        // parse data arguments
+        if (i == 'args') argv[i] = yaml.safeLoad(argv[i])
 
-    // get the avifors config file if it exists
-    if (!!argv['avifors-src']) Object.assign(argv, helpers.readYaml(argv['avifors-src']))
-    else {
-        let aviforsConfigRaw
-        try { aviforsConfigRaw = fs.readFileSync('.avifors.yaml', 'utf8') } catch(e) {}
-        if (aviforsConfigRaw) {
-            try { Object.assign(argv, yaml.safeLoad(aviforsConfigRaw)) }
-            catch (e) { throw exceptions.yamlLoadFile('.avifors.yaml', e) }
+        // transform string argument lists into actual argument lists
+        if (!!['model-src', 'config-src', 'plugins'][i]) {
+            argv[i] = argv[i].split(',').map(path => path.trim())
         }
     }
 
-    // merge globals
-    if (globals) Object.assign(argv.global, yaml.safeLoad(globals))
+    // get the avifors config file if it exists
+    let aviforsFileConfig = {}
+    if (!!argv['avifors-src']) aviforsFileConfig = helpers.readYaml(argv['avifors-src'])
+    else if (helpers.fileExists('.avifors.yaml')) aviforsFileConfig = helpers.readYaml(argv['avifors-src'])
 
-    // merge plugins
-    if (plugins) argv = argv.concat(yaml.safeLoad(plugins))
-
-    // transform string lists of files into actual lists of files
-    ['model-src', 'config-src'].forEach(i => {
-        if (typeof argv[i] == 'string') argv[i] = argv[i].split(',').map(path => path.trim())
-    })
+    // merge file config & command line parameters
+    for (let i in aviforsFileConfig) {
+        let val = aviforsFileConfig[i]
+        if (!argv[i]) argv[i] = val
+        else {
+            if (helpers.isScalar(val)) argv[i] = val
+            if (Array.isArray(val)) argv[i] = argv[i].concat(val)
+            else argv[i] = Object.assign({}, val, argv[i])
+        }
+    }
 
     // determine the source of data
     let source = 'cli'
@@ -98,7 +100,7 @@ function sanitizeArgs(argv) {
             try {
                 result.data = [{
                     type: argv['type'],
-                    arguments: yaml.safeLoad(argv['args'])
+                    arguments: argv['args']
                 }]
                 result.data = modelArgs.flattenModel(result.data, result.config)
             } catch (e) { throw exceptions.yamlLoadArgs(e) }

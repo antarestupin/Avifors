@@ -5,6 +5,7 @@ module.exports = {
     getWithDefaultArguments: getWithDefaultArguments
 }
 
+// get the default value for given type
 function getDefaultValue(type) {
     return {
         'string': '',
@@ -15,6 +16,7 @@ function getDefaultValue(type) {
     }[type]
 }
 
+// get the arguments with default values for those not provided
 function getWithDefaultArguments(arg, configArgs) {
     let argType = helpers.getArgType(configArgs)
 

@@ -18,58 +18,56 @@ function generate({config: config, data: data, model: model, global: globalVar},
     nunjucksEnv.addGlobal('_model', model)
 
     data.forEach(item => {
-        // set default arguments
+        // set undefined arguments to their default value
         item.arguments = defaults.getWithDefaultArguments(item.arguments, config[item.type].arguments)
-        item.arguments._args = item.arguments // useful for list items
-        // add implementation specific arguments
-        if (!item.arguments._impl) {
+        item.arguments._args = item.arguments // list of the arguments
+        if (!item.arguments._impl) { // add implementation specific arguments
             item.arguments._impl = !!config[item.type].impl_arguments ?
                 modelArgs.getImplArguments(config[item.type].impl_arguments, item.arguments, item.type, nunjucksEnv):
                 {}
         }
 
-        // compute the outputs defined with a template
+        // generate the outputs section if defined with a template
         if (typeof config[item.type].outputs == 'string') {
-            try {
-                config[item.type].outputs = yaml.safeLoad(nunjucksEnv.renderString(config[item.type].outputs, item.arguments))
-            } catch (e) {
-                if (e instanceof yaml.YAMLException) throw exceptions.yamlLoadConfigOutputs(item.type, e)
-                else throw exceptions.nunjucksRenderOption('outputs', item.type, e)
-            }
+            let renderedOutputs = renderOptionString(config[item.type].outputs, item.arguments, nunjucksEnv, item.type, `outputs`)
+            try { config[item.type].outputs = yaml.safeLoad(renderedOutputs) }
+            catch (e) { throw exceptions.yamlLoadConfigOutputs(item.type, e) }
         }
-
 
         // generate the code
         config[item.type].outputs.forEach((output, outputIndex) => {
-            let outputArguments = output.arguments || item.arguments
+            let outputArguments = output.arguments || item.arguments // only useful for generated outputs
 
             // get template and output paths
             let pathListOptions = ['template', 'fallback', 'output']
             let pathList = {}
             pathListOptions.forEach(i => {
-                if (!!output[i])
-                    pathList[i] = renderString(output[i], item.arguments, nunjucksEnv, item.type, `outputs[${outputIndex}].${i}`)
+                pathList[i] = !!output[i] ?
+                    renderOptionString(output[i], item.arguments, nunjucksEnv, item.type, `outputs[${outputIndex}].${i}`):
+                    null
             })
 
-            let templateOption = 'template'
-            try { fs.readFileSync(pathList.template, 'utf8') }
-            catch (e) {
-                templateOption = 'fallback'
-                if (pathList.fallback) fs.readFileSync(pathList.fallback, 'utf8')
-                else if (output.optional) return
-                else throw e
+            // determine wether the template or the fallback will be used
+            let templateOptions = ['template', 'fallback']
+            let templateOption = templateOptions.find(i => helpers.fileExists(pathList[i]))
+            if (!templateOption) {
+                if (output.optional) return
+                else throw exceptions.readTemplateFile(pathList.template, pathList.fallback, item.type)
             }
 
+            // get the generated code
             let rendered
             try { rendered = nunjucksEnv.render(pathList[templateOption], outputArguments) }
             catch (e) { throw exceptions.nunjucksRenderTemplate(pathList.template, e) }
 
+            // write the result in the output path
             helpers.writeFile(pathList.output, rendered)
         })
     })
 }
 
-function renderString(str, args, nunjucksEnv, type, section) {
+// generate the value of an option
+function renderOptionString(str, args, nunjucksEnv, type, section) {
     try { return nunjucksEnv.renderString(str, args) }
     catch (e) { throw exceptions.nunjucksRenderOption(`outputs[${outputIndex}].template`, item.type, e) }
 }

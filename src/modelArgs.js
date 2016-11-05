@@ -79,7 +79,7 @@ function askForArgs(schema, namespace = '') {
                     case 'N':
                     case 'NO':
                         continueAdding = false
-                        break;
+                        break
                     case 'Y':
                     case 'YES':
                     default:

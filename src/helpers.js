@@ -8,13 +8,26 @@ module.exports = {
     getArgType: getArgType,
     readYaml: readYaml,
     writeFile: writeFile,
-    isScalar: isScalar
+    isScalar: isScalar,
+    fileExists: fileExists
 }
 
+// say if a file exists
+function fileExists(filePath) {
+    try {
+        fs.readFileSync(filePath, 'utf8')
+        return true
+    } catch (e) {
+        return false
+    }
+}
+
+// say wether a val is scalar or not
 function isScalar(val) {
     return (/string|number|boolean/).test(typeof val)
 }
 
+// get the type of a model argument
 function getArgType(schema) {
     let contents = schema._contents || schema
 
@@ -25,6 +38,7 @@ function getArgType(schema) {
     return 'map'
 }
 
+// read and parse a yaml file
 function readYaml(filePath) {
     try {
         return yaml.safeLoad(fs.readFileSync(filePath, 'utf8'))
@@ -34,9 +48,9 @@ function readYaml(filePath) {
     }
 }
 
+// write contents to a file and create its parent dir if it doesn't already exist
 function writeFile(filePath, contents) {
     try {
-        // create dir if it doesn't already exist
         let dirPath = path.dirname(filePath)
         try { fs.statSync(dirPath) }
         catch(e) { mkdirp.sync(dirPath) }
