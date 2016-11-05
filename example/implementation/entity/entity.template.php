@@ -1,6 +1,6 @@
 <?php
 
-{% import 'example/implementation/templates/class.template.php' as class -%}
+{% import 'example/lib/class/class.template.php' as class -%}
 {% set varproperties = properties | camelcase -%}
 
 namespace Acme\Entity;

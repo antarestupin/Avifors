@@ -5,9 +5,9 @@ entity:
         properties: [string]
         methods:
             -
-                name: string
-                parameters: [string]
-                return_type: string
+                _extends: example_lib.class.method
+                _contents:
+                    description: string
     impl_arguments:
         - example/implementation/entity/entity.args.yaml
         -
