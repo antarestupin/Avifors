@@ -13,7 +13,7 @@ const nunjucksEnv = nunjucks.configure({
     lstripBlocks: true
 })
 
-const generator = require('./generator')(nunjucksEnv)
+const generator = require('./generation/generator')(nunjucksEnv)
 
 try {
     main(argv)
@@ -29,7 +29,7 @@ function main(argv) {
     argsSanitizer.setCommand(argv)
     const command = argv._[0]
 
-    // helper message
+    // helper message (must be executed first because errors can be thrown later)
     if ('h' in argv || 'help' in argv || command == 'help') {
         console.log(helpMessage)
         return

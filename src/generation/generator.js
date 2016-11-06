@@ -1,9 +1,9 @@
 const yaml = require('js-yaml')
-const helpers = require('./helpers')
 const fs = require('fs')
-const exceptions = require('./exceptions')
-const defaults = require('./defaults')
-const modelArgs = require('./modelArgs')
+const helpers = require('../helpers')
+const exceptions = require('../exceptions')
+const defaults = require('../defaults')
+const modelArgs = require('../modelArgs')
 
 module.exports = (nunjucksEnv) => {
     return {
