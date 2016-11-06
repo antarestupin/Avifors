@@ -6,6 +6,7 @@ const chalk = require('chalk')
 const path = require('path')
 const helpMessage = require('./help')
 const argsSanitizer = require('./args')
+const interfaceGenerator = require('./interface/interface-generator')
 
 const nunjucksEnv = nunjucks.configure({
     autoescape: false,
@@ -46,8 +47,20 @@ function main(argv) {
 
     switch (command) {
         case 'generate':
+            argsSanitizer.setData(args, argv)
             console.log(chalk.yellow('Starting code generation'))
             generator.generate(args.config, args.data, args.model, args.global)
             console.log(chalk.bold.green('Done, without errors'))
+            break
+
+        case 'interface':
+            console.log(chalk.yellow('Generating the interface'))
+            if (argv._[1]) {
+                interfaceGenerator.printInterfaceItem(args.config, 'entity')
+            } else if (argv.output && !argv.console) {
+                interfaceGenerator.generateInterface(args.config, argv.output)
+            } else {
+                interfaceGenerator.printInterface(args.config)
+            }
     }
 }

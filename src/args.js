@@ -9,7 +9,8 @@ const modelArgs = require('./modelArgs')
 
 module.exports = {
     sanitizeArgs: sanitizeArgs,
-    setCommand: setCommand
+    setCommand: setCommand,
+    setData: setData
 }
 
 // Get the command to call from the arguments ('generate' per default)
@@ -21,7 +22,10 @@ function setCommand(argv) {
         'h': 'help',
 
         'generate': 'generate',
-        'g': 'generate'
+        'g': 'generate',
+
+        'interface': 'interface',
+        'i': 'interface'
     }[givenCommand]
 
     if (!command) {
@@ -60,14 +64,8 @@ function sanitizeArgs(argv) {
         }
     }
 
-    // determine the source of data
-    let source = 'cli'
-    if (!!argv['type'] && !!argv['args']) source = 'arguments'
-    else if (!!argv['model-src'] && argv._.length == 1) source = 'file'
-
     let result = {
         config: configHelper.getConfig(argv['config-src']),
-        source: source,
         global: argv.global || {},
         plugins: argv.plugins || []
     }
@@ -79,12 +77,21 @@ function sanitizeArgs(argv) {
         .reduce((a,b) => a.concat(b)) // merge the items
     result.model = modelArgs.flattenModel(result.model, result.config)
 
+    return result
+}
+
+function setData(argsConfig, argv) {
+    // determine the source of data
+    let source = 'cli'
+    if (!!argv['type'] && !!argv['args']) source = 'arguments'
+    else if (!!argv['model-src'] && argv._.length == 1) source = 'file'
+
     // get the data
     switch (source) {
         case 'cli':
             // item type
             let type = argv['type'] || argv._[1] || prompt('Type of the item to generate: ')
-            while (!result.config[type]) {
+            while (!argsConfig.config[type]) {
                 console.log(chalk.red('Type ' + type + ' does not exist in configuration'))
                 type = prompt('Type of the item to generate: ')
             }
@@ -93,7 +100,7 @@ function sanitizeArgs(argv) {
             let args
             let argsConfirmed = false
             while (!argsConfirmed) {
-                args = modelArgs.askForArgs(result.config[type].arguments)
+                args = modelArgs.askForArgs(argsConfig.config[type].arguments)
                 console.log('\n' + chalk.underline.cyan('Item arguments:') + '\n\n' + chalk.cyan(yaml.safeDump(args) + '\n'))
                 switch (prompt('Do you confirm the item arguments? (Y/n)').toUpperCase()) {
                     case 'N':
@@ -107,29 +114,27 @@ function sanitizeArgs(argv) {
                 }
             }
 
-            result.data = [{
+            argsConfig.data = [{
                 type: type,
                 arguments: args
             }]
-            result.data = modelArgs.flattenModel(result.data, result.config)
+            argsConfig.data = modelArgs.flattenModel(argsConfig.data, argsConfig.config)
             break
         case 'file':
-            result.data = result.model
+            argsConfig.data = argsConfig.model
             break
         case 'arguments':
             try {
-                result.data = [{
+                argsConfig.data = [{
                     type: argv['type'],
                     arguments: argv['args']
                 }]
-                result.data = modelArgs.flattenModel(result.data, result.config)
+                argsConfig.data = modelArgs.flattenModel(argsConfig.data, argsConfig.config)
             } catch (e) { throw exceptions.yamlLoadArgs(e) }
     }
 
     // can happen if the source is 'cli' or 'arguments'
-    if (!Array.isArray(result.data)) {
-        result.data = [result.data]
+    if (!Array.isArray(argsConfig.data)) {
+        argsConfig.data = [argsConfig.data]
     }
-
-    return result
 }
