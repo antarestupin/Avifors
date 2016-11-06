@@ -15,12 +15,14 @@ const nunjucksEnv = nunjucks.configure({
 
 const generator = require('./generator')(nunjucksEnv)
 
-if ('h' in argv || 'help' in argv) {
+argsSanitizer.setCommand(argv)
+const command = argv._[0]
+
+if ('h' in argv || 'help' in argv || command == 'help') {
     console.log(helpMessage)
 } else {
     try {
         main(argv)
-        console.log(chalk.bold.green('Done, without errors'))
     }
     catch (e) {
         console.log('\n' + chalk.red(chalk.bold.underline('Error') + ':\n\n' + e))
@@ -33,9 +35,15 @@ function main(argv) {
     let args = argsSanitizer.sanitizeArgs(argv)
 
     // add filters and globals
+    console.log(chalk.yellow('Loading plugins'))
     let plugins = ['./template/filters', './template/functions']
     plugins.forEach(i => require(i)(nunjucksEnv, args.model, args.config))
     args.plugins.forEach(modifier => require(path.resolve(modifier))(nunjucksEnv, args.model, args.config))
 
-    generator.generate(args)
+    switch (command) {
+        case 'generate':
+            console.log(chalk.yellow('Starting code generation'))
+            generator.generate(args.config, args.data, args.model, args.global)
+            console.log(chalk.bold.green('Done, without errors'))
+    }
 }

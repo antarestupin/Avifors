@@ -7,12 +7,12 @@ const modelArgs = require('./modelArgs')
 
 module.exports = (nunjucksEnv) => {
     return {
-        generate: (args) => generate(args, nunjucksEnv)
+        generate: (config, data, model, globalVar) => generate(config, data, model, globalVar, nunjucksEnv)
     }
 }
 
 // generate the code
-function generate({config: config, data: data, model: model, global: globalVar}, nunjucksEnv) {
+function generate(config, data, model, globalVar, nunjucksEnv) {
     // add global variables
     nunjucksEnv.addGlobal('_global', globalVar) // global variables defined in the .avifors.yaml file
     nunjucksEnv.addGlobal('_model', model)

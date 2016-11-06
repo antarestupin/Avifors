@@ -1,4 +1,5 @@
 const prompt = require('prompt-sync')({ sigint: true })
+const chalk = require('chalk')
 const helpers = require('./helpers')
 const defaults = require('./defaults')
 const exceptions = require('./exceptions')
@@ -55,7 +56,7 @@ function askForArgs(schema, namespace = '') {
         let defaultValue = schema._default || defaults.getDefaultValue(type)
         let defaultSection = defaultValue === '' ? '': ` (${defaultValue})`
 
-        let enteredValue = prompt('Value of ' + namespace + defaultSection + ': ')
+        let enteredValue = prompt('Value of ' + chalk.cyan(namespace + defaultSection) + ': ')
 
         if (enteredValue === '') enteredValue = defaultValue
 
@@ -68,13 +69,13 @@ function askForArgs(schema, namespace = '') {
 
         if (helpers.isScalar(schemaContents[0])) { // list of scalars
             for (let continueAdding = true; continueAdding;) {
-                let newVal = prompt('Add a value to ' + namespace + ' (type enter to stop adding): ')
+                let newVal = prompt('Add a value to ' + chalk.cyan(namespace) + ' (type enter to stop adding): ')
                 if (newVal == '') continueAdding = false
                 else args.push(newVal)
             }
         } else { // list of lists / maps
             for (let continueAdding = true, i = 0; continueAdding; i++) {
-                let add = prompt('Add an item to ' + namespace + '? (Y/n) ')
+                let add = prompt('Add an item to ' + chalk.cyan(namespace) + '? (Y/n) ')
                 switch (add.toUpperCase()) {
                     case 'N':
                     case 'NO':
@@ -97,5 +98,6 @@ function askForArgs(schema, namespace = '') {
         let subnamespace = namespace == '' ? i: namespace + '.' + i
         args[i] = askForArgs(schemaContents[i], subnamespace)
     }
+
     return args
 }

@@ -8,7 +8,27 @@ const configHelper = require('./config')
 const modelArgs = require('./modelArgs')
 
 module.exports = {
-    sanitizeArgs: sanitizeArgs
+    sanitizeArgs: sanitizeArgs,
+    setCommand: setCommand
+}
+
+// Get the command to call from the arguments ('generate' per default)
+function setCommand(argv) {
+    let givenCommand = argv['_'][0] || 'generate'
+
+    let command = {
+        'help': 'help',
+        'h': 'help',
+
+        'generate': 'generate',
+        'g': 'generate'
+    }[givenCommand]
+
+    if (!command) {
+        throw exceptions.commandDoesNotExist(command)
+    }
+
+    argv['_'][0] = command
 }
 
 // Get the arguments needed
@@ -19,7 +39,7 @@ function sanitizeArgs(argv) {
         if (i == 'args') argv[i] = yaml.safeLoad(argv[i])
 
         // transform string argument lists into actual argument lists
-        if (!!['model-src', 'config-src', 'plugins'][i]) {
+        if (['model-src', 'config-src', 'plugins'].indexOf(i) > -1) {
             argv[i] = argv[i].split(',').map(path => path.trim())
         }
     }
@@ -43,7 +63,7 @@ function sanitizeArgs(argv) {
     // determine the source of data
     let source = 'cli'
     if (!!argv['type'] && !!argv['args']) source = 'arguments'
-    else if (!!argv['model-src'] && argv._.length == 0) source = 'file'
+    else if (!!argv['model-src'] && argv._.length == 1) source = 'file'
 
     let result = {
         config: configHelper.getConfig(argv['config-src']),
@@ -63,7 +83,7 @@ function sanitizeArgs(argv) {
     switch (source) {
         case 'cli':
             // item type
-            let type = argv['type'] || argv._[0] || prompt('Type of the item to generate: ')
+            let type = argv['type'] || argv._[1] || prompt('Type of the item to generate: ')
             while (!result.config[type]) {
                 console.log(chalk.red('Type ' + type + ' does not exist in configuration'))
                 type = prompt('Type of the item to generate: ')
@@ -104,6 +124,11 @@ function sanitizeArgs(argv) {
                 }]
                 result.data = modelArgs.flattenModel(result.data, result.config)
             } catch (e) { throw exceptions.yamlLoadArgs(e) }
+    }
+
+    // can happen if the source is 'cli' or 'arguments'
+    if (!Array.isArray(result.data)) {
+        result.data = [result.data]
     }
 
     return result
