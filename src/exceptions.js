@@ -3,6 +3,8 @@ const chalk = require('chalk')
 module.exports = {
     noConfig: () => "You must indicate at least one config file using the 'config-src' option",
 
+    commandDoesNotExist: command => `Command ${chalk.bold(command)} does not exist`,
+
     // FS
 
     readFile: filePath => `Tried to read non existent file ${chalk.bold(filePath)}`,

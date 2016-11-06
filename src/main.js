@@ -15,23 +15,27 @@ const nunjucksEnv = nunjucks.configure({
 
 const generator = require('./generator')(nunjucksEnv)
 
-argsSanitizer.setCommand(argv)
-const command = argv._[0]
-
-if ('h' in argv || 'help' in argv || command == 'help') {
-    console.log(helpMessage)
-} else {
-    try {
-        main(argv)
-    }
-    catch (e) {
-        console.log('\n' + chalk.red(chalk.bold.underline('Error') + ':\n\n' + e))
-        console.log('\nType ' + chalk.cyan('avifors -h') + ' for more help')
-        console.log('\n' + chalk.red('Generation aborted due to error\n'))
-    }
+try {
+    main(argv)
+}
+catch (e) {
+    console.log('\n' + chalk.red(chalk.bold.underline('Error') + ':\n\n' + e))
+    console.log('\nType ' + chalk.cyan('avifors -h') + ' for more help')
+    console.log('\n' + chalk.red('Generation aborted due to error\n'))
 }
 
 function main(argv) {
+    // get the command
+    argsSanitizer.setCommand(argv)
+    const command = argv._[0]
+
+    // helper message
+    if ('h' in argv || 'help' in argv || command == 'help') {
+        console.log(helpMessage)
+        return
+    }
+
+    // get the arguments
     let args = argsSanitizer.sanitizeArgs(argv)
 
     // add filters and globals

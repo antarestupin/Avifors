@@ -25,7 +25,7 @@ function setCommand(argv) {
     }[givenCommand]
 
     if (!command) {
-        throw exceptions.commandDoesNotExist(command)
+        throw exceptions.commandDoesNotExist(givenCommand)
     }
 
     argv['_'][0] = command
