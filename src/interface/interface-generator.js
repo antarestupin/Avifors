@@ -27,6 +27,18 @@ function getInterface(config) {
         }
     }
 
+    function stringifyArrays(model) {
+        for (let i in model) {
+            if (Array.isArray(model[i]) && helpers.isScalar(model[i][0])) {
+                model[i] = `[${model[i][0]}]`
+            } else if (!helpers.isScalar(model[i])) {
+                stringifyArrays(model[i])
+            }
+        }
+    }
+
+    stringifyArrays(modelInterface)
+
     return modelInterface
 }
 
