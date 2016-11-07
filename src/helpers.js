@@ -9,7 +9,19 @@ module.exports = {
     readYaml: readYaml,
     writeFile: writeFile,
     isScalar: isScalar,
-    fileExists: fileExists
+    fileExists: fileExists,
+    findListItemName: findListItemName
+}
+
+// find the name of the list item name for given item
+function findListItemName(itemName, config) {
+    for (let i in config) {
+        if (config[i].list && config[i].origin == itemName) {
+            return i
+        }
+    }
+
+    return null
 }
 
 // say if a file exists

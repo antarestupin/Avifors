@@ -20,6 +20,7 @@ function getInterface(config) {
                 modelInterface[i] = [config[i].origin]
             } else {
                 modelInterface[i] = {
+                    listItem: helpers.findListItemName(i, config),
                     arguments: config[i].arguments,
                     impl_arguments: config[i].impl_arguments || []
                 }
@@ -29,7 +30,7 @@ function getInterface(config) {
 
     function stringifyArrays(model) {
         for (let i in model) {
-            if (Array.isArray(model[i]) && helpers.isScalar(model[i][0])) {
+            if (Array.isArray(model[i]) && helpers.isScalar(model[i][0]) && model[i].length === 1) {
                 model[i] = `[${model[i][0]}]`
             } else if (!helpers.isScalar(model[i])) {
                 stringifyArrays(model[i])
@@ -49,7 +50,7 @@ function generateInterface(config, output) {
     for (let i in modelInterface) {
         helpers.writeFile(
             path.join(output, i + '.yaml'),
-            yaml.safeDump({ [i]: modelInterface[i] })
+            yamlDump({ [i]: modelInterface[i] })
         )
     }
 }
@@ -59,7 +60,7 @@ function printInterface(config) {
     let modelInterface = getInterface(config)
 
     console.log(
-        ('\n' + yaml.safeDump(modelInterface))
+        ('\n' + yamlDump(modelInterface))
             .replace(/\n(\w+):/g, '\n' + chalk.magenta('$1'))
             .replace(/(\w+):/g, chalk.cyan('$1') + ':')
     )
@@ -70,7 +71,15 @@ function printInterfaceItem(config, itemName) {
     let modelInterface = getInterface(config)
 
     console.log(
-        ('\n' + yaml.safeDump(modelInterface[itemName]))
+        ('\n' + yamlDump(modelInterface[itemName]))
             .replace(/(\w+):/g, chalk.cyan('$1') + ':')
     )
+}
+
+// dump the model
+function yamlDump(modelInterface) {
+    return yaml.safeDump(modelInterface, {
+        indent: 4,
+        lineWidth: 120
+    })
 }
