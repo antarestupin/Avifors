@@ -1,0 +1,15 @@
+entity:
+    shape: triangle
+    color: '#FF9900'
+
+event:
+    shape: dot
+    color: '#2B7CE9'
+
+events_test:
+    shape: dot
+    color: '#C5000B'
+
+events_list:
+    shape: square
+    color: '#5A1E5C'

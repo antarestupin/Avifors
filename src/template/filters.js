@@ -1,5 +1,4 @@
 const yaml = require('js-yaml')
-const fs = require('fs')
 
 module.exports = (nunjucksEnv, model, config) => {
     let filters = {
@@ -27,8 +26,6 @@ module.exports = (nunjucksEnv, model, config) => {
         jsonparse: jsonParse,
         yaml: yamlDump,
         yamlparse: yamlParse,
-
-        readfile: readFile,
 
         apply: apply
     }
@@ -70,9 +67,6 @@ const jsonParse = str => JSON.parse(str)
 const jsonDump = dict => JSON.stringify(dict)
 const yamlParse = str => yaml.safeLoad(str)
 const yamlDump = dict => yaml.safeDump(dict)
-
-// file manipulation
-const readFile = path => fs.readFileSync(path, 'utf8')
 
 // other
 const apply = (val, fn) => eval(fn)(val) // apply a JS function to the given value

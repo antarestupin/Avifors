@@ -25,7 +25,10 @@ function setCommand(argv) {
         'g': 'generate',
 
         'interface': 'interface',
-        'i': 'interface'
+        'i': 'interface',
+
+        'visualize': 'visualize',
+        'v': 'visualize'
     }[givenCommand]
 
     if (!command) {

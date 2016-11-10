@@ -4,6 +4,8 @@ model-src:
 config-src:
     - example/avifors/**/*.avifors.yaml
     - example/lib/**/*.avifors.yaml
+visualization-src:
+    - example/visualization.avifors.yaml
 plugins:
     - ./example/plugin.js
 global:

@@ -18,6 +18,7 @@
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
     "nunjucks": "^2.5.2",
-    "prompt-sync": "^4.1.4"
+    "prompt-sync": "^4.1.4",
+    "vis": "^4.17.0"
   }
 }

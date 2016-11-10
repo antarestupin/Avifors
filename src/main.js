@@ -7,6 +7,7 @@ const path = require('path')
 const helpMessage = require('./help')
 const argsSanitizer = require('./args')
 const interfaceGenerator = require('./interface/interface-generator')
+const visualizationGenerator = require('./visualization/visualization-generator')
 
 const nunjucksEnv = nunjucks.configure({
     autoescape: false,
@@ -62,5 +63,12 @@ function main(argv) {
             } else {
                 interfaceGenerator.printInterface(args.config)
             }
+            break
+
+        case 'visualize':
+            console.log(chalk.yellow('Generating the visualization'))
+            let output = argv._[1] || argv['v-output'] || 'model.html'
+            visualizationGenerator.generateVisualization(args.model, args.config, output, nunjucksEnv)
+            console.log(chalk.bold.green('Done, without errors'))
     }
 }
