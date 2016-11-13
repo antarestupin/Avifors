@@ -1,7 +1,7 @@
 <?php
 
 {% import 'example/lib/class/class.template.php' as class -%}
-{% set varproperties = properties | camelcase -%}
+{% set varproperties = properties | map("i => i.name") | camelcase -%}
 
 namespace Acme\Entity;
 
@@ -17,7 +17,7 @@ class {{ name | pascalcase }} {
         $this->id = $id;
     }
 
-    {% for attr in properties %}
+    {% for attr in properties | map("i => i.name") %}
     public function get{{ attr | pascalcase }}() {
         return $this->{{ attr | camelcase }};
     }

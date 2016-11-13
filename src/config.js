@@ -22,6 +22,25 @@ function getConfig(src) {
 
     resolveInheritance(config)
 
+    config = resolveMeta(config)
+
+    return config
+}
+
+function resolveMeta(config) {
+    if (typeof config == 'string') return config
+
+    if (Array.isArray(config)) return config.map(i => resolveMeta(i))
+
+    let specialKeys = ['_key', '_value']
+    specialKeys.forEach(i => {
+        if (!!config[i]) config[config[i]] = 'string'
+    })
+
+    for (let i in config) {
+        config[i] = resolveMeta(config[i])
+    }
+
     return config
 }
 

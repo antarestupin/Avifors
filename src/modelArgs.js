@@ -95,8 +95,10 @@ function askForArgs(schema, namespace = '') {
     // map
     let args = {}
     for (let i in schemaContents) {
-        let subnamespace = namespace == '' ? i: namespace + '.' + i
-        args[i] = askForArgs(schemaContents[i], subnamespace)
+        if (i.charAt(0) !== '_') {
+            let subnamespace = namespace == '' ? i: namespace + '.' + i
+            args[i] = askForArgs(schemaContents[i], subnamespace)
+        }
     }
 
     return args

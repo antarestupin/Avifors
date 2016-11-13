@@ -2,9 +2,13 @@ entities: [entity]
 entity:
     arguments:
         name: string
-        properties: [string]
+        properties:
+            -
+                _key: name
+                _value: type
         methods:
             -
+                _key: name
                 _extends: example_lib.class.method
                 _contents:
                     description: string

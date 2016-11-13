@@ -4,9 +4,14 @@
         entities:
             -
                 name: user
-                properties: [email_address, encrypted_password, articles]
+                properties:
+                    email_address: string
+                    encrypted_password: string
+                    articles: Article[]
                 methods:
-                    - { name: clear_basket }
+                    clear_basket: {}
             -
                 name: article
-                properties: [name, price]
+                properties:
+                    name: string
+                    price: number

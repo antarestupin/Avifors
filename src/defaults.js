@@ -27,10 +27,29 @@ function getWithDefaultArguments(arg, configArgs) {
 
     let configContents = !!configArgs._contents ? configArgs._contents: configArgs
 
-    if (argType == 'list') return arg.map(item => getWithDefaultArguments(item, configContents[0]))
+    if (argType == 'list') {
+        if (Array.isArray(arg)) {
+            return arg.map(item => getWithDefaultArguments(item, configContents[0]))
+        }
+
+        let res = []
+        for (let i in arg) {
+            let row = {}
+
+            if (!!configContents[0]._value) row[configContents[0]._value] = arg[i]
+            else row = arg[i]
+
+            if (!!configContents[0]._key) row[configContents[0]._key] = i
+
+            res.push(getWithDefaultArguments(row, configContents[0]))
+        }
+        return res
+    }
 
     if (argType == 'map') {
-        for (let i in configArgs) arg[i] = getWithDefaultArguments(arg[i], configArgs[i])
+        for (let i in configArgs) {
+            arg[i] = getWithDefaultArguments(arg[i], configArgs[i])
+        }
     }
 
     return arg
