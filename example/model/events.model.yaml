@@ -1,27 +1,22 @@
--
-    type: event
-    arguments:
-        name: user_registered
-        attributes: [user_id, email_address, encrypted_password]
--
-    type: events
-    arguments:
-        events:
-            -
-                name: user_banned
-                attributes: [user_id, reason]
-            -
-                name: password_changed
-                attributes: [user_id, encrypted_new_password]
--
-    type: events_test
-    arguments:
-        events:
-            -
-                name: user_deleted
-                attributes: [user_id]
-            -
-                name: user_modified
-                attributes: [user_id, attribute_changed, new_value]
-            -
-                name: nothing_happened
+event:
+    name: user_registered
+    attributes: [user_id, email_address, encrypted_password]
+
+events:
+    -
+        name: user_banned
+        attributes: [user_id, reason]
+    -
+        name: password_changed
+        attributes: [user_id, encrypted_new_password]
+
+events_test:
+    events:
+        -
+            name: user_deleted
+            attributes: [user_id]
+        -
+            name: user_modified
+            attributes: [user_id, attribute_changed, new_value]
+        -
+            name: nothing_happened

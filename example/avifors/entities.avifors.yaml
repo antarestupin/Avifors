@@ -1,6 +1,7 @@
 entities: [entity]
 entity:
     arguments:
+        _key: name
         name: string
         properties:
             -

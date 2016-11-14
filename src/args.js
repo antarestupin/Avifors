@@ -77,7 +77,39 @@ function sanitizeArgs(argv) {
         .map(src => glob.sync(src, { nodir: true })) // get the list of files matching given pattern
         .reduce((a,b) => a.concat(b)) // flatten it to one list
         .map(src => helpers.readYaml(src))
+        .map(item => {
+            if (Array.isArray(item)) return item
+
+            let res = []
+            for (let i in item) {
+                if (result.config[i].list) {
+                    let configOriginItem = result.config[result.config[i].origin]
+                    if (!Array.isArray(item[i])) {
+                        let keyName = configOriginItem.arguments._key
+                        let arrayItem = []
+
+                        for (let j in item[i]) {
+                            item[i][j][keyName] = j
+                            arrayItem.push(item[i][j])
+                        }
+
+                        item[i] = arrayItem
+                    }
+
+                    item[i] = {
+                        [i]: item[i]
+                    }
+                }
+
+                res.push({
+                    type: i,
+                    arguments: item[i]
+                })
+            }
+            return res
+        })
         .reduce((a,b) => a.concat(b)) // merge the items
+
     result.model = modelArgs.flattenModel(result.model, result.config)
 
     return result

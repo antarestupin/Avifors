@@ -1,17 +1,14 @@
--
-    type: entities
-    arguments:
-        entities:
-            -
-                name: user
-                properties:
-                    email_address: string
-                    encrypted_password: string
-                    articles: Article[]
-                methods:
-                    clear_basket: {}
-            -
-                name: article
-                properties:
-                    name: string
-                    price: number
+entities:
+
+    User:
+        properties:
+            email_address: string
+            encrypted_password: string
+            articles: Article[]
+        methods:
+            clear_basket: {}
+
+    Article:
+        properties:
+            name: string
+            price: number
