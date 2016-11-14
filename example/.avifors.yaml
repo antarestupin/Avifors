@@ -3,7 +3,6 @@ model-src:
     - example/implementation/**/*.model.yaml
 config-src:
     - example/avifors/**/*.avifors.yaml
-    - example/lib/**/*.avifors.yaml
 visualization-src:
     - example/visualization.avifors.yaml
 plugins:

@@ -2,17 +2,14 @@ entities: [entity]
 entity:
     arguments:
         _key: name
-        name: string
         properties:
             -
                 _key: name
                 _value: type
         methods:
             -
-                _key: name
-                _extends: example_lib.class.method
-                _contents:
-                    description: string
+                _include: "{{ include('example/lib/class/class.avifors.yaml').method | json }}"
+                description: string
     impl_arguments:
         - example/implementation/entity/entity.args.yaml
         -

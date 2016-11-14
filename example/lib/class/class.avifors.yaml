@@ -1,6 +1,4 @@
-example_lib.class.method:
-    _type: argument
-    _contents:
-        name: string
-        parameters: [string]
-        return_type: string
+method:
+    _key: name
+    parameters: [string]
+    return_type: string

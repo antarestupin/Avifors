@@ -10,7 +10,25 @@ module.exports = {
     writeFile: writeFile,
     isScalar: isScalar,
     fileExists: fileExists,
-    findListItemName: findListItemName
+    findListItemName: findListItemName,
+    getType: getType,
+    getUserDefinedProperties: getUserDefinedProperties
+}
+
+function getType(value) {
+    if (isScalar(value)) {
+        return 'scalar'
+    }
+
+    if (Array.isArray(value)) {
+        return 'list'
+    }
+
+    if (value === undefined || value === null) {
+        return 'null'
+    }
+
+    return 'map'
 }
 
 // find the name of the list item name for given item
@@ -37,6 +55,18 @@ function fileExists(filePath) {
 // say wether a val is scalar or not
 function isScalar(val) {
     return (/string|number|boolean/).test(typeof val)
+}
+
+function getUserDefinedProperties(model) {
+    let res = {}
+
+    for (let i in model) {
+        if (i.charAt(0) !== '_') {
+            res[i] = model[i]
+        }
+    }
+
+    return res
 }
 
 // get the type of a model argument

@@ -1,6 +1,7 @@
 const glob = require('glob')
 const exceptions = require('./exceptions')
 const helpers = require('./helpers')
+const nunjucksEnv = require('./renderer')
 
 module.exports = {
     getConfig: getConfig
@@ -20,14 +21,51 @@ function getConfig(src) {
 
     setDefaultType(config)
 
-    resolveInheritance(config)
+    //resolveInheritance(config)
 
-    config = resolveMeta(config)
+    for (let i in config) {
+        config[i].arguments = resolveItem(config[i].arguments)
+
+        config[i].arguments = resolveMeta(config[i].arguments)
+    }
 
     return config
 }
 
+function resolveItem(item) {
+    switch (helpers.getType(item)) {
+        case 'list':
+            item[0] = resolveItem(item[0])
+            break
+
+        case 'map':
+            if (!!item._include) {
+                if (!Array.isArray(item._include)) {
+                    item._include = [item._include]
+                }
+
+                let toInclude = item._include
+                    .map(i => nunjucksEnv.renderString(i, { include: path => helpers.readYaml(path) }))
+                    .map(i => JSON.parse(i))
+                    .map(i => resolveItem(i))
+                    .reduce((a,b) => Object.assign({}, a, b))
+
+                item = Object.assign({}, toInclude, item)
+
+                delete item._include
+            }
+
+            for (let i in helpers.getUserDefinedProperties(item)) {
+                item[i] = resolveItem(item[i])
+            }
+    }
+
+    return item
+}
+
 function resolveMeta(config) {
+    if (config === undefined) return
+
     if (typeof config == 'string') return config
 
     if (Array.isArray(config)) return config.map(i => resolveMeta(i))
@@ -37,7 +75,7 @@ function resolveMeta(config) {
         if (!!config[i]) config[config[i]] = 'string'
     })
 
-    for (let i in config) {
+    for (let i in helpers.getUserDefinedProperties(config)) {
         config[i] = resolveMeta(config[i])
     }
 

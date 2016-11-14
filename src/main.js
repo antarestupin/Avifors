@@ -8,12 +8,7 @@ const helpMessage = require('./help')
 const argsSanitizer = require('./args')
 const interfaceGenerator = require('./interface/interface-generator')
 const visualizationGenerator = require('./visualization/visualization-generator')
-
-const nunjucksEnv = nunjucks.configure({
-    autoescape: false,
-    trimBlocks: true,
-    lstripBlocks: true
-})
+const nunjucksEnv = require('./renderer')
 
 const generator = require('./generation/generator')(nunjucksEnv)
 
@@ -37,13 +32,16 @@ function main(argv) {
         return
     }
 
+    // add filters
+    require('./template/filters')(nunjucksEnv)
+
     // get the arguments
     let args = argsSanitizer.sanitizeArgs(argv)
 
     // add filters and globals
-    console.log(chalk.yellow('Loading plugins'))
-    let plugins = ['./template/filters', './template/functions']
+    let plugins = ['./template/functions']
     plugins.forEach(i => require(i)(nunjucksEnv, args.model, args.config))
+    console.log(chalk.yellow('Loading plugins'))
     args.plugins.forEach(modifier => require(path.resolve(modifier))(nunjucksEnv, args.model, args.config))
 
     switch (command) {
