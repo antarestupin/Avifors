@@ -2,3 +2,4 @@ node_modules/
 npm-debug.log
 example/output/
 example/interface/
+model.html

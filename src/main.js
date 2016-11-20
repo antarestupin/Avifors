@@ -66,7 +66,7 @@ function main(argv) {
         case 'visualize':
             console.log(chalk.yellow('Generating the visualization'))
             let output = argv._[1] || argv['v-output'] || 'model.html'
-            visualizationGenerator.generateVisualization(args.model, args.config, output, nunjucksEnv)
+            visualizationGenerator.generateVisualization(args.model, args.config, argv['visualization-src'], output, nunjucksEnv)
             console.log(chalk.bold.green('Done, without errors'))
     }
 }

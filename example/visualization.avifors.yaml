@@ -1,15 +1,19 @@
 entity:
-    shape: triangle
+    label: name
     color: '#FF9900'
+    edges:
+        -
+            items: node => node.arguments.properties
+            dest: "(index, item, node) => ['string', 'number'].indexOf(item) === -1 ? findOneInModel(`entity{name: ${item.split('[')[0]}}`): null"
+            label: (index, dest, item, node) => index
+            type: (index, item, dest, node) => 'to'
 
 event:
-    shape: dot
-    color: '#2B7CE9'
+    label: name
+    color: '#ADD8E6'
 
 events_test:
-    shape: dot
     color: '#C5000B'
 
 events_list:
-    shape: square
     color: '#5A1E5C'

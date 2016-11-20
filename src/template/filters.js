@@ -66,7 +66,7 @@ const filter = (collection, fn) => collection.filter(eval(fn)) // apply a filter
 const jsonParse = str => JSON.parse(str)
 const jsonDump = dict => JSON.stringify(dict)
 const yamlParse = str => yaml.safeLoad(str)
-const yamlDump = dict => yaml.safeDump(dict)
+const yamlDump = dict => yaml.safeDump(dict, { indent: 4 })
 
 // other
 const apply = (val, fn) => eval(fn)(val) // apply a JS function to the given value
