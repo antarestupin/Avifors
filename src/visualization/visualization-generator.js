@@ -23,12 +23,12 @@ function generateVisualization(model, config, displayParamsPathList, output, nun
             case 'scalar':
                 return node
             case 'list':
-                return `<ul style="list-style-type:none; padding-left:1em; padding-right: 1em">${node.map(i => `<li>- ${i.length ? displayArgs(i): '[]'}</li>`).join('')}</ul>`
+                return `<ul style="list-style-type:none; padding-left:1em; padding-right: 1em">${node.map(i => `<li>- ${node.length ? displayArgs(i): '[]'}</li>`).join('')}</ul>`
             case 'map':
                 if (Object.keys(node).length === 0) return '{}'
 
                 let res = '<ul style="list-style-type:none; padding-left:1em; padding-right: 1em">'
-                for (let i in node) res += `<li>${i}: ${displayArgs(node[i])}</li>`
+                for (let i in node) res += `<li><b>${i}</b>: ${displayArgs(node[i])}</li>`
                 res += '</ul>'
 
                 return res
@@ -53,10 +53,10 @@ function generateVisualization(model, config, displayParamsPathList, output, nun
                         dest = rule.dest(item, node)
 
                     if (dest) {
-                        let type = rule.type(item, dest, node),
-                            label = rule.label(item, dest, node)
+                        let type = rule.type ? rule.type(item, dest, node): 'undefined',
+                            label = rule.label ? rule.label(item, dest, node): ''
 
-                        return [`edges.push({from: ${node.id}, to: ${dest.id}, arrows: ${type ? `'${type}'`: 'undefined' }, width: 2, label: '${label}'})`]
+                        return [`edges.push({from: ${node.id}, to: ${dest.id}, arrows: '${type}', width: 1, label: '${label}'})`]
                     }
 
                     return []
@@ -65,10 +65,10 @@ function generateVisualization(model, config, displayParamsPathList, output, nun
                     return items.map(item => {
                         let dest = rule.dest(item, node)
                         if (dest) {
-                            let type = rule.type(item, dest, node),
-                                label = rule.label(item, dest, node)
+                            let type = rule.type ? rule.type(item, dest, node): 'undefined',
+                                label = rule.label ? rule.label(item, dest, node): ''
 
-                            return `edges.push({from: ${node.id}, to: ${dest.id}, arrows: ${type ? `'${type}'`: 'undefined' }, width: 2, label: '${label}'})`
+                            return `edges.push({from: ${node.id}, to: ${dest.id}, arrows: '${type}', width: 1, label: '${label}'})`
                         }
 
                         return ''
@@ -81,10 +81,10 @@ function generateVisualization(model, config, displayParamsPathList, output, nun
                         let item = items[index],
                             dest = rule.dest(index, item, node)
                         if (dest) {
-                            let type = rule.type(index, item, dest, node),
-                                label = rule.label(index, item, dest, node)
+                            let type = rule.type ? rule.type(index, item, dest, node): 'undefined',
+                                label = rule.label ? rule.label(index, item, dest, node): ''
 
-                            res.push(`edges.push({from: ${node.id}, to: ${dest.id}, arrows: ${type ? `'${type}'`: 'undefined' }, width: 2, label: '${label}'})`)
+                            res.push(`edges.push({from: ${node.id}, to: ${dest.id}, arrows: '${type}', width: 1, label: '${label}'})`)
                         }
                     }
 
