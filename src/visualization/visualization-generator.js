@@ -56,7 +56,7 @@ function generateVisualization(model, config, displayParamsPathList, output, nun
                         let type = rule.type ? rule.type(item, dest, node): 'undefined',
                             label = rule.label ? rule.label(item, dest, node): ''
 
-                        return [`edges.push({from: ${node.id}, to: ${dest.id}, arrows: '${type}', width: 1, label: '${label}'})`]
+                        return [`data.edges.push({from: ${node.id}, to: ${dest.id}, arrows: '${type}', width: 1, label: '${label}'})`]
                     }
 
                     return []
@@ -68,7 +68,7 @@ function generateVisualization(model, config, displayParamsPathList, output, nun
                             let type = rule.type ? rule.type(item, dest, node): 'undefined',
                                 label = rule.label ? rule.label(item, dest, node): ''
 
-                            return `edges.push({from: ${node.id}, to: ${dest.id}, arrows: '${type}', width: 1, label: '${label}'})`
+                            return `data.edges.push({from: ${node.id}, to: ${dest.id}, arrows: '${type}', width: 1, label: '${label}'})`
                         }
 
                         return ''
@@ -84,7 +84,7 @@ function generateVisualization(model, config, displayParamsPathList, output, nun
                             let type = rule.type ? rule.type(index, item, dest, node): 'undefined',
                                 label = rule.label ? rule.label(index, item, dest, node): ''
 
-                            res.push(`edges.push({from: ${node.id}, to: ${dest.id}, arrows: '${type}', width: 1, label: '${label}'})`)
+                            res.push(`data.edges.push({from: ${node.id}, to: ${dest.id}, arrows: '${type}', width: 1, label: '${label}'})`)
                         }
                     }
 
