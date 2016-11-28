@@ -1,38 +1,5 @@
 const yaml = require('js-yaml')
 
-module.exports = (nunjucksEnv, model, config) => {
-    let filters = {
-        flower: flower,
-        fupper: flower,
-
-        snakecase: snakeCase,
-        kebabcase: kebabCase,
-        pascalcase: pascalCase,
-        camelcase: camelCase,
-        uppercamelcase: upperCamelCase,
-        lowercamelcase: lowerCamelCase,
-
-        prepend: prepend,
-        append: append,
-        surround: surround,
-        keys: keys,
-        values: values,
-        findbycolumn: findByColumn,
-        findonebycolumn: findOneByColumn,
-        map: map,
-        filter: filter,
-
-        json: jsonDump,
-        jsonparse: jsonParse,
-        yaml: yamlDump,
-        yamlparse: yamlParse,
-
-        apply: apply
-    }
-
-    for (let i in filters) nunjucksEnv.addFilter(i, filters[i])
-}
-
 // 'camelCase' => ['camel', 'case']
 function splitVariableName(varName) {
     return ['-', '_'].map(i => varName.split(i)).find(i => i.length > 1) // kebab-case / snake_case
@@ -70,3 +37,32 @@ const yamlDump = dict => yaml.safeDump(dict, { indent: 4 })
 
 // other
 const apply = (val, fn) => eval(fn)(val) // apply a JS function to the given value
+
+module.exports = {
+    flower: flower,
+    fupper: fupper,
+
+    snakecase: snakeCase,
+    kebabcase: kebabCase,
+    pascalcase: pascalCase,
+    camelcase: camelCase,
+    uppercamelcase: upperCamelCase,
+    lowercamelcase: lowerCamelCase,
+
+    prepend: prepend,
+    append: append,
+    surround: surround,
+    keys: keys,
+    values: values,
+    findbycolumn: findByColumn,
+    findonebycolumn: findOneByColumn,
+    map: map,
+    filter: filter,
+
+    json: jsonDump,
+    jsonparse: jsonParse,
+    yaml: yamlDump,
+    yamlparse: yamlParse,
+
+    apply: apply
+}

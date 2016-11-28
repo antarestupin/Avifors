@@ -1,7 +1,7 @@
 const yaml = require('js-yaml')
 const chalk = require('chalk')
 const path = require('path')
-const helpers = require('../helpers')
+const helpers = require('../common/helpers')
 
 module.exports = {
     getInterface: getInterface,

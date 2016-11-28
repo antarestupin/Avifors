@@ -3,6 +3,7 @@ const chalk = require('chalk')
 const helpers = require('./helpers')
 const defaults = require('./defaults')
 const exceptions = require('./exceptions')
+const nunjucksEnv = require('./renderer')
 
 module.exports = {
     askForArgs: askForArgs,
@@ -27,7 +28,7 @@ function flattenModel(model, config) {
 }
 
 // get implementation specific arguments
-function getImplArguments(impl, args, type, nunjucksEnv) {
+function getImplArguments(impl, args, type) {
     return impl
         .map((i, index) => {
             let pathTemplate = i.path || i,
