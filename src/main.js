@@ -12,14 +12,14 @@ const nunjucksEnv = require('./common/renderer')
 const data = require('./generation/data')
 const generator = require('./generation/generator')
 
-// try {
+try {
     main(argv)
-// }
-// catch (e) {
-//     console.log('\n' + chalk.red(chalk.bold.underline('Error') + ':\n\n' + e))
-//     console.log('\nType ' + chalk.cyan('avifors -h') + ' for more help')
-//     console.log('\n' + chalk.red('Generation aborted due to error\n'))
-// }
+}
+catch (e) {
+    console.log('\n' + chalk.red(chalk.bold.underline('Error') + ':\n\n' + e))
+    console.log('\nType ' + chalk.cyan('avifors -h') + ' for more help')
+    console.log('\n' + chalk.red('Generation aborted due to error\n'))
+}
 
 function main(argv) {
     // get the command
