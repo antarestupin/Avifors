@@ -1,7 +1,5 @@
 const glob = require('glob')
-const chalk = require('chalk')
 const yaml = require('js-yaml')
-const prompt = require('prompt-sync')({ sigint: true })
 const exceptions = require('./exceptions')
 const helpers = require('./helpers')
 const configHelper = require('./config')

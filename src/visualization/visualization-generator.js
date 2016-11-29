@@ -1,8 +1,10 @@
-const path = require('path')
 const glob = require('glob')
 const helpers = require('../common/helpers')
 const modelFunctions = require('../common/model')
-const nunjucksEnv = require('../common/renderer')
+const {
+    nunjucksEnv,
+    path
+} = require('../common/container')
 
 module.exports = {
     generateVisualization: generateVisualization

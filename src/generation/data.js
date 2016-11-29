@@ -1,6 +1,6 @@
 const chalk = require('chalk')
 const yaml = require('js-yaml')
-const prompt = require('prompt-sync')({ sigint: true })
+const prompt = require('../common/container').prompt
 const exceptions = require('../common/exceptions')
 const modelArgs = require('../common/modelArgs')
 

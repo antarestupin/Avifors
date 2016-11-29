@@ -3,12 +3,14 @@
 const nunjucks = require('nunjucks')
 const argv = require('minimist')(process.argv.slice(2))
 const chalk = require('chalk')
-const path = require('path')
 const helpMessage = require('./help/help')
 const argsSanitizer = require('./common/args')
 const interfaceGenerator = require('./interface/interface-generator')
 const visualizationGenerator = require('./visualization/visualization-generator')
-const nunjucksEnv = require('./common/renderer')
+const {
+    nunjucksEnv,
+    path
+} = require('./common/container')
 const data = require('./generation/data')
 const generator = require('./generation/generator')
 

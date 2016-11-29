@@ -1,6 +1,6 @@
 const yaml = require('js-yaml')
 const chalk = require('chalk')
-const path = require('path')
+const path = require('../common/container').path
 const helpers = require('../common/helpers')
 
 module.exports = {

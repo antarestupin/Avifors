@@ -1,9 +1,11 @@
-const prompt = require('prompt-sync')({ sigint: true })
 const chalk = require('chalk')
 const helpers = require('./helpers')
 const defaults = require('./defaults')
 const exceptions = require('./exceptions')
-const nunjucksEnv = require('./renderer')
+const {
+    nunjucksEnv,
+    prompt
+} = require('./container')
 
 module.exports = {
     askForArgs: askForArgs,

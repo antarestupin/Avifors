@@ -1,10 +1,12 @@
 const yaml = require('js-yaml')
-const fs = require('fs')
 const helpers = require('../common/helpers')
 const exceptions = require('../common/exceptions')
 const defaults = require('../common/defaults')
 const modelArgs = require('../common/modelArgs')
-const nunjucksEnv = require('../common/renderer')
+const {
+    fs,
+    nunjucksEnv
+} = require('../common/container')
 
 module.exports = {
     generate: generate

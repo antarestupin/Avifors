@@ -1,7 +1,7 @@
 const glob = require('glob')
 const exceptions = require('./exceptions')
 const helpers = require('./helpers')
-const nunjucksEnv = require('./renderer')
+const nunjucksEnv = require('./container').nunjucksEnv
 
 module.exports = {
     getConfig: getConfig

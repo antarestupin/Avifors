@@ -1,7 +1,9 @@
 const yaml = require('js-yaml')
-const fs = require('fs')
-const path = require('path')
-const mkdirp = require('mkdirp')
+const {
+    fs,
+    path,
+    mkdirp
+} = require('./container')
 const exceptions = require('./exceptions')
 
 module.exports = {
