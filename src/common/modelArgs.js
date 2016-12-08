@@ -2,10 +2,7 @@ const chalk = require('chalk')
 const helpers = require('./helpers')
 const defaults = require('./defaults')
 const exceptions = require('./exceptions')
-const {
-    nunjucksEnv,
-    prompt
-} = require('./container')
+const container = require('./container')
 
 module.exports = {
     askForArgs: askForArgs,
@@ -37,7 +34,7 @@ function getImplArguments(impl, args, type) {
                 optional = i.optional !== undefined && i.optional,
                 path
 
-            try { path = nunjucksEnv.renderString(pathTemplate, args) }
+            try { path = container.get('nunjucksEnv').renderString(pathTemplate, args) }
             catch (e) { throw exceptions.nunjucksRenderOption(`impl_arguments[${index}]`, type, e) }
 
             try { return helpers.readYaml(path) }
@@ -51,6 +48,8 @@ function getImplArguments(impl, args, type) {
 
 // Ask for the item arguments to the user
 function askForArgs(schema, namespace = '') {
+    const prompt = container.get('prompt')
+
     let type = helpers.getArgType(schema)
     let schemaContents = schema._contents || schema
 

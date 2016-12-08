@@ -7,21 +7,18 @@ const helpMessage = require('./help/help')
 const argsSanitizer = require('./common/args')
 const interfaceGenerator = require('./interface/interface-generator')
 const visualizationGenerator = require('./visualization/visualization-generator')
-const {
-    nunjucksEnv,
-    path
-} = require('./common/container')
+const container = require('./common/container')
 const data = require('./generation/data')
 const generator = require('./generation/generator')
 
-try {
+// try {
     main(argv)
-}
-catch (e) {
-    console.log('\n' + chalk.red(chalk.bold.underline('Error') + ':\n\n' + e))
-    console.log('\nType ' + chalk.cyan('avifors -h') + ' for more help')
-    console.log('\n' + chalk.red('Generation aborted due to error\n'))
-}
+// }
+// catch (e) {
+//     console.log('\n' + chalk.red(chalk.bold.underline('Error') + ':\n\n' + e))
+//     console.log('\nType ' + chalk.cyan('avifors -h') + ' for more help')
+//     console.log('\n' + chalk.red('Generation aborted due to error\n'))
+// }
 
 function main(argv) {
     // get the command
@@ -33,6 +30,9 @@ function main(argv) {
         console.log(helpMessage)
         return
     }
+
+    const nunjucksEnv = container.get('nunjucksEnv')
+    const path = container.get('path')
 
     // add filters
     require('./template/add-filters')(nunjucksEnv)

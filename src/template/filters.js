@@ -39,9 +39,6 @@ const yamlDump = dict => yaml.safeDump(dict, { indent: 4 })
 const apply = (val, fn) => eval(fn)(val) // apply a JS function to the given value
 
 module.exports = {
-    flower: flower,
-    fupper: fupper,
-
     snakecase: snakeCase,
     kebabcase: kebabCase,
     pascalcase: pascalCase,
@@ -49,9 +46,12 @@ module.exports = {
     uppercamelcase: upperCamelCase,
     lowercamelcase: lowerCamelCase,
 
+    flower: flower,
+    fupper: fupper,
     prepend: prepend,
     append: append,
     surround: surround,
+
     keys: keys,
     values: values,
     findbycolumn: findByColumn,

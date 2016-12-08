@@ -1,7 +1,7 @@
 const glob = require('glob')
 const exceptions = require('./exceptions')
 const helpers = require('./helpers')
-const nunjucksEnv = require('./container').nunjucksEnv
+const container = require('./container')
 
 module.exports = {
     getConfig: getConfig
@@ -33,6 +33,8 @@ function getConfig(src) {
 }
 
 function resolveItem(item) {
+    const nunjucksEnv = container.get('nunjucksEnv')
+
     switch (helpers.getType(item)) {
         case 'list':
             item[0] = resolveItem(item[0])

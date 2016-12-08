@@ -3,10 +3,7 @@ const helpers = require('../common/helpers')
 const exceptions = require('../common/exceptions')
 const defaults = require('../common/defaults')
 const modelArgs = require('../common/modelArgs')
-const {
-    fs,
-    nunjucksEnv
-} = require('../common/container')
+const container = require('../common/container')
 
 module.exports = {
     generate: generate
@@ -14,6 +11,8 @@ module.exports = {
 
 // generate the code
 function generate(config, data, model, globalVar) {
+    const nunjucksEnv = container.get('nunjucksEnv')
+
     // add global variables
     nunjucksEnv.addGlobal('_global', globalVar) // global variables defined in the .avifors.yaml file
     nunjucksEnv.addGlobal('_model', model)
@@ -84,7 +83,7 @@ function getTemplateOption(pathList) {
 
 function getRenderedCode(pathList, templateOption, outputArguments) {
     try {
-        return rendered = nunjucksEnv.render(pathList[templateOption], outputArguments)
+        return rendered = container.get('nunjucksEnv').render(pathList[templateOption], outputArguments)
     }
     catch (e) {
         throw exceptions.nunjucksRenderTemplate(pathList.template, e)
@@ -93,6 +92,6 @@ function getRenderedCode(pathList, templateOption, outputArguments) {
 
 // generate the value of an option
 function renderOptionString(str, args, type, section) {
-    try { return nunjucksEnv.renderString(str, args) }
+    try { return container.get('nunjucksEnv').renderString(str, args) }
     catch (e) { throw exceptions.nunjucksRenderOption(`outputs[${outputIndex}].template`, item.type, e) }
 }

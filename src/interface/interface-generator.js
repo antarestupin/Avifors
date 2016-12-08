@@ -1,6 +1,6 @@
 const yaml = require('js-yaml')
 const chalk = require('chalk')
-const path = require('../common/container').path
+const container = require('../common/container')
 const helpers = require('../common/helpers')
 
 module.exports = {
@@ -49,7 +49,7 @@ function generateInterface(config, output) {
 
     for (let i in modelInterface) {
         helpers.writeFile(
-            path.join(output, i + '.yaml'),
+            container.get('path').join(output, i + '.yaml'),
             yamlDump({ [i]: modelInterface[i] })
         )
     }

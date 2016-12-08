@@ -1,6 +1,6 @@
 const chalk = require('chalk')
 const yaml = require('js-yaml')
-const prompt = require('../common/container').prompt
+const container = require('../common/container')
 const exceptions = require('../common/exceptions')
 const modelArgs = require('../common/modelArgs')
 
@@ -43,6 +43,8 @@ function getDataSource(argv) {
 }
 
 function getCliData(argv, argsConfig) {
+    const prompt = container.get('prompt')
+
     // item type
     let type = argv['type'] || argv._[1] || prompt('Type of the item to generate: ')
     while (!argsConfig.config[type]) {

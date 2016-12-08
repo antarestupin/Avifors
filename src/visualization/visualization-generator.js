@@ -1,10 +1,7 @@
 const glob = require('glob')
 const helpers = require('../common/helpers')
 const modelFunctions = require('../common/model')
-const {
-    nunjucksEnv,
-    path
-} = require('../common/container')
+const container = require('../common/container')
 
 module.exports = {
     generateVisualization: generateVisualization
@@ -23,7 +20,9 @@ function generateVisualization(model, config, displayParamsPathList, output) {
 }
 
 function renderTemplate(model, config, displayParams) {
-    return nunjucksEnv.render(path.resolve(__dirname, 'visualization.template.html'), {
+    const path = container.get('path')
+
+    return container.get('nunjucksEnv').render(path.resolve(__dirname, 'visualization.template.html'), {
         vis_js_src: path.resolve(__dirname, '../../node_modules/vis/dist/vis.min.js'),
         vis_css_src: path.resolve(__dirname, '../../node_modules/vis/dist/vis.min.css'),
         display_parameters: displayParams,

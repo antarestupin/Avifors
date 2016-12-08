@@ -1,22 +1,23 @@
-const nunjucksEnv = require('nunjucks').configure({
-    autoescape: false,
-    trimBlocks: true,
-    lstripBlocks: true
-})
+const container = {
+    env: "prod",
 
-const prompt = require('prompt-sync')({ sigint: true })
+    fs: require('fs'),
 
-const fs = require('fs')
+    mkdirp: require('mkdirp'),
 
-const path = require('path')
+    nunjucksEnv: require('nunjucks').configure({
+        autoescape: false,
+        trimBlocks: true,
+        lstripBlocks: true
+    }),
 
-const mkdirp = require('mkdirp')
+    path: require('path'),
+
+    prompt: require('prompt-sync')({ sigint: true })
+}
 
 module.exports = {
-    env: "prod",
-    fs: fs,
-    mkdirp: mkdirp,
-    nunjucksEnv: nunjucksEnv,
-    path: path,
-    prompt: prompt
+    get: id => container[id],
+    set: (id, value) => container[id] = value,
+    dump: () => container
 }
