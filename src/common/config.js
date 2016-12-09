@@ -4,7 +4,12 @@ const helpers = require('./helpers')
 const container = require('./container')
 
 module.exports = {
-    getConfig: getConfig
+    getConfig: getConfig,
+    _resolveItem: resolveItem,
+    _resolveMeta: resolveMeta,
+    _resolveLists: resolveLists,
+    _setDefaultType: setDefaultType,
+    _resolveInheritance: resolveInheritance
 }
 
 // Get the config from given files

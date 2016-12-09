@@ -7,7 +7,8 @@ module.exports = {
     getInterface: getInterface,
     generateInterface: generateInterface,
     printInterface: printInterface,
-    printInterfaceItem: printInterfaceItem
+    printInterfaceItem: printInterfaceItem,
+    _yamlDump: yamlDump
 }
 
 // get the model interface

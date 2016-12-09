@@ -7,7 +7,11 @@ const modelArgs = require('./modelArgs')
 
 module.exports = {
     sanitizeArgs: sanitizeArgs,
-    setCommand: setCommand
+    setCommand: setCommand,
+    _transformCliArgs: transformCliArgs,
+    _getAviforsFileConfig: getAviforsFileConfig,
+    _mergeArgs: mergeArgs,
+    _getResultModel: getResultModel
 }
 
 // Get the command to call from the arguments ('generate' per default)

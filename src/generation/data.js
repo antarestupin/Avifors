@@ -5,7 +5,10 @@ const exceptions = require('../common/exceptions')
 const modelArgs = require('../common/modelArgs')
 
 module.exports = {
-    setData: setData
+    setData: setData,
+    _getDataSource: getDataSource,
+    _getCliData: getCliData,
+    _getArgumentsData: getArgumentsData
 }
 
 function setData(argsConfig, argv) {

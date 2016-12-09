@@ -6,7 +6,13 @@ const modelArgs = require('../common/modelArgs')
 const container = require('../common/container')
 
 module.exports = {
-    generate: generate
+    generate: generate,
+    _setDefaultArguments: setDefaultArguments,
+    _setOutputs: setOutputs,
+    _getPathList: getPathList,
+    _getTemplateOption: getTemplateOption,
+    _getRenderedCode: getRenderedCode,
+    _renderOptionString: renderOptionString
 }
 
 // generate the code
