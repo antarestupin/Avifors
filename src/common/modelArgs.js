@@ -2,7 +2,7 @@ const chalk = require('chalk')
 const helpers = require('./helpers')
 const defaults = require('./defaults')
 const exceptions = require('./exceptions')
-const container = require('./container')
+const globalContainer = require('./container')
 
 module.exports = {
     askForArgs: askForArgs,
@@ -47,7 +47,7 @@ function getImplArguments(impl, args, type) {
 }
 
 // Ask for the item arguments to the user
-function askForArgs(schema, namespace = '') {
+function askForArgs(schema, namespace = '', container = globalContainer) {
     const prompt = container.get('prompt')
 
     let type = helpers.getArgType(schema)

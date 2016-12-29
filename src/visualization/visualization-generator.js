@@ -1,7 +1,7 @@
 const glob = require('glob')
 const helpers = require('../common/helpers')
 const modelFunctions = require('../common/model')
-const container = require('../common/container')
+const globalContainer = require('../common/container')
 
 module.exports = {
     generateVisualization: generateVisualization
@@ -19,7 +19,7 @@ function generateVisualization(model, config, displayParamsPathList, output) {
     helpers.writeFile(output, rendered)
 }
 
-function renderTemplate(model, config, displayParams) {
+function renderTemplate(model, config, displayParams, container = globalContainer) {
     const path = container.get('path')
 
     return container.get('nunjucksEnv').render(path.resolve(__dirname, 'visualization.template.html'), {

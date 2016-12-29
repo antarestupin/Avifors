@@ -1,6 +1,6 @@
 const yaml = require('js-yaml')
 const chalk = require('chalk')
-const container = require('../common/container')
+const globalContainer = require('../common/container')
 const helpers = require('../common/helpers')
 
 module.exports = {
@@ -45,7 +45,7 @@ function getInterface(config) {
 }
 
 // create files containing the model interface
-function generateInterface(config, output) {
+function generateInterface(config, output, container = globalContainer) {
     let modelInterface = getInterface(config)
 
     for (let i in modelInterface) {

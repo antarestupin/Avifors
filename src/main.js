@@ -7,7 +7,7 @@ const helpMessage = require('./help/help')
 const argsSanitizer = require('./common/args')
 const interfaceGenerator = require('./interface/interface-generator')
 const visualizationGenerator = require('./visualization/visualization-generator')
-const container = require('./common/container')
+const globalContainer = require('./common/container')
 const data = require('./generation/data')
 const generator = require('./generation/generator')
 
@@ -31,8 +31,8 @@ function main(argv) {
         return
     }
 
-    const nunjucksEnv = container.get('nunjucksEnv')
-    const path = container.get('path')
+    const nunjucksEnv = globalContainer.get('nunjucksEnv')
+    const path = globalContainer.get('path')
 
     // add filters
     require('./template/add-filters')(nunjucksEnv)

@@ -1,5 +1,5 @@
 const yaml = require('js-yaml')
-const container = require('./container')
+const globalContainer = require('./container')
 const exceptions = require('./exceptions')
 
 module.exports = {
@@ -41,7 +41,7 @@ function findListItemName(itemName, config) {
 }
 
 // say if a file exists
-function fileExists(filePath) {
+function fileExists(filePath, container = globalContainer) {
     try {
         container.get('fs').readFileSync(filePath, 'utf8')
         return true
@@ -79,7 +79,7 @@ function getArgType(schema) {
 }
 
 // read and parse a yaml file
-function readYaml(filePath) {
+function readYaml(filePath, container = globalContainer) {
     try {
         return yaml.safeLoad(container.get('fs').readFileSync(filePath, 'utf8'))
     } catch (e) {
@@ -89,7 +89,7 @@ function readYaml(filePath) {
 }
 
 // write contents to a file and create its parent dir if it doesn't already exist
-function writeFile(filePath, contents) {
+function writeFile(filePath, contents, container = globalContainer) {
     const fs = container.get('fs')
 
     try {

@@ -3,7 +3,7 @@ const helpers = require('../common/helpers')
 const exceptions = require('../common/exceptions')
 const defaults = require('../common/defaults')
 const modelArgs = require('../common/modelArgs')
-const container = require('../common/container')
+const globalContainer = require('../common/container')
 
 module.exports = {
     generate: generate,
@@ -16,7 +16,7 @@ module.exports = {
 }
 
 // generate the code
-function generate(config, data, model, globalVar) {
+function generate(config, data, model, globalVar, container = globalContainer) {
     const nunjucksEnv = container.get('nunjucksEnv')
 
     // add global variables
@@ -87,7 +87,7 @@ function getTemplateOption(pathList) {
     return ['template', 'fallback'].find(i => helpers.fileExists(pathList[i]))
 }
 
-function getRenderedCode(pathList, templateOption, outputArguments) {
+function getRenderedCode(pathList, templateOption, outputArguments, container = globalContainer) {
     try {
         return rendered = container.get('nunjucksEnv').render(pathList[templateOption], outputArguments)
     }
@@ -97,7 +97,7 @@ function getRenderedCode(pathList, templateOption, outputArguments) {
 }
 
 // generate the value of an option
-function renderOptionString(str, args, type, section) {
+function renderOptionString(str, args, type, section, container = globalContainer) {
     try { return container.get('nunjucksEnv').renderString(str, args) }
     catch (e) { throw exceptions.nunjucksRenderOption(`outputs[${outputIndex}].template`, item.type, e) }
 }

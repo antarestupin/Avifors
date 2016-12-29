@@ -1,6 +1,6 @@
 const chalk = require('chalk')
 const yaml = require('js-yaml')
-const container = require('../common/container')
+const globalContainer = require('../common/container')
 const exceptions = require('../common/exceptions')
 const modelArgs = require('../common/modelArgs')
 
@@ -45,7 +45,7 @@ function getDataSource(argv) {
     return 'cli'
 }
 
-function getCliData(argv, argsConfig) {
+function getCliData(argv, argsConfig, container = globalContainer) {
     const prompt = container.get('prompt')
 
     // item type
