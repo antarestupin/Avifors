@@ -1,6 +1,5 @@
 const assert = require('assert')
 const functions = require('../../src/template/functions')
-const common = require('../common')
 
 describe('# template/functions', function() {
     describe('_', function() {
@@ -9,9 +8,9 @@ describe('# template/functions', function() {
     })
 
     describe('readFile', function() {
-        common.withContainerMock(
-            { fs: { readFileSync: () => 'hello' } },
-            () => it("should return the contents of the file at given path", () => assert.equal('hello', functions.readFile('hello.txt')))
-        )
+        it("should return the contents of the file at given path", () => assert.equal(
+            'hello',
+            functions.readFile('hello.txt', { fs: { readFileSync: () => 'hello' } })
+        ))
     })
 })

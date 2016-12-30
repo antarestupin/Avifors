@@ -1,6 +1,5 @@
 const assert = require('assert')
 const helpers = require('../../src/common/helpers')
-const common = require('../common')
 
 describe('# common/helpers', function() {
     describe('getType', function() {
@@ -27,13 +26,14 @@ describe('# common/helpers', function() {
     })
 
     describe('fileExists', function() {
-        common.withContainerMock(
-            { fs: { readFileSync: () => 'file contents' } },
-            () => it("should return true if the file exists", () => assert.equal(true, helpers.fileExists('hello.txt')))
-        )
-        /*common.withContainerMock(
-            { fs: { readFileSync: () => { throw 'file not found' } } },
-            () => it("should return false if the file does not exist", () => assert.equal(false, helpers.fileExists('hello.txt')))
-        )*/
+        it("should return true if the file exists", () => assert.equal(
+            true,
+            helpers.fileExists('hello.txt', { fs: { readFileSync: () => 'file contents' } })
+        ))
+
+        it("should return false if the file does not exist", () => assert.equal(
+            false,
+            helpers.fileExists('hello.txt', { fs: { readFileSync: () => { throw 'file not found' } } })
+        ))
     })
 })

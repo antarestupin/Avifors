@@ -45,12 +45,12 @@ function getInterface(config) {
 }
 
 // create files containing the model interface
-function generateInterface(config, output, container = globalContainer) {
+function generateInterface(config, output, { path } = globalContainer) {
     let modelInterface = getInterface(config)
 
     for (let i in modelInterface) {
         helpers.writeFile(
-            container.get('path').join(output, i + '.yaml'),
+            path.join(output, i + '.yaml'),
             yamlDump({ [i]: modelInterface[i] })
         )
     }

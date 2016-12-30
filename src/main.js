@@ -31,8 +31,7 @@ function main(argv) {
         return
     }
 
-    const nunjucksEnv = globalContainer.get('nunjucksEnv')
-    const path = globalContainer.get('path')
+    const { nunjucksEnv, path } = globalContainer
 
     // add filters
     require('./template/add-filters')(nunjucksEnv)

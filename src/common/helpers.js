@@ -41,9 +41,9 @@ function findListItemName(itemName, config) {
 }
 
 // say if a file exists
-function fileExists(filePath, container = globalContainer) {
+function fileExists(filePath, { fs } = globalContainer) {
     try {
-        container.get('fs').readFileSync(filePath, 'utf8')
+        fs.readFileSync(filePath, 'utf8')
         return true
     } catch (e) {
         return false
@@ -79,9 +79,9 @@ function getArgType(schema) {
 }
 
 // read and parse a yaml file
-function readYaml(filePath, container = globalContainer) {
+function readYaml(filePath, { fs } = globalContainer) {
     try {
-        return yaml.safeLoad(container.get('fs').readFileSync(filePath, 'utf8'))
+        return yaml.safeLoad(fs.readFileSync(filePath, 'utf8'))
     } catch (e) {
         if (e instanceof yaml.YAMLException) throw exceptions.yamlLoadFile(filePath, e)
         else throw exceptions.readFile(filePath)
@@ -89,13 +89,11 @@ function readYaml(filePath, container = globalContainer) {
 }
 
 // write contents to a file and create its parent dir if it doesn't already exist
-function writeFile(filePath, contents, container = globalContainer) {
-    const fs = container.get('fs')
-
+function writeFile(filePath, contents, { fs, path, mkdirp } = globalContainer) {
     try {
-        let dirPath = container.get('path').dirname(filePath)
+        let dirPath = path.dirname(filePath)
         try { fs.statSync(dirPath) }
-        catch(e) { container.get('mkdirp').sync(dirPath) }
+        catch(e) { mkdirp.sync(dirPath) }
 
         fs.writeFileSync(filePath, contents, { flag: 'w+' })
     } catch (e) {

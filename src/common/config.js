@@ -37,9 +37,7 @@ function getConfig(src) {
     return config
 }
 
-function resolveItem(item, container = globalContainer) {
-    const nunjucksEnv = container.get('nunjucksEnv')
-
+function resolveItem(item, { nunjucksEnv } = globalContainer) {
     switch (helpers.getType(item)) {
         case 'list':
             item[0] = resolveItem(item[0])

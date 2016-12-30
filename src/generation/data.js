@@ -45,9 +45,7 @@ function getDataSource(argv) {
     return 'cli'
 }
 
-function getCliData(argv, argsConfig, container = globalContainer) {
-    const prompt = container.get('prompt')
-
+function getCliData(argv, argsConfig, { prompt } = globalContainer) {
     // item type
     let type = argv['type'] || argv._[1] || prompt('Type of the item to generate: ')
     while (!argsConfig.config[type]) {

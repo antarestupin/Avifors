@@ -27,14 +27,14 @@ function flattenModel(model, config) {
 }
 
 // get implementation specific arguments
-function getImplArguments(impl, args, type) {
+function getImplArguments(impl, args, type, { nunjucksEnv } = globalContainer) {
     return impl
         .map((i, index) => {
             let pathTemplate = i.path || i,
                 optional = i.optional !== undefined && i.optional,
                 path
 
-            try { path = container.get('nunjucksEnv').renderString(pathTemplate, args) }
+            try { path = nunjucksEnv.renderString(pathTemplate, args) }
             catch (e) { throw exceptions.nunjucksRenderOption(`impl_arguments[${index}]`, type, e) }
 
             try { return helpers.readYaml(path) }
@@ -47,9 +47,7 @@ function getImplArguments(impl, args, type) {
 }
 
 // Ask for the item arguments to the user
-function askForArgs(schema, namespace = '', container = globalContainer) {
-    const prompt = container.get('prompt')
-
+function askForArgs(schema, namespace = '', { prompt } = globalContainer) {
     let type = helpers.getArgType(schema)
     let schemaContents = schema._contents || schema
 
