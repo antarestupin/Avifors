@@ -36,4 +36,48 @@ describe('# common/helpers', function() {
             helpers.fileExists('hello.txt', { fs: { readFileSync: () => { throw 'file not found' } } })
         ))
     })
+
+    describe('isScalar', function() {
+        it('should indicate if given value is a scalar', () => {
+            assert.equal(true, helpers.isScalar(42))
+            assert.equal(true, helpers.isScalar('test'))
+            assert.equal(true, helpers.isScalar(true))
+            assert.equal(false, helpers.isScalar([]))
+            assert.equal(false, helpers.isScalar({}))
+        })
+    })
+
+    describe('getUserDefinedProperties', function() {
+        it('should return an object with only user-defined properties', () => assert.deepEqual(
+            {
+                'a': 'aVal',
+                'b': 'bVal'
+            },
+            helpers.getUserDefinedProperties({
+                'a': 'aVal',
+                '_type': 'test',
+                'b': 'bVal'
+            })
+        ))
+    })
+
+    describe('getArgType', function() {
+        it('should return the type of a model argument', () => {
+            assert.equal('string', helpers.getArgType('string'))
+            assert.equal('list', helpers.getArgType(['string']))
+            assert.equal('map', helpers.getArgType({'a': 'string'}))
+        })
+        it('should use the _contents prop if available', () => assert.equal('string', helpers.getArgType({ _contents: 'string' })))
+    })
+
+    describe('readYaml', function() {
+        it("should read and parse a YAML file", () => assert.deepEqual(
+            ['foo', 'bar'],
+            helpers.readYaml('test.yaml', { fs: { readFileSync: () => '- foo\n- bar' } })
+        ))
+    })
+
+    describe('writeFile', function() {
+        // TODO
+    })
 })
