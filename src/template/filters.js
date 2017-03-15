@@ -10,10 +10,10 @@ function scalableOrArrayFunction(fn) {
   return function(...args) {
     if (Array.isArray(args[0])) {
       const head = args.shift()
-      return head.map(i => fn.apply(null, [i, ...args]))
+      return head.map(i => fn(i, ...args))
     }
 
-    return fn.apply(null, args)
+    return fn(...args)
   }
 }
 
@@ -34,8 +34,8 @@ const surround = scalableOrArrayFunction((str, toAdd) => toAdd + str + toAdd) //
 
 // collection manipulation
 const keys = dict => Object.keys(dict) // get object keys
-const values = dict => { let res = []; for (let i in dict) res.push(dict[i]); return res } // get object values
-const findByColumn = (list, column, value) => list.filter(i => i[column] == value) // filter an object by the value of one of its columns
+const values = dict => Object.values(dict) // get object values
+const findByColumn = (list, column, value) => list.filter(i => i[column] === value) // filter an object by the value of one of its columns
 const findOneByColumn = (list, column, value) => findByColumn(list, column, value)[0]
 const map = (collection, fn) => collection.map(eval(fn)) // apply a map to the collection with a JS function
 const filter = (collection, fn) => collection.filter(eval(fn)) // apply a filter to the collection with a JS function

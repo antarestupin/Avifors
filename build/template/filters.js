@@ -30,11 +30,11 @@ function scalableOrArrayFunction(fn) {
     if (Array.isArray(args[0])) {
       var head = args.shift();
       return head.map(function (i) {
-        return fn.apply(null, [i].concat(args));
+        return fn.apply(undefined, [i].concat(args));
       });
     }
 
-    return fn.apply(null, args);
+    return fn.apply(undefined, args);
   };
 }
 
@@ -82,13 +82,11 @@ var keys = function keys(dict) {
   return Object.keys(dict);
 }; // get object keys
 var values = function values(dict) {
-  var res = [];for (var i in dict) {
-    res.push(dict[i]);
-  }return res;
+  return Object.values(dict);
 }; // get object values
 var findByColumn = function findByColumn(list, column, value) {
   return list.filter(function (i) {
-    return i[column] == value;
+    return i[column] === value;
   });
 }; // filter an object by the value of one of its columns
 var findOneByColumn = function findOneByColumn(list, column, value) {
