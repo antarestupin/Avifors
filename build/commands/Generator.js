@@ -61,7 +61,7 @@ var Generator = function () {
 
         _fs2.default.writeFileSync(filePath, contents, { flag: 'w+' });
       } catch (e) {
-        throw exceptions._writeFile(filePath);
+        throw 'Could not write file ' + filePath;
       }
     }
   }]);

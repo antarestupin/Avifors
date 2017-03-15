@@ -21,29 +21,38 @@ function splitVariableName(varName) {
   || varName.replace(/([a-z](?=[A-Z]))/g, '$1-').toLowerCase().split('-'); // PascalCase / camelCase
 }
 
+function scalableOrArrayFunction(fn) {
+  return function () {
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    if (Array.isArray(args[0])) {
+      var head = args.shift();
+      return head.map(function (i) {
+        return fn.apply(null, [i].concat(args));
+      });
+    }
+
+    return fn.apply(null, args);
+  };
+}
+
 // code conventions
-var snakeCase = function snakeCase(str) {
-  return Array.isArray(str) ? str.map(function (i) {
-    return snakeCase(i);
-  }) : splitVariableName(str).join('_');
-}; // snake_case
-var kebabCase = function kebabCase(str) {
-  return Array.isArray(str) ? str.map(function (i) {
-    return kebabCase(i);
-  }) : splitVariableName(str).join('-');
-}; // kebab-case
-var camelCase = function camelCase(str) {
-  return Array.isArray(str) ? str.map(function (i) {
-    return camelCase(i);
-  }) : flower(pascalCase(str));
-}; // camelCase
-var pascalCase = function pascalCase(str) {
-  return Array.isArray(str) ? str.map(function (i) {
-    return pascalCase(i);
-  }) : splitVariableName(str).map(function (i) {
+var snakeCase = scalableOrArrayFunction(function (str) {
+  return splitVariableName(str).join('_');
+}); // snake_case
+var kebabCase = scalableOrArrayFunction(function (str) {
+  return splitVariableName(str).join('-');
+}); // kebab-case
+var camelCase = scalableOrArrayFunction(function (str) {
+  return flower(pascalCase(str));
+}); // camelCase
+var pascalCase = scalableOrArrayFunction(function (str) {
+  return splitVariableName(str).map(function (i) {
     return fupper(i);
   }).join('');
-}; // PascalCase
+}); // PascalCase
 var upperCamelCase = function upperCamelCase(str) {
   return pascalCase(str);
 };
@@ -52,31 +61,21 @@ var lowerCamelCase = function lowerCamelCase(str) {
 };
 
 // string manipulation
-var flower = function flower(str) {
-  return Array.isArray(str) ? str.map(function (i) {
-    return flower(i);
-  }) : str.charAt(0).toLowerCase() + str.substr(1);
-}; // LOWER => lOWER
-var fupper = function fupper(str) {
-  return Array.isArray(str) ? str.map(function (i) {
-    return fupper(i);
-  }) : str.charAt(0).toUpperCase() + str.substr(1);
-}; // upper => Upper
-var prepend = function prepend(str, toPrepend) {
-  return Array.isArray(str) ? str.map(function (i) {
-    return prepend(i, toPrepend);
-  }) : toPrepend + str;
-}; // prepend('foo', '$') => $foo
-var append = function append(str, toAppend) {
-  return Array.isArray(str) ? str.map(function (i) {
-    return append(i, toAppend);
-  }) : str + toAppend;
-}; // append('foo', '$') => foo$
-var surround = function surround(str, toAdd) {
-  return Array.isArray(str) ? str.map(function (i) {
-    return surround(i, toAdd);
-  }) : toAdd + str + toAdd;
-}; // surround('foo', '$') => $foo$
+var flower = scalableOrArrayFunction(function (str) {
+  return str.charAt(0).toLowerCase() + str.substr(1);
+}); // LOWER => lOWER
+var fupper = scalableOrArrayFunction(function (str) {
+  return str.charAt(0).toUpperCase() + str.substr(1);
+}); // upper => Upper
+var prepend = scalableOrArrayFunction(function (str, toPrepend) {
+  return toPrepend + str;
+}); // prepend('foo', '$') => $foo
+var append = scalableOrArrayFunction(function (str, toAppend) {
+  return str + toAppend;
+}); // append('foo', '$') => foo$
+var surround = scalableOrArrayFunction(function (str, toAdd) {
+  return toAdd + str + toAdd;
+}); // surround('foo', '$') => $foo$
 
 // collection manipulation
 var keys = function keys(dict) {

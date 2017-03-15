@@ -6,20 +6,31 @@ function splitVariableName(varName) {
     || varName.replace(/([a-z](?=[A-Z]))/g, '$1-').toLowerCase().split('-') // PascalCase / camelCase
 }
 
+function scalableOrArrayFunction(fn) {
+  return function(...args) {
+    if (Array.isArray(args[0])) {
+      const head = args.shift()
+      return head.map(i => fn.apply(null, [i, ...args]))
+    }
+
+    return fn.apply(null, args)
+  }
+}
+
 // code conventions
-const snakeCase = str => Array.isArray(str) ? str.map(i => snakeCase(i)): splitVariableName(str).join('_') // snake_case
-const kebabCase = str => Array.isArray(str) ? str.map(i => kebabCase(i)): splitVariableName(str).join('-') // kebab-case
-const camelCase = str => Array.isArray(str) ? str.map(i => camelCase(i)): flower(pascalCase(str)) // camelCase
-const pascalCase = str => Array.isArray(str) ? str.map(i => pascalCase(i)): splitVariableName(str).map(i => fupper(i)).join('') // PascalCase
+const snakeCase = scalableOrArrayFunction(str => splitVariableName(str).join('_')) // snake_case
+const kebabCase = scalableOrArrayFunction(str => splitVariableName(str).join('-')) // kebab-case
+const camelCase = scalableOrArrayFunction(str => flower(pascalCase(str))) // camelCase
+const pascalCase = scalableOrArrayFunction(str => splitVariableName(str).map(i => fupper(i)).join('')) // PascalCase
 const upperCamelCase = str => pascalCase(str)
 const lowerCamelCase = str => camelCase(str)
 
 // string manipulation
-const flower = str => Array.isArray(str) ? str.map(i => flower(i)): str.charAt(0).toLowerCase() + str.substr(1) // LOWER => lOWER
-const fupper = str => Array.isArray(str) ? str.map(i => fupper(i)): str.charAt(0).toUpperCase() + str.substr(1) // upper => Upper
-const prepend = (str, toPrepend) => Array.isArray(str) ? str.map(i => prepend(i, toPrepend)): toPrepend + str // prepend('foo', '$') => $foo
-const append = (str, toAppend) => Array.isArray(str) ? str.map(i => append(i, toAppend)): str + toAppend // append('foo', '$') => foo$
-const surround = (str, toAdd) => Array.isArray(str) ? str.map(i => surround(i, toAdd)): toAdd + str + toAdd // surround('foo', '$') => $foo$
+const flower = scalableOrArrayFunction(str => str.charAt(0).toLowerCase() + str.substr(1)) // LOWER => lOWER
+const fupper = scalableOrArrayFunction(str => str.charAt(0).toUpperCase() + str.substr(1)) // upper => Upper
+const prepend = scalableOrArrayFunction((str, toPrepend) => toPrepend + str) // prepend('foo', '$') => $foo
+const append = scalableOrArrayFunction((str, toAppend) => str + toAppend) // append('foo', '$') => foo$
+const surround = scalableOrArrayFunction((str, toAdd) => toAdd + str + toAdd) // surround('foo', '$') => $foo$
 
 // collection manipulation
 const keys = dict => Object.keys(dict) // get object keys
