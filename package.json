@@ -3,14 +3,16 @@
   "version": "1.0.0-dev",
   "description": "A CLI tool to generate code from templates.",
   "scripts": {
-    "main": "node src/main.js --avifors-src example/.avifors.yaml",
-    "help": "node src/main.js -h",
-    "test": "./node_modules/mocha/bin/mocha test/**/*.test.js"
+    "build": "babel src -d build",
+    "main": "node build/main.js --config='./example/.avifors.yaml' generate",
+    "interface": "node build/main.js --config='./example/.avifors.yaml' interface",
+    "help": "node build/main.js help",
+    "test": "./node_modules/mocha/bin/mocha build/**/*.test.js"
   },
-  "author": "",
+  "author": "Antarès Tupin",
   "license": "MIT",
   "bin": {
-    "avifors": "src/main.js"
+    "avifors": "build/main.js"
   },
   "dependencies": {
     "chalk": "^1.1.3",
@@ -23,6 +25,9 @@
     "vis": "^4.17.0"
   },
   "devDependencies": {
+    "babel-cli": "^6.23.0",
+    "babel-plugin-transform-object-rest-spread": "^6.23.0",
+    "babel-preset-env": "^1.2.1",
     "mocha": "^3.2.0"
   }
 }

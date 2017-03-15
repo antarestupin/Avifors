@@ -1,10 +1,7 @@
-const yaml = require('js-yaml')
-const globalContainer = require('../common/container')
+import yaml from 'js-yaml'
+import fs from 'fs'
 
-// display the contents of a file
-readFile = (path, { fs } = globalContainer) => fs.readFileSync(path, 'utf8')
-
-module.exports = {
-    _: (cond, joiner='\n') => cond ? joiner: '',
-    readFile: readFile
+export const functions = {
+  _: (cond, joiner='\n') => cond ? joiner: '',
+  readFile: path => fs.readFileSync(path, 'utf8')
 }

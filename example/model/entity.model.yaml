@@ -1,8 +1,0 @@
-entity:
-    name: Bunny
-    properties:
-        weight: number
-        fluffiness: number
-    methods:
-        eat:
-            parameters: [food]

@@ -1,14 +1,27 @@
 entities:
 
-    User:
-        properties:
-            email_address: string
-            encrypted_password: string
-            articles: Article[]
-        methods:
-            clear_basket: {}
+  User:
+    properties:
+      -
+        name: email_address
+        type: string
+        description: Email address
+      -
+        name: encrypted_password
+        type: string
+        description: Encrypted password
+      # -
+      #   name: articles
+      #   type: Article[]
+      #   description: List of articles
 
-    Article:
-        properties:
-            name: string
-            price: number
+  Article:
+    properties:
+      -
+        name: name
+        type: string
+        description: Article's name
+      -
+        name: price
+        type: number
+        description: Article's price

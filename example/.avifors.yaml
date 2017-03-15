@@ -1,11 +1,6 @@
-model-src:
-    - example/model/**/*.model.yaml
-    - example/implementation/**/*.model.yaml
-config-src:
-    - example/avifors/**/*.avifors.yaml
-visualization-src:
-    - example/visualization.avifors.yaml
 plugins:
-    - ./example/plugin.js
-global:
-    company_namespace: MyCorp
+  - "./example/**/*.generator.js"
+  - "./example/**/*.plugin.js"
+
+model:
+  - "./example/model/**/*.model.yaml"

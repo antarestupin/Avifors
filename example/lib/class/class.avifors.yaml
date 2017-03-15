@@ -1,4 +1,0 @@
-method:
-    _key: name
-    parameters: [string]
-    return_type: string

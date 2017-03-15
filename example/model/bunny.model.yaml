@@ -1,0 +1,11 @@
+entity:
+  name: Bunny
+  properties:
+    -
+      name: weight
+      type: number
+      description: Weight of the bunny
+    -
+      name: fluffiness
+      type: number
+      description: Fluffiness of the bunny

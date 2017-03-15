@@ -1,9 +1,9 @@
-const yaml = require('js-yaml')
+import yaml from 'js-yaml'
 
 // 'camelCase' => ['camel', 'case']
 function splitVariableName(varName) {
-    return ['-', '_'].map(i => varName.split(i)).find(i => i.length > 1) // kebab-case / snake_case
-        || varName.replace(/([a-z](?=[A-Z]))/g, '$1-').toLowerCase().split('-') // PascalCase / camelCase
+  return ['-', '_'].map(i => varName.split(i)).find(i => i.length > 1) // kebab-case / snake_case
+    || varName.replace(/([a-z](?=[A-Z]))/g, '$1-').toLowerCase().split('-') // PascalCase / camelCase
 }
 
 // code conventions
@@ -38,31 +38,31 @@ const yamlDump = dict => yaml.safeDump(dict, { indent: 4 })
 // other
 const apply = (val, fn) => eval(fn)(val) // apply a JS function to the given value
 
-module.exports = {
-    snakecase: snakeCase,
-    kebabcase: kebabCase,
-    pascalcase: pascalCase,
-    camelcase: camelCase,
-    uppercamelcase: upperCamelCase,
-    lowercamelcase: lowerCamelCase,
+export const filters = {
+  snakecase: snakeCase,
+  kebabcase: kebabCase,
+  pascalcase: pascalCase,
+  camelcase: camelCase,
+  uppercamelcase: upperCamelCase,
+  lowercamelcase: lowerCamelCase,
 
-    flower: flower,
-    fupper: fupper,
-    prepend: prepend,
-    append: append,
-    surround: surround,
+  flower: flower,
+  fupper: fupper,
+  prepend: prepend,
+  append: append,
+  surround: surround,
 
-    keys: keys,
-    values: values,
-    findbycolumn: findByColumn,
-    findonebycolumn: findOneByColumn,
-    map: map,
-    filter: filter,
+  keys: keys,
+  values: values,
+  findbycolumn: findByColumn,
+  findonebycolumn: findOneByColumn,
+  map: map,
+  filter: filter,
 
-    json: jsonDump,
-    jsonparse: jsonParse,
-    yaml: yamlDump,
-    yamlparse: yamlParse,
+  json: jsonDump,
+  jsonparse: jsonParse,
+  yaml: yamlDump,
+  yamlparse: yamlParse,
 
-    apply: apply
+  apply: apply
 }

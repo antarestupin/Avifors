@@ -1,2 +1,0 @@
-methods:
-    eat: $this->weight += $food->getWeight();
