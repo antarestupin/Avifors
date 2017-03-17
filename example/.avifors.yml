@@ -3,4 +3,4 @@ plugins:
   - "./example/**/*.plugin.js"
 
 model:
-  - "./example/model/**/*.model.yaml"
+  - "./example/model/**/*.model.yml"

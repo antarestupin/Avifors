@@ -4,8 +4,8 @@
   "description": "A CLI tool to generate code from templates.",
   "scripts": {
     "build": "babel src -d build",
-    "main": "node build/main.js --config='./example/.avifors.yaml' generate",
-    "interface": "node build/main.js --config='./example/.avifors.yaml' interface",
+    "main": "node build/main.js --config='./example/.avifors.yml' generate",
+    "interface": "node build/main.js --config='./example/.avifors.yml' interface",
     "help": "node build/main.js help",
     "test": "./node_modules/mocha/bin/mocha build/**/*.test.js"
   },

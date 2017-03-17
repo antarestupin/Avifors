@@ -12,7 +12,7 @@ ${chalk.bold.underline('Commands')}:
 
 ${chalk.bold.underline('Arguments')}:
 
-  ${chalk.bgWhite.black('--config')} Sets the path to Avifors' configuration file (defaults to ${chalk.cyan('./.avifors.yaml')})
+  ${chalk.bgWhite.black('--config')} Sets the path to Avifors' configuration file (defaults to ${chalk.cyan('./.avifors.yml')})
 
 More information is available at ${chalk.underline('https://github.com/antarestupin/Avifors')}
 `

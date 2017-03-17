@@ -7,7 +7,7 @@ Object.defineProperty(exports, "__esModule", {
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Configuration = function Configuration() {
-  var filePath = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : './.avifors.yaml';
+  var filePath = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : './.avifors.yml';
   var yamlHelper = arguments[1];
 
   _classCallCheck(this, Configuration);
