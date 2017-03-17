@@ -20,15 +20,20 @@ var _mkdirp = require('mkdirp');
 
 var _mkdirp2 = _interopRequireDefault(_mkdirp);
 
+var _chalk = require('chalk');
+
+var _chalk2 = _interopRequireDefault(_chalk);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Generator = function () {
-  function Generator(avifors) {
+  function Generator(avifors, yamlHelper) {
     _classCallCheck(this, Generator);
 
     this.avifors = avifors;
+    this.yamlHelper = yamlHelper;
   }
 
   _createClass(Generator, [{
@@ -37,7 +42,9 @@ var Generator = function () {
       var _this = this;
 
       model.forEach(function (item) {
-        _this.avifors.getGenerator(item.type)[0].outputs.map(function (i) {
+        var generator = _this.avifors.getGenerator(item.type)[0];
+        _this._validateItem(item, generator);
+        generator.outputs.map(function (i) {
           return i(item.arguments);
         }).map(function (i) {
           return _extends({
@@ -47,6 +54,15 @@ var Generator = function () {
           return _this._writeFile(i.path, i.contents);
         });
       });
+    }
+  }, {
+    key: '_validateItem',
+    value: function _validateItem(item, generator) {
+      try {
+        generator.arguments.validate(item.arguments, '');
+      } catch (e) {
+        throw _chalk2.default.red('Error during model item validation:') + ' ' + e + '\n\n' + 'Item generating this error:\n' + this.yamlHelper.print(item.arguments);
+      }
     }
   }, {
     key: '_writeFile',

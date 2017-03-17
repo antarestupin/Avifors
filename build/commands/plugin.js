@@ -10,14 +10,14 @@ exports.default = function (avifors) {
       var avifors = _ref.avifors,
           model = _ref.model;
 
-      var generator = new _Generator2.default(avifors);
+      var generator = new _Generator2.default(avifors, new _YamlHelper2.default());
       generator.generate(model);
     },
     interface: function _interface(_ref2) {
       var avifors = _ref2.avifors,
           argv = _ref2.argv;
 
-      var interfacePrinter = new _InterfacePrinter2.default(avifors);
+      var interfacePrinter = new _InterfacePrinter2.default(avifors, new _YamlHelper2.default());
       if (argv._[1] !== undefined) {
         console.log(interfacePrinter.printItem(argv._[1]));
       } else {
@@ -38,5 +38,9 @@ var _Generator2 = _interopRequireDefault(_Generator);
 var _InterfacePrinter = require('./InterfacePrinter');
 
 var _InterfacePrinter2 = _interopRequireDefault(_InterfacePrinter);
+
+var _YamlHelper = require('../tools/YamlHelper');
+
+var _YamlHelper2 = _interopRequireDefault(_YamlHelper);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }

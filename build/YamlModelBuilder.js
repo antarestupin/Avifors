@@ -29,10 +29,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var YamlModelBuilder = function () {
-  function YamlModelBuilder(avifors) {
+  function YamlModelBuilder(avifors, yamlHelper) {
     _classCallCheck(this, YamlModelBuilder);
 
     this.avifors = avifors;
+    this.yamlHelper = yamlHelper;
   }
 
   _createClass(YamlModelBuilder, [{
@@ -47,7 +48,7 @@ var YamlModelBuilder = function () {
         return a.concat(b);
       }) // flatten it to one list
       .map(function (path) {
-        return _this._readYamlFile(path);
+        return _this.yamlHelper.readYamlFile(path);
       }).map(function (modelConfig) {
         return _this._normalizeModelConfig(modelConfig);
       }).reduce(function (a, b) {
@@ -103,18 +104,6 @@ var YamlModelBuilder = function () {
         type: name,
         arguments: modelConfig[name]
       }];
-    }
-
-    // Reads and parse given YAML file
-
-  }, {
-    key: '_readYamlFile',
-    value: function _readYamlFile(path) {
-      try {
-        return _jsYaml2.default.safeLoad(_fs2.default.readFileSync(path, 'utf8'));
-      } catch (e) {
-        if (e instanceof _jsYaml2.default.YAMLException) throw 'Could not parse file ' + path + '.\nCause:\n\n' + e.message;else throw 'Could not read file ' + path + '.';
-      }
     }
   }]);
 

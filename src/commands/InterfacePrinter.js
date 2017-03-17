@@ -1,22 +1,15 @@
-import yaml from 'js-yaml'
-import chalk from 'chalk'
-
 export default class InterfacePrinter {
-  constructor(avifors) {
+  constructor(avifors, yamlHelper) {
     this.avifors = avifors
+    this.yamlHelper = yamlHelper
   }
 
   print() {
-    return this.serialize(this.avifors.generators.map(i => ({name: i.name, arguments: i.arguments.normalize()})))
+    return this.yamlHelper.print(this.avifors.generators.map(i => ({name: i.name, arguments: i.arguments.normalize()})))
   }
 
   printItem(name) {
     const item = this.avifors.generators.find(i => i.name === name)
-    return this.serialize(item.arguments.normalize())
-  }
-
-  serialize(toSerialize) {
-    return yaml.safeDump(toSerialize, {indent: 2, lineWidth: 120})
-      .replace(/(\w+):/g, chalk.cyan('$1') + ':')
+    return this.yamlHelper.print(item.arguments.normalize())
   }
 }

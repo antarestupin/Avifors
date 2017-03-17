@@ -10,10 +10,6 @@ entities:
         name: encrypted_password
         type: string
         description: Encrypted password
-      # -
-      #   name: articles
-      #   type: Article[]
-      #   description: List of articles
 
   Article:
     properties:

@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", {
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _nunjucks = require('nunjucks');
@@ -34,24 +36,30 @@ var Avifors = function () {
     });
 
     this.type = {
+      mixed: function mixed() {
+        return { type: 'mixed', normalize: function normalize() {
+            return 'mixed';
+          }, validate: function validate() {} };
+      },
       string: function string() {
         return { type: 'string', normalize: function normalize() {
             return 'string';
+          }, validate: function validate(i, path) {
+            return assert(typeof i === 'string', path + ' must be a string, "' + i + '" given');
           } };
       },
       number: function number() {
         return { type: 'number', normalize: function normalize() {
             return 'number';
+          }, validate: function validate(i, path) {
+            return assert(typeof i === 'number', path + ' must be a number, "' + i + '" given');
           } };
       },
       boolean: function boolean() {
         return { type: 'boolean', normalize: function normalize() {
             return 'boolean';
-          } };
-      },
-      mixed: function mixed() {
-        return { type: 'mixed', normalize: function normalize() {
-            return 'mixed';
+          }, validate: function validate(i, path) {
+            return assert(typeof i === 'boolean', path + ' must be a boolean, "' + i + '" given');
           } };
       },
       list: function list(children) {
@@ -60,6 +68,12 @@ var Avifors = function () {
           children: children,
           normalize: function normalize() {
             return [children.normalize()];
+          },
+          validate: function validate(i, path) {
+            assert(Array.isArray(i), path + ' must be a list, ' + i + ' given');
+            i.every(function (v, j) {
+              return children.validate(v, path + '[' + j + ']');
+            });
           }
         };
       },
@@ -73,9 +87,18 @@ var Avifors = function () {
               result[i] = keys[i].normalize();
             }
             return result;
+          },
+          validate: function validate(i, path) {
+            assert((typeof i === 'undefined' ? 'undefined' : _typeof(i)) === 'object' && !Array.isArray(i), path + ' must be a map, ' + i + ' given');
+            for (var j in i) {
+              assert(j in keys, 'Unexpected key "' + j + '" in ' + path);
+              keys[j].validate(i[j], path + '.' + j);
+            }
           }
         };
-      }
+      },
+
+      assert: assert
     };
   }
 
@@ -160,3 +183,10 @@ var Avifors = function () {
 }();
 
 exports.default = Avifors;
+
+
+function assert(predicate, message) {
+  if (!predicate) {
+    throw message;
+  }
+}

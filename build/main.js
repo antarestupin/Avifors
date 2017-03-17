@@ -19,6 +19,10 @@ var _Configuration2 = _interopRequireDefault(_Configuration);
 
 var _help = require('./help');
 
+var _YamlHelper = require('./tools/YamlHelper');
+
+var _YamlHelper2 = _interopRequireDefault(_YamlHelper);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var avifors = new _Avifors2.default();
@@ -32,12 +36,13 @@ var userCommand = argv._[0];
 if (userCommand === undefined || userCommand === 'help') {
   console.log(_help.helpMessage);
 } else {
-  var config = new _Configuration2.default(argv.config);
+  var yamlHelper = new _YamlHelper2.default();
+  var config = new _Configuration2.default(argv.config, yamlHelper);
 
   avifors.loadPlugins(config.plugins);
   // console.log(avifors.generators)
 
-  var modelBuilder = new _YamlModelBuilder2.default(avifors);
+  var modelBuilder = new _YamlModelBuilder2.default(avifors, yamlHelper);
   var model = modelBuilder.build(config.modelFiles);
   // console.log(model)
 
