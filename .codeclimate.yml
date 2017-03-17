@@ -19,3 +19,4 @@ exclude_paths:
   - build/
   - example/
   - src/**/*.test.js
+  - README.md
