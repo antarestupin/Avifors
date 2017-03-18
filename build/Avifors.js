@@ -61,10 +61,6 @@ var Avifors = function () {
   }, {
     key: 'getCommand',
     value: function getCommand(name) {
-      if (!name) {
-        throw 'No command has been given.';
-      }
-
       var command = this.commands[name];
       if (!command) {
         throw 'Command ' + name + ' does not exist.';

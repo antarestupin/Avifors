@@ -8,31 +8,14 @@
 ## Install
 
 ```
+yarn global add avifors
+# or
 npm install -g avifors
-```
-
-## Commands
-
-### Generate code
-
-```
-avifors generate
-```
-
-### Print generators interface
-
-The following command will print the arguments needed for each generator you registered, formatted in YAML:
-
-```
-avifors interface
-```
-
-For getting the interface of a particular generator, let's say `entity`:
-
-```
-avifors interface entity
 ```
 
 ## Documentation
 
-TODO
+- [Getting started](https://github.com/antarestupin/Avifors/tree/master/doc/getting_started.md)
+- [Commands and options](https://github.com/antarestupin/Avifors/tree/master/doc/commands.md)
+- [Define the model](https://github.com/antarestupin/Avifors/tree/master/doc/model.md)
+- [Avifors plugins](https://github.com/antarestupin/Avifors/tree/master/doc/plugins.md)

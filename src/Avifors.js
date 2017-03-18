@@ -29,10 +29,6 @@ export default class Avifors {
   }
 
   getCommand(name) {
-    if (!name) {
-      throw 'No command has been given.'
-    }
-
     const command = this.commands[name]
     if (!command) {
       throw `Command ${name} does not exist.`

@@ -1,21 +1,22 @@
 <?php
 
-{% set varproperties = properties | map("i => i.name") | camelcase -%}
+{% set propertiesNames = properties | map("i => i.name") -%}
 
 namespace Acme\Entity;
 
 class {{ name | pascalcase }} {
     private $id;
 
-    {% for attr in varproperties %}
-    private ${{ attr }};
+    {% for attr in propertiesNames %}
+    private ${{ attr | camelcase }};
     {% endfor %}
 
     public function __construct($id) {
         $this->id = $id;
     }
 
-    {% for attr in properties | map("i => i.name") %}
+    {# Getters & Setters #}
+    {% for attr in propertiesNames %}
     public function get{{ attr | pascalcase }}() {
         return $this->{{ attr | camelcase }};
     }
