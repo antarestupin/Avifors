@@ -18,7 +18,7 @@ var _Configuration = require('../Configuration');
 
 var _Configuration2 = _interopRequireDefault(_Configuration);
 
-var _YamlModelBuilder = require('../YamlModelBuilder');
+var _YamlModelBuilder = require('../model/YamlModelBuilder');
 
 var _YamlModelBuilder2 = _interopRequireDefault(_YamlModelBuilder);
 

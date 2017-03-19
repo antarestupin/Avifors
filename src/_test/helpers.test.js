@@ -1,6 +1,6 @@
 import Avifors from '../Avifors'
 import Configuration from '../Configuration'
-import YamlModelBuilder from '../YamlModelBuilder'
+import YamlModelBuilder from '../model/YamlModelBuilder'
 import YamlHelper from '../tools/YamlHelper'
 import Generator from '../commands/Generator'
 import InterfacePrinter from '../commands/InterfacePrinter'
