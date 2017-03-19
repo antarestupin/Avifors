@@ -44,6 +44,7 @@ if (userCommand === undefined || userCommand === 'help') {
 
   var modelBuilder = new _YamlModelBuilder2.default(avifors, yamlHelper);
   var model = modelBuilder.build(config.modelFiles);
+  avifors.setModel(model);
   // console.log(model)
 
   avifors.getCommand(userCommand)({

@@ -10,7 +10,6 @@ export default class Generator {
   }
 
   generate(model) {
-    this.avifors.nunjucks.addGlobal('model', model)
     model.forEach(item => {
       const generator = this.avifors.getGenerator(item.type)[0]
       this._validateItem(item, generator)

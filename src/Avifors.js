@@ -6,6 +6,7 @@ import chalk from 'chalk'
 export default class Avifors {
   constructor() {
     this.generators = []
+    this.model = null // will be defined by the model builder
 
     const emptyDicts = ['command', 'type', 'validator']
     emptyDicts.forEach(i => this._createProperty(i))
@@ -69,6 +70,14 @@ export default class Avifors {
     }
 
     throw `Generator ${name} not found.`
+  }
+
+  /**
+   * Set the model once it's built
+   */
+  setModel(model) {
+    this.model = model
+    this.nunjucks.addGlobal('model', model)
   }
 
   /**

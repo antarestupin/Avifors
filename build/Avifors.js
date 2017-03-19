@@ -35,6 +35,7 @@ var Avifors = function () {
     _classCallCheck(this, Avifors);
 
     this.generators = [];
+    this.model = null; // will be defined by the model builder
 
     var emptyDicts = ['command', 'type', 'validator'];
     emptyDicts.forEach(function (i) {
@@ -122,6 +123,17 @@ var Avifors = function () {
       }
 
       throw 'Generator ' + name + ' not found.';
+    }
+
+    /**
+     * Set the model once it's built
+     */
+
+  }, {
+    key: 'setModel',
+    value: function setModel(model) {
+      this.model = model;
+      this.nunjucks.addGlobal('model', model);
     }
 
     /**

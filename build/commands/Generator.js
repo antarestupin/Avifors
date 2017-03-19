@@ -41,7 +41,6 @@ var Generator = function () {
     value: function generate(model) {
       var _this = this;
 
-      this.avifors.nunjucks.addGlobal('model', model);
       model.forEach(function (item) {
         var generator = _this.avifors.getGenerator(item.type)[0];
         _this._validateItem(item, generator);
