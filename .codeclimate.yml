@@ -17,6 +17,7 @@ ratings:
   - "**.module"
 exclude_paths:
   - build/
+  - doc/
   - example/
   - src/**/*.test.js
   - README.md
