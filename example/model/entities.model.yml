@@ -5,19 +5,15 @@ entities:
       -
         name: email_address
         type: string
-        description: Email address
       -
         name: encrypted_password
         type: string
-        description: Encrypted password
 
   Article:
     properties:
       -
         name: name
         type: string
-        description: Article's name
       -
         name: price
         type: number
-        description: Article's price

@@ -12,22 +12,52 @@ export default class Avifors {
       lstripBlocks: true
     })
 
+    this._initializeValidators()
     this._initializeTypes()
   }
 
+  /**
+   * Set a generator
+   */
   setGenerator(name, config) {
     config.outputs = config.outputs.map(i => typeof i === 'function' ? i: (args => ({path: this.nunjucks.renderString(i.path, args), template: i.template})))
-    config.arguments = this.type.map(config.arguments)
+    config.arguments = this.types.map(config.arguments)
     this.generators.push({
       name: name,
       ...config
     })
   }
 
+  /**
+   * Get the generator defined with given name, and say if given name refers to a list of items
+   * @return [generator dict, list bool]
+   */
+  getGenerator(name) {
+    let isList = false
+    let generator = this.generators.find(gen => gen.name === name)
+    if (generator !== undefined) {
+      return [generator, isList]
+    }
+
+    isList = true
+    generator = this.generators.find(gen => gen.list === name)
+    if (generator !== undefined) {
+      return [generator, isList]
+    }
+
+    throw `Generator ${name} not found.`
+  }
+
+  /**
+   * Set a command
+   */
   setCommand(name, command) {
     this.commands[name] = command
   }
 
+  /**
+   * Get the command defined with given name
+   */
   getCommand(name) {
     const command = this.commands[name]
     if (!command) {
@@ -38,24 +68,24 @@ export default class Avifors {
   }
 
   /**
-   * @return [modelItem dict, list bool]
+   * Quick way to assert a predicate
    */
-  getGenerator(name) {
-    let isList = false
-    let modelItem = this.generators.find(generator => generator.name === name)
-    if (modelItem !== undefined) {
-      return [modelItem, isList]
+  assert(predicate, message) {
+    if (!predicate) {
+      throw message
     }
-
-    isList = true
-    modelItem = this.generators.find(generator => generator.list === name)
-    if (modelItem !== undefined) {
-      return [modelItem, isList]
-    }
-
-    throw `Generator ${name} not found.`
   }
 
+  /**
+   * Validate given item using given validators
+   */
+  validate(validators, item, path) {
+    validators.forEach(v => v.validate(item, path))
+  }
+
+  /**
+   * Load plugins at given paths
+   */
   loadPlugins(paths) {
     paths
       .map(path => glob.sync(path, { nodir: true, absolute: true })) // get the list of files matching given pattern
@@ -63,19 +93,25 @@ export default class Avifors {
       .forEach(pluginPath => require(pluginPath).default(this))
   }
 
+  /**
+   * Add core types
+   */
   _initializeTypes() {
-    this.type = {
-      mixed:   () => ({type: 'mixed',   normalize: () => 'mixed',   validate: () => {} }),
-      list: children => ({
+    this.types = {
+      mixed: (validators = []) => ({ type: 'mixed', normalize: () => 'mixed', validate: (i, path) => this.validate(validators, i, path) }),
+
+      list: (children, validators = []) => ({
         type: 'list',
         children: children,
         normalize: () => [children.normalize()],
         validate: (i, path) => {
-          assert(Array.isArray(i), `${path} must be a list, ${i} given`)
-          i.every((v,j) => children.validate(v, `${path}[${j}]`))
+          this.assert(Array.isArray(i), `${path} must be a list, ${i} given`)
+          this.validate(validators, i, path)
+          i.forEach((v,j) => children.validate(v, `${path}[${j}]`))
         }
       }),
-      map: keys => ({
+
+      map: (keys, validators = []) => ({
         type: 'map',
         keys: keys,
         normalize: () => {
@@ -86,28 +122,48 @@ export default class Avifors {
           return result
         },
         validate: (i, path) => {
-          assert(typeof i === 'object' && !Array.isArray(i), `${path} must be a map, ${i} given`)
-          for (let j in i) {
-            assert(j in keys, `Unexpected key "${j}" in ${path}`)
-            keys[j].validate(i[j], `${path}.${j}`)
-          }
+          this.assert(typeof i === 'object' && !Array.isArray(i), `${path} must be a map, ${i} given`)
+          this.validate(validators, i, path)
+          for (let j in i)    this.assert(j in keys, `Unexpected key "${j}" in ${path}`)
+          for (let j in keys) keys[j].validate(i[j], `${path}.${j}`)
         }
       }),
 
-      assert: assert
+      optional: {}
     }
 
+    // Basic types
     const basicTypes = ['string', 'number', 'boolean']
-    basicTypes.forEach(type => this.type[type] = () => ({
-      type: type,
-      normalize: () => type,
-      validate: (i, path) => assert(typeof i === type, `${path} must be a ${type}, "${i}" given`)
-    }))
-  }
-}
+    const buildBasicType = (type, optional) => (validators = []) => {
+      if (!optional) {
+        validators.push(this.validators.required())
+      }
 
-function assert(predicate, message) {
-  if (!predicate) {
-    throw message
+      return {
+        type: type,
+        normalize: () => type + (validators.length ? ` (${ validators.map(v => v.normalize()).join(', ') })`: ''),
+        validate: (i, path) => {
+          this.assert(typeof i === type || i == null, `${path} must be a ${type}, "${i}" given`)
+          this.validate(validators, i, path)
+        }
+      }
+    }
+
+    basicTypes.forEach(type => {
+      this.types[type] = buildBasicType(type, false)
+      this.types.optional[type] = buildBasicType(type, true)
+    })
+  }
+
+  /**
+   * Add core validators
+   */
+  _initializeValidators() {
+    this.validators = {
+      required: () => ({
+        normalize: () => 'required',
+        validate: (i, path) => this.assert(i != null, `${path} must be defined`)
+      })
+    }
   }
 }

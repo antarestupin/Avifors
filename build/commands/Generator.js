@@ -62,7 +62,7 @@ var Generator = function () {
       try {
         generator.arguments.validate(item.arguments, '');
       } catch (e) {
-        throw _chalk2.default.red('Error during model item validation:') + ' ' + e + '\n\n' + 'Item generating this error:\n' + this.yamlHelper.print(item.arguments);
+        throw _chalk2.default.red('Error during model item validation:') + ' ' + e + '\n\n' + 'Item generating this error:\n\n' + this.yamlHelper.print(item.arguments);
       }
     }
   }, {

@@ -36,19 +36,23 @@ var userCommand = argv._[0];
 if (userCommand === undefined || userCommand === 'help') {
   console.log(_help.helpMessage);
 } else {
-  var yamlHelper = new _YamlHelper2.default();
-  var config = new _Configuration2.default(argv.config, yamlHelper);
+  try {
+    var yamlHelper = new _YamlHelper2.default();
+    var config = new _Configuration2.default(argv.config, yamlHelper);
 
-  avifors.loadPlugins(config.plugins);
-  // console.log(avifors.generators)
+    avifors.loadPlugins(config.plugins);
+    // console.log(avifors.generators)
 
-  var modelBuilder = new _YamlModelBuilder2.default(avifors, yamlHelper);
-  var model = modelBuilder.build(config.modelFiles);
-  // console.log(model)
+    var modelBuilder = new _YamlModelBuilder2.default(avifors, yamlHelper);
+    var model = modelBuilder.build(config.modelFiles);
+    // console.log(model)
 
-  avifors.getCommand(userCommand)({
-    avifors: avifors,
-    model: model,
-    argv: argv
-  });
+    avifors.getCommand(userCommand)({
+      avifors: avifors,
+      model: model,
+      argv: argv
+    });
+  } catch (e) {
+    console.log(e.message ? e.message : e);
+  }
 }

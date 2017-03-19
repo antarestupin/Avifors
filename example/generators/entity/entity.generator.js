@@ -4,12 +4,12 @@ module.exports.default = function(avifors) {
     key: "name",
 
     arguments: {
-      name: avifors.type.string(),
-      properties: avifors.type.list(
-        avifors.type.map({
-          "name": avifors.type.string(),
-          "type": avifors.type.string(),
-          "description": avifors.type.string()
+      name: avifors.types.string(),
+      properties: avifors.types.list(
+        avifors.types.map({
+          "name": avifors.types.string(),
+          "type": avifors.types.string(),
+          "description": avifors.types.optional.string()
         })
       )
     },

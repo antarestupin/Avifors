@@ -16,19 +16,23 @@ const userCommand = argv._[0]
 if (userCommand === undefined || userCommand === 'help') {
   console.log(helpMessage)
 } else {
-  const yamlHelper = new YamlHelper()
-  const config = new Configuration(argv.config, yamlHelper)
+  try {
+    const yamlHelper = new YamlHelper()
+    const config = new Configuration(argv.config, yamlHelper)
 
-  avifors.loadPlugins(config.plugins)
-  // console.log(avifors.generators)
+    avifors.loadPlugins(config.plugins)
+    // console.log(avifors.generators)
 
-  const modelBuilder = new YamlModelBuilder(avifors, yamlHelper)
-  const model = modelBuilder.build(config.modelFiles)
-  // console.log(model)
+    const modelBuilder = new YamlModelBuilder(avifors, yamlHelper)
+    const model = modelBuilder.build(config.modelFiles)
+    // console.log(model)
 
-  avifors.getCommand(userCommand)({
-    avifors: avifors,
-    model: model,
-    argv: argv
-  })
+    avifors.getCommand(userCommand)({
+      avifors: avifors,
+      model: model,
+      argv: argv
+    })
+  } catch(e) {
+    console.log(e.message ? e.message: e)
+  }
 }

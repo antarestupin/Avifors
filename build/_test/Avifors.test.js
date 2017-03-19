@@ -8,43 +8,23 @@ var _Avifors = require('../Avifors');
 
 var _Avifors2 = _interopRequireDefault(_Avifors);
 
+var _helpers = require('./helpers.test');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function exampleGenerator() {
-  var avifors = new _Avifors2.default();
-  var generator = {
-    list: "tests",
-    key: "name",
-    arguments: {
-      name: avifors.type.string(),
-      properties: avifors.type.list(avifors.type.map({
-        "name": avifors.type.string(),
-        "type": avifors.type.string(),
-        "description": avifors.type.string()
-      }))
-    },
-    outputs: [{
-      path: "example/output/Entity/{{ name | pascalcase }}.php",
-      template: "example/generators/entity/entity.template.php"
-    }]
-  };
-
-  return generator;
-}
 
 describe('# Avifors', function () {
   describe('type', function () {
     it("should be able to be normalized", function () {
-      var avifors = new _Avifors2.default();
-      avifors.setGenerator('test', exampleGenerator());
+      var avifors = (0, _helpers.getAvifors)();
+
       _assert2.default.deepEqual({
-        name: 'string',
+        name: 'string (required)',
         properties: [{
-          name: 'string',
-          type: 'string',
+          name: 'string (required)',
+          type: 'string (required)',
           description: 'string'
         }]
-      }, avifors.getGenerator('test')[0].arguments.normalize());
+      }, avifors.getGenerator('entity')[0].arguments.normalize());
     });
   });
 });

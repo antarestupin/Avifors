@@ -4,9 +4,9 @@ module.exports.default = function(avifors) {
     key: "name",
 
     arguments: {
-      name: avifors.type.string(),
-      attributes: avifors.type.list(
-        avifors.type.string()
+      name: avifors.types.string(),
+      attributes: avifors.types.list(
+        avifors.types.string()
       )
     },
 

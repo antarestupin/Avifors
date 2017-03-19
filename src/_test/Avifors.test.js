@@ -1,47 +1,22 @@
 import assert from 'assert'
 import Avifors from '../Avifors'
-
-function exampleGenerator() {
-  const avifors = new Avifors()
-  const generator = {
-    list: "tests",
-    key: "name",
-    arguments: {
-      name: avifors.type.string(),
-      properties: avifors.type.list(
-        avifors.type.map({
-          "name": avifors.type.string(),
-          "type": avifors.type.string(),
-          "description": avifors.type.string()
-        })
-      )
-    },
-    outputs: [
-      {
-        path: "example/output/Entity/{{ name | pascalcase }}.php",
-        template: "example/generators/entity/entity.template.php"
-      }
-    ]
-  }
-
-  return generator
-}
+import {getAvifors} from './helpers.test'
 
 describe('# Avifors', function() {
   describe('type', function() {
     it("should be able to be normalized", () => {
-      const avifors = new Avifors()
-      avifors.setGenerator('test', exampleGenerator())
+      const avifors = getAvifors()
+
       assert.deepEqual(
         {
-          name: 'string',
+          name: 'string (required)',
           properties: [{
-            name: 'string',
-            type: 'string',
+            name: 'string (required)',
+            type: 'string (required)',
             description: 'string'
           }]
         },
-        avifors.getGenerator('test')[0].arguments.normalize()
+        avifors.getGenerator('entity')[0].arguments.normalize()
       )
     })
   })
