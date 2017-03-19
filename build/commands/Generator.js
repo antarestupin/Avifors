@@ -45,7 +45,7 @@ var Generator = function () {
       model.forEach(function (item) {
         var generator = _this.avifors.getGenerator(item.type)[0];
         _this._validateItem(item, generator);
-        generator.outputs.map(function (i) {
+        generator.outputs(item.arguments).map(function (i) {
           return i(item.arguments);
         }).map(function (i) {
           return _extends({

@@ -16,6 +16,14 @@ var _glob = require('glob');
 
 var _glob2 = _interopRequireDefault(_glob);
 
+var _checkTypes = require('check-types');
+
+var _checkTypes2 = _interopRequireDefault(_checkTypes);
+
+var _chalk = require('chalk');
+
+var _chalk2 = _interopRequireDefault(_chalk);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -50,15 +58,43 @@ var Avifors = function () {
     value: function setGenerator(name, config) {
       var _this2 = this;
 
-      config.outputs = config.outputs.map(function (i) {
-        return typeof i === 'function' ? i : function (args) {
-          return { path: _this2.nunjucks.renderString(i.path, args), template: i.template };
+      this._checkSetGeneratorArguments(name, config);
+
+      if (_checkTypes2.default.array(config.outputs)) {
+        var outputs = config.outputs.map(function (i) {
+          return typeof i === 'function' ? i : function (args) {
+            return { path: _this2.nunjucks.renderString(i.path, args), template: i.template };
+          };
+        });
+        config.outputs = function () {
+          return outputs;
         };
-      });
+      }
       config.arguments = this.types.map(config.arguments);
       this.generators.push(_extends({
         name: name
       }, config));
+    }
+  }, {
+    key: '_checkSetGeneratorArguments',
+    value: function _checkSetGeneratorArguments(name, config) {
+      var _this3 = this;
+
+      var badCallExceptionMessage = function badCallExceptionMessage(msg) {
+        return _chalk2.default.cyan('Avifors.setGenerator(\'' + name + '\', config):') + ' ' + msg;
+      };
+      this.assert(_checkTypes2.default.nonEmptyString(name), badCallExceptionMessage('Generator name must be an non empty string'));
+      this.assert(_checkTypes2.default.nonEmptyObject(config), badCallExceptionMessage('config must be an non empty object and contain at least \'arguments\' and \'outputs\''));
+      this.assert(_checkTypes2.default.maybe.nonEmptyString(config.list), badCallExceptionMessage('config.list must be a non empty string'));
+      this.assert(_checkTypes2.default.maybe.nonEmptyString(config.key), badCallExceptionMessage('config.key must be a non empty string'));
+      this.assert(_checkTypes2.default.object(config.arguments), badCallExceptionMessage('config.key must be a non empty object'));
+      if (_checkTypes2.default.array(config.outputs)) {
+        config.outputs.forEach(function (i, index) {
+          return _this3.assert(_checkTypes2.default.function(i) || _checkTypes2.default.object(i) && _checkTypes2.default.nonEmptyString(i.path) && _checkTypes2.default.nonEmptyString(i.template), badCallExceptionMessage('config.key[' + index + '] must be an object containing non empty strings \'path\' and \'template\' or a function returning the above object'));
+        });
+      } else {
+        this.assert(_checkTypes2.default.function(config.outputs), badCallExceptionMessage('config.outputs must be an array or a function returning an array of outputs'));
+      }
     }
 
     /**
@@ -119,7 +155,7 @@ var Avifors = function () {
   }, {
     key: 'loadPlugins',
     value: function loadPlugins(paths) {
-      var _this3 = this;
+      var _this4 = this;
 
       paths.map(function (path) {
         return _glob2.default.sync(path, { nodir: true, absolute: true });
@@ -128,7 +164,7 @@ var Avifors = function () {
         return a.concat(b);
       }) // flatten it to one list
       .forEach(function (pluginPath) {
-        return require(pluginPath).default(_this3);
+        return require(pluginPath).default(_this4);
       });
     }
 
@@ -140,22 +176,22 @@ var Avifors = function () {
   }, {
     key: '_createProperty',
     value: function _createProperty(field) {
-      var _this4 = this;
+      var _this5 = this;
 
       var uppercased = field.charAt(0).toUpperCase() + field.substr(1);
       var plural = field + 's';
       this[plural] = {};
       this['set' + uppercased] = function (name, value) {
-        return _this4[plural][name] = value;
+        return _this5[plural][name] = value;
       };
       this['get' + uppercased] = function (name) {
-        if (!_this4['has' + uppercased](name)) {
+        if (!_this5['has' + uppercased](name)) {
           throw uppercased + ' ' + name + ' does not exist.';
         }
-        return _this4[plural][name];
+        return _this5[plural][name];
       };
       this['has' + uppercased] = function (name) {
-        return _this4[plural][name] !== undefined;
+        return _this5[plural][name] !== undefined;
       };
     }
   }]);

@@ -14,7 +14,7 @@ export default class Generator {
     model.forEach(item => {
       const generator = this.avifors.getGenerator(item.type)[0]
       this._validateItem(item, generator)
-      generator.outputs
+      generator.outputs(item.arguments)
         .map(i => i(item.arguments))
         .map(i => ({
           contents: this.avifors.nunjucks.render(i.template, item.arguments),

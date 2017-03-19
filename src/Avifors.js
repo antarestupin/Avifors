@@ -1,5 +1,7 @@
 import nunjucks from 'nunjucks'
 import glob from 'glob'
+import check from 'check-types'
+import chalk from 'chalk'
 
 export default class Avifors {
   constructor() {
@@ -19,12 +21,34 @@ export default class Avifors {
    * Set a generator
    */
   setGenerator(name, config) {
-    config.outputs = config.outputs.map(i => typeof i === 'function' ? i: (args => ({path: this.nunjucks.renderString(i.path, args), template: i.template})))
+    this._checkSetGeneratorArguments(name, config)
+
+    if (check.array(config.outputs)) {
+      const outputs = config.outputs.map(i => typeof i === 'function' ? i: (args => ({path: this.nunjucks.renderString(i.path, args), template: i.template})))
+      config.outputs = () => outputs
+    }
     config.arguments = this.types.map(config.arguments)
     this.generators.push({
       name: name,
       ...config
     })
+  }
+
+  _checkSetGeneratorArguments(name, config) {
+    const badCallExceptionMessage = msg => `${chalk.cyan(`Avifors.setGenerator('${name}', config):`)} ${msg}`
+    this.assert(check.nonEmptyString(name), badCallExceptionMessage(`Generator name must be an non empty string`))
+    this.assert(check.nonEmptyObject(config), badCallExceptionMessage(`config must be an non empty object and contain at least 'arguments' and 'outputs'`))
+    this.assert(check.maybe.nonEmptyString(config.list), badCallExceptionMessage(`config.list must be a non empty string`))
+    this.assert(check.maybe.nonEmptyString(config.key), badCallExceptionMessage(`config.key must be a non empty string`))
+    this.assert(check.object(config.arguments), badCallExceptionMessage(`config.key must be a non empty object`))
+    if (check.array(config.outputs)) {
+      config.outputs.forEach((i, index) => this.assert(
+        check.function(i) || (check.object(i) && check.nonEmptyString(i.path) && check.nonEmptyString(i.template)),
+        badCallExceptionMessage(`config.key[${index}] must be an object containing non empty strings 'path' and 'template' or a function returning the above object`))
+      )
+    } else {
+      this.assert(check.function(config.outputs), badCallExceptionMessage(`config.outputs must be an array or a function returning an array of outputs`))
+    }
   }
 
   /**
