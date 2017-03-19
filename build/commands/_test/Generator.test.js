@@ -4,7 +4,7 @@ var _assert = require('assert');
 
 var _assert2 = _interopRequireDefault(_assert);
 
-var _helpers = require('../_test/helpers.test');
+var _helpers = require('../../_test/helpers.test');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 

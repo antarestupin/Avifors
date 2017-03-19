@@ -1,5 +1,5 @@
 import assert from 'assert'
-import YamlHelper from './YamlHelper'
+import YamlHelper from '../YamlHelper'
 
 describe('# tools/YamlHelper', function() {
   describe('serialize', function() {

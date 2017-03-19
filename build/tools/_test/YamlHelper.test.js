@@ -4,7 +4,7 @@ var _assert = require('assert');
 
 var _assert2 = _interopRequireDefault(_assert);
 
-var _YamlHelper = require('./YamlHelper');
+var _YamlHelper = require('../YamlHelper');
 
 var _YamlHelper2 = _interopRequireDefault(_YamlHelper);
 

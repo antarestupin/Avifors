@@ -1,5 +1,5 @@
 import assert from 'assert'
-import {functions} from './functions'
+import {functions} from '../functions'
 
 describe('# template/functions', function() {
   describe('_', function() {

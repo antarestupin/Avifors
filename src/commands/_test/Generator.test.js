@@ -1,5 +1,5 @@
 import assert from 'assert'
-import {getGenerator, getModel} from '../_test/helpers.test'
+import {getGenerator, getModel} from '../../_test/helpers.test'
 
 describe('# commands/Generator', function() {
   describe('_validateItem', function() {

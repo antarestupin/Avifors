@@ -1,5 +1,5 @@
 import assert from 'assert'
-import {filters} from './filters'
+import {filters} from '../filters'
 
 describe('# template/filters', function() {
 
