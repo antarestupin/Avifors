@@ -133,8 +133,8 @@ var Avifors = function () {
     }
 
     /**
-     * Create an empty dict property with its getter and setter
-     * Example: _createProperty('command') => this.commands = {}; this.getCommand(name); this.setCommand(name, command)
+     * Create an empty dict property with its getter, setter and hasser
+     * Example: _createProperty('command') => this.commands = {}; this.getCommand(name); this.setCommand(name, command); this.hasCommand(name)
      */
 
   }, {
@@ -149,11 +149,13 @@ var Avifors = function () {
         return _this4[plural][name] = value;
       };
       this['get' + uppercased] = function (name) {
-        var result = _this4[plural][name];
-        if (!result) {
+        if (!_this4['has' + uppercased](name)) {
           throw uppercased + ' ' + name + ' does not exist.';
         }
-        return result;
+        return _this4[plural][name];
+      };
+      this['has' + uppercased] = function (name) {
+        return _this4[plural][name] !== undefined;
       };
     }
   }]);

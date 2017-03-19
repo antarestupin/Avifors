@@ -28,7 +28,7 @@ export default class Generator {
     try {
       generator.arguments.validate(item.arguments, '')
     } catch(e) {
-      throw `${chalk.red(`Error during model item validation:`)} ${e}\n\n`
+      throw `${chalk.bold.red(`Error during model item validation:`)} ${e}\n\n`
         + `Item generating this error:\n\n`
         + this.yamlHelper.print(item.arguments)
     }

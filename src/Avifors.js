@@ -74,8 +74,8 @@ export default class Avifors {
   }
 
   /**
-   * Create an empty dict property with its getter and setter
-   * Example: _createProperty('command') => this.commands = {}; this.getCommand(name); this.setCommand(name, command)
+   * Create an empty dict property with its getter, setter and hasser
+   * Example: _createProperty('command') => this.commands = {}; this.getCommand(name); this.setCommand(name, command); this.hasCommand(name)
    */
   _createProperty(field) {
     const uppercased = field.charAt(0).toUpperCase() + field.substr(1)
@@ -83,11 +83,11 @@ export default class Avifors {
     this[plural] = {}
     this['set' + uppercased] = (name, value) => this[plural][name] = value
     this['get' + uppercased] = name => {
-      const result = this[plural][name]
-      if (!result) {
+      if (!this['has' + uppercased](name)) {
         throw `${uppercased} ${name} does not exist.`
       }
-      return result
+      return this[plural][name]
     }
+    this['has' + uppercased] = name => this[plural][name] !== undefined
   }
 }
