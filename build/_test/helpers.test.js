@@ -42,6 +42,12 @@ function getConfiguration() {
 
 function getAvifors() {
   var avifors = new _Avifors2.default();
+
+  var corePlugins = ['../model/plugin', '../template/plugin', '../commands/plugin'];
+  corePlugins.forEach(function (plugin) {
+    return require(plugin).default(avifors);
+  });
+
   avifors.loadPlugins(getConfiguration().plugins);
   return avifors;
 }

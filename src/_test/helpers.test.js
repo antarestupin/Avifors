@@ -11,6 +11,10 @@ export function getConfiguration() {
 
 export function getAvifors() {
   const avifors = new Avifors()
+
+  const corePlugins = ['../model/plugin', '../template/plugin', '../commands/plugin']
+  corePlugins.forEach(plugin => require(plugin).default(avifors))
+
   avifors.loadPlugins(getConfiguration().plugins)
   return avifors
 }
