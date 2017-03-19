@@ -12,7 +12,7 @@ describe('# Avifors', function() {
           name: 'string (required)',
           properties: [{
             name: 'string (required)',
-            type: 'string (required)',
+            type: 'string (enum[string, number, boolean], required)',
             description: 'string'
           }]
         },
