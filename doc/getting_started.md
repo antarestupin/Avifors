@@ -21,9 +21,9 @@ module.exports.default = function(avifors) {
     key: "name",                      // When using a list of events, the key used to identify an event will then be set as its 'name'
 
     arguments: {                      // Here we define the interface of the model definition, i.e. how to define an event
-      name: avifors.type.string(),    // The name of the event is a string
-      attributes: avifors.type.list(  // Here we want a list of strings as attributes
-        avifors.type.string()
+      name: avifors.types.string(),    // The name of the event is a string
+      attributes: avifors.types.list(  // Here we want a list of strings as attributes
+        avifors.types.string()
       )
     },
 

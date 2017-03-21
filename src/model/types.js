@@ -7,7 +7,6 @@ export function getTypes(avifors) {
 
     list: (children, validators = []) => ({
       type: 'list',
-      children: children,
       normalize: () => [children.normalize()],
       validate: (i, path) => {
         avifors.assert(Array.isArray(i), `${path} must be a list, ${i} given`)

@@ -25,7 +25,6 @@ function getTypes(avifors) {
       var validators = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
       return {
         type: 'list',
-        children: children,
         normalize: function normalize() {
           return [children.normalize()];
         },
