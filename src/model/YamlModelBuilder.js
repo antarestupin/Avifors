@@ -1,6 +1,7 @@
 import fs from 'fs'
 import glob from 'glob'
 import yaml from 'js-yaml'
+import chalk from 'chalk'
 
 export default class YamlModelBuilder {
   constructor(avifors, yamlHelper) {
@@ -34,7 +35,7 @@ export default class YamlModelBuilder {
    */
   _normalizeModelConfig(modelConfig) {
     let name = Object.keys(modelConfig)[0]
-    let [modelItem, isList] = this.avifors.getGenerator(name)
+    let [generator, isList] = this.avifors.getGenerator(name)
 
     if (isList) {
       // if the key is used as an argument
@@ -42,22 +43,36 @@ export default class YamlModelBuilder {
         let argsList = []
         for (let i in modelConfig[name]) {
           argsList.push({
-            [modelItem.key]: i,
+            [generator.key]: i,
             ...modelConfig[name][i]
           })
         }
         modelConfig[name] = argsList
       }
 
+      modelConfig[name].forEach(args => this._validateItem(args, generator))
+
       return modelConfig[name].map(args => ({
-        type: modelItem.name,
-        arguments: args
+        type: generator.name,
+        arguments: generator.arguments.build(args)
       }))
     }
 
+    this._validateItem(modelConfig[name], generator)
+
     return [{
       type: name,
-      arguments: modelConfig[name]
+      arguments: generator.arguments.build(modelConfig[name])
     }]
+  }
+
+  _validateItem(args, generator) {
+    try {
+      generator.arguments.validate(args, '')
+    } catch(e) {
+      throw `${chalk.bold.red(`Error during model item validation:`)} ${e}\n\n`
+        + `Item generating this error:\n\n`
+        + this.yamlHelper.print(args)
+    }
   }
 }

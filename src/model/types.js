@@ -3,10 +3,16 @@
  */
 export function getTypes(avifors) {
   const types = {
-    mixed: (validators = []) => ({ type: 'mixed', normalize: () => 'mixed', validate: (i, path) => avifors.validate(validators, i, path) }),
+    scalar: (validators = []) => ({
+      type: 'scalar',
+      build: value => value,
+      normalize: () => 'scalar',
+      validate: (i, path) => avifors.validate(validators, i, path)
+    }),
 
     list: (children, validators = []) => ({
       type: 'list',
+      build: value => value.map(i => children.build(i)),
       normalize: () => [children.normalize()],
       validate: (i, path) => {
         avifors.assert(Array.isArray(i), `${path} must be a list, ${i} given`)
@@ -17,7 +23,13 @@ export function getTypes(avifors) {
 
     map: (keys, validators = []) => ({
       type: 'map',
-      keys: keys,
+      build: value => {
+        let result = {}
+        for (let i in keys) {
+          result[i] = keys[i].build(value[i])
+        }
+        return result
+      },
       normalize: () => {
         let result = {}
         for (let i in keys) {
@@ -45,6 +57,7 @@ export function getTypes(avifors) {
 
     return {
       type: type,
+      build: value => value,
       normalize: () => type + (validators.length ? ` (${ validators.map(v => v.normalize()).join(', ') })`: ''),
       validate: (i, path) => {
         avifors.assert(typeof i === type || i == null, `${path} must be a ${type}, "${i}" given`)

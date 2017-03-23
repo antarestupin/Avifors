@@ -43,7 +43,6 @@ var Generator = function () {
 
       model.forEach(function (item) {
         var generator = _this.avifors.getGenerator(item.type)[0];
-        _this._validateItem(item, generator);
         generator.outputs(item.arguments).map(function (i) {
           return i(item.arguments);
         }).map(function (i) {
@@ -54,15 +53,6 @@ var Generator = function () {
           return _this._writeFile(i.path, i.contents);
         });
       });
-    }
-  }, {
-    key: '_validateItem',
-    value: function _validateItem(item, generator) {
-      try {
-        generator.arguments.validate(item.arguments, '');
-      } catch (e) {
-        throw _chalk2.default.bold.red('Error during model item validation:') + ' ' + e + '\n\n' + 'Item generating this error:\n\n' + this.yamlHelper.print(item.arguments);
-      }
     }
   }, {
     key: '_writeFile',

@@ -12,7 +12,6 @@ export default class Generator {
   generate(model) {
     model.forEach(item => {
       const generator = this.avifors.getGenerator(item.type)[0]
-      this._validateItem(item, generator)
       generator.outputs(item.arguments)
         .map(i => i(item.arguments))
         .map(i => ({
@@ -21,16 +20,6 @@ export default class Generator {
         }))
         .forEach(i => this._writeFile(i.path, i.contents))
     })
-  }
-
-  _validateItem(item, generator) {
-    try {
-      generator.arguments.validate(item.arguments, '')
-    } catch(e) {
-      throw `${chalk.bold.red(`Error during model item validation:`)} ${e}\n\n`
-        + `Item generating this error:\n\n`
-        + this.yamlHelper.print(item.arguments)
-    }
   }
 
   _writeFile(filePath, contents) {

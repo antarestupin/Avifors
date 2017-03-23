@@ -12,19 +12,31 @@ exports.getTypes = getTypes;
  */
 function getTypes(avifors) {
   var types = {
-    mixed: function mixed() {
+    scalar: function scalar() {
       var validators = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-      return { type: 'mixed', normalize: function normalize() {
-          return 'mixed';
-        }, validate: function validate(i, path) {
+      return {
+        type: 'scalar',
+        build: function build(value) {
+          return value;
+        },
+        normalize: function normalize() {
+          return 'scalar';
+        },
+        validate: function validate(i, path) {
           return avifors.validate(validators, i, path);
-        } };
+        }
+      };
     },
 
     list: function list(children) {
       var validators = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
       return {
         type: 'list',
+        build: function build(value) {
+          return value.map(function (i) {
+            return children.build(i);
+          });
+        },
         normalize: function normalize() {
           return [children.normalize()];
         },
@@ -42,7 +54,13 @@ function getTypes(avifors) {
       var validators = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
       return {
         type: 'map',
-        keys: keys,
+        build: function build(value) {
+          var result = {};
+          for (var i in keys) {
+            result[i] = keys[i].build(value[i]);
+          }
+          return result;
+        },
         normalize: function normalize() {
           var result = {};
           for (var i in keys) {
@@ -77,6 +95,9 @@ function getTypes(avifors) {
 
       return {
         type: type,
+        build: function build(value) {
+          return value;
+        },
         normalize: function normalize() {
           return type + (validators.length ? ' (' + validators.map(function (v) {
             return v.normalize();

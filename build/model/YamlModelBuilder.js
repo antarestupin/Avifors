@@ -22,6 +22,10 @@ var _jsYaml = require('js-yaml');
 
 var _jsYaml2 = _interopRequireDefault(_jsYaml);
 
+var _chalk = require('chalk');
+
+var _chalk2 = _interopRequireDefault(_chalk);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -75,11 +79,13 @@ var YamlModelBuilder = function () {
   }, {
     key: '_normalizeModelConfig',
     value: function _normalizeModelConfig(modelConfig) {
+      var _this2 = this;
+
       var name = Object.keys(modelConfig)[0];
 
       var _avifors$getGenerator = this.avifors.getGenerator(name),
           _avifors$getGenerator2 = _slicedToArray(_avifors$getGenerator, 2),
-          modelItem = _avifors$getGenerator2[0],
+          generator = _avifors$getGenerator2[0],
           isList = _avifors$getGenerator2[1];
 
       if (isList) {
@@ -87,23 +93,38 @@ var YamlModelBuilder = function () {
         if (!Array.isArray(modelConfig[name])) {
           var argsList = [];
           for (var i in modelConfig[name]) {
-            argsList.push(_extends(_defineProperty({}, modelItem.key, i), modelConfig[name][i]));
+            argsList.push(_extends(_defineProperty({}, generator.key, i), modelConfig[name][i]));
           }
           modelConfig[name] = argsList;
         }
 
+        modelConfig[name].forEach(function (args) {
+          return _this2._validateItem(args, generator);
+        });
+
         return modelConfig[name].map(function (args) {
           return {
-            type: modelItem.name,
-            arguments: args
+            type: generator.name,
+            arguments: generator.arguments.build(args)
           };
         });
       }
 
+      this._validateItem(modelConfig[name], generator);
+
       return [{
         type: name,
-        arguments: modelConfig[name]
+        arguments: generator.arguments.build(modelConfig[name])
       }];
+    }
+  }, {
+    key: '_validateItem',
+    value: function _validateItem(args, generator) {
+      try {
+        generator.arguments.validate(args, '');
+      } catch (e) {
+        throw _chalk2.default.bold.red('Error during model item validation:') + ' ' + e + '\n\n' + 'Item generating this error:\n\n' + this.yamlHelper.print(args);
+      }
     }
   }]);
 
