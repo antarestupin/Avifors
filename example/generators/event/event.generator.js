@@ -4,7 +4,7 @@ module.exports.default = function(avifors) {
     key: "name",
 
     arguments: {
-      name: avifors.types.string(),
+      name: avifors.types.string({builders: [value => 'my_namespace_'+value]}),
       attributes: avifors.types.list(
         avifors.types.string()
       )

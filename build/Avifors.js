@@ -37,7 +37,7 @@ var Avifors = function () {
     this.generators = [];
     this.model = null; // will be defined by the model builder
 
-    var emptyDicts = ['command', 'type', 'validator'];
+    var emptyDicts = ['command', 'type', 'validator', 'builder'];
     emptyDicts.forEach(function (i) {
       return _this._createProperty(i);
     });

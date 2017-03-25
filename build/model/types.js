@@ -12,30 +12,23 @@ exports.getTypes = getTypes;
  */
 function getTypes(avifors) {
   var types = {
-    scalar: function scalar() {
-      var validators = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-      return {
-        type: 'scalar',
-        build: function build(value) {
-          return value;
-        },
-        normalize: function normalize() {
-          return 'scalar';
-        },
-        validate: function validate(i, path) {
-          return avifors.validate(validators, i, path);
-        }
-      };
-    },
-
     list: function list(children) {
-      var validators = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+      var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+          _ref$validators = _ref.validators,
+          validators = _ref$validators === undefined ? [] : _ref$validators,
+          _ref$builders = _ref.builders,
+          builders = _ref$builders === undefined ? [] : _ref$builders;
+
       return {
         type: 'list',
         build: function build(value) {
-          return value.map(function (i) {
+          var result = value.map(function (i) {
             return children.build(i);
           });
+          builders.forEach(function (builder) {
+            return result = builder(result);
+          });
+          return result;
         },
         normalize: function normalize() {
           return [children.normalize()];
@@ -51,7 +44,12 @@ function getTypes(avifors) {
     },
 
     map: function map(keys) {
-      var validators = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+      var _ref2 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+          _ref2$validators = _ref2.validators,
+          validators = _ref2$validators === undefined ? [] : _ref2$validators,
+          _ref2$builders = _ref2.builders,
+          builders = _ref2$builders === undefined ? [] : _ref2$builders;
+
       return {
         type: 'map',
         build: function build(value) {
@@ -59,6 +57,9 @@ function getTypes(avifors) {
           for (var i in keys) {
             result[i] = keys[i].build(value[i]);
           }
+          builders.forEach(function (builder) {
+            return result = builder(result);
+          });
           return result;
         },
         normalize: function normalize() {
@@ -83,11 +84,20 @@ function getTypes(avifors) {
     optional: {}
   };
 
-  // Basic types
+  setBasicTypes(types, avifors);
+
+  return types;
+}
+
+function setBasicTypes(types, avifors) {
   var basicTypes = ['string', 'number', 'boolean'];
   var buildBasicType = function buildBasicType(type, optional) {
     return function () {
-      var validators = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+      var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+          _ref3$validators = _ref3.validators,
+          validators = _ref3$validators === undefined ? [] : _ref3$validators,
+          _ref3$builders = _ref3.builders,
+          builders = _ref3$builders === undefined ? [] : _ref3$builders;
 
       if (!optional) {
         validators.push(avifors.validators.required());
@@ -96,7 +106,11 @@ function getTypes(avifors) {
       return {
         type: type,
         build: function build(value) {
-          return value;
+          var result = value;
+          builders.forEach(function (builder) {
+            return result = builder(result);
+          });
+          return result;
         },
         normalize: function normalize() {
           return type + (validators.length ? ' (' + validators.map(function (v) {
@@ -115,6 +129,4 @@ function getTypes(avifors) {
     types[type] = buildBasicType(type, false);
     types.optional[type] = buildBasicType(type, true);
   });
-
-  return types;
 }

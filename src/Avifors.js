@@ -8,7 +8,7 @@ export default class Avifors {
     this.generators = []
     this.model = null // will be defined by the model builder
 
-    const emptyDicts = ['command', 'type', 'validator']
+    const emptyDicts = ['command', 'type', 'validator', 'builder']
     emptyDicts.forEach(i => this._createProperty(i))
 
     this.nunjucks = nunjucks.configure({

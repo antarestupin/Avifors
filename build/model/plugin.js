@@ -14,8 +14,15 @@ exports.default = function (avifors) {
   for (var _i in validators) {
     avifors.setValidator(_i, validators[_i]);
   }
+
+  var builders = (0, _builders.getBuilders)(avifors);
+  for (var _i2 in builders) {
+    avifors.setBuilder(_i2, builders[_i2]);
+  }
 };
 
 var _types = require('./types');
 
 var _validators = require('./validators');
+
+var _builders = require('./builders');

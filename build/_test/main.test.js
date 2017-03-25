@@ -13,7 +13,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 describe('# main', function () {
     describe('generate', function () {
         it("should generate code from model", function () {
-            _assert2.default.equal('<?php\n\nnamespace Acme\\Event;\n\nclass PasswordChanged extends BaseEvent {\n    private $name;\n    private $userId;\n    private $encryptedNewPassword;\n\n    public function __construct($userId, $encryptedNewPassword) {\n        $this->name = \'acme-password-changed\';\n        $this->userId = $userId;\n        $this->encryptedNewPassword = $encryptedNewPassword;\n    }\n\n    public function getUserId() {\n        return $this->userId;\n    }\n    public function getEncryptedNewPassword() {\n        return $this->encryptedNewPassword;\n    }\n}\n', _fs2.default.readFileSync('./example/output/Event/PasswordChanged.php', 'utf8'));
+            _assert2.default.equal('<?php\n\nnamespace Acme\\Event;\n\nclass MyNamespacePasswordChanged extends BaseEvent {\n    private $name;\n    private $userId;\n    private $encryptedNewPassword;\n\n    public function __construct($userId, $encryptedNewPassword) {\n        $this->name = \'acme-my-namespace-password-changed\';\n        $this->userId = $userId;\n        $this->encryptedNewPassword = $encryptedNewPassword;\n    }\n\n    public function getUserId() {\n        return $this->userId;\n    }\n    public function getEncryptedNewPassword() {\n        return $this->encryptedNewPassword;\n    }\n}\n', _fs2.default.readFileSync('./example/output/Event/MyNamespacePasswordChanged.php', 'utf8'));
         });
     });
 });

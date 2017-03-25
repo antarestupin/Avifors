@@ -9,13 +9,13 @@ describe('# main', function() {
 
 namespace Acme\\Event;
 
-class PasswordChanged extends BaseEvent {
+class MyNamespacePasswordChanged extends BaseEvent {
     private $name;
     private $userId;
     private $encryptedNewPassword;
 
     public function __construct($userId, $encryptedNewPassword) {
-        $this->name = 'acme-password-changed';
+        $this->name = 'acme-my-namespace-password-changed';
         $this->userId = $userId;
         $this->encryptedNewPassword = $encryptedNewPassword;
     }
@@ -28,7 +28,7 @@ class PasswordChanged extends BaseEvent {
     }
 }
 `,
-        fs.readFileSync('./example/output/Event/PasswordChanged.php', 'utf8')
+        fs.readFileSync('./example/output/Event/MyNamespacePasswordChanged.php', 'utf8')
       )
     })
   })

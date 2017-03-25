@@ -8,9 +8,9 @@ module.exports.default = function(avifors) {
       properties: avifors.types.list(
         avifors.types.map({
           "name": avifors.types.string(),
-          "type": avifors.types.string([avifors.validators.enum(['string', 'number', 'boolean'])]),
+          "type": avifors.types.string({validators: [avifors.validators.enum(['string', 'number', 'boolean'])]}),
           "description": avifors.types.optional.string()
-        })
+        }, { builders: [avifors.builders.mapDefaultValues(() => ({ description: "@inheritdoc" }))] })
       )
     },
 

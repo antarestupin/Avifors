@@ -3,16 +3,13 @@
  */
 export function getTypes(avifors) {
   const types = {
-    scalar: (validators = []) => ({
-      type: 'scalar',
-      build: value => value,
-      normalize: () => 'scalar',
-      validate: (i, path) => avifors.validate(validators, i, path)
-    }),
-
-    list: (children, validators = []) => ({
+    list: (children, { validators = [], builders = [] } = {}) => ({
       type: 'list',
-      build: value => value.map(i => children.build(i)),
+      build: value => {
+        let result = value.map(i => children.build(i))
+        builders.forEach(builder => result = builder(result))
+        return result
+      },
       normalize: () => [children.normalize()],
       validate: (i, path) => {
         avifors.assert(Array.isArray(i), `${path} must be a list, ${i} given`)
@@ -21,13 +18,14 @@ export function getTypes(avifors) {
       }
     }),
 
-    map: (keys, validators = []) => ({
+    map: (keys, { validators = [], builders = [] } = {}) => ({
       type: 'map',
       build: value => {
         let result = {}
         for (let i in keys) {
           result[i] = keys[i].build(value[i])
         }
+        builders.forEach(builder => result = builder(result))
         return result
       },
       normalize: () => {
@@ -48,16 +46,25 @@ export function getTypes(avifors) {
     optional: {}
   }
 
-  // Basic types
+  setBasicTypes(types, avifors)
+
+  return types
+}
+
+function setBasicTypes(types, avifors) {
   const basicTypes = ['string', 'number', 'boolean']
-  const buildBasicType = (type, optional) => (validators = []) => {
+  const buildBasicType = (type, optional) => ({ validators = [], builders = [] } = {}) => {
     if (!optional) {
       validators.push(avifors.validators.required())
     }
 
     return {
       type: type,
-      build: value => value,
+      build: value => {
+        let result = value
+        builders.forEach(builder => result = builder(result))
+        return result
+      },
       normalize: () => type + (validators.length ? ` (${ validators.map(v => v.normalize()).join(', ') })`: ''),
       validate: (i, path) => {
         avifors.assert(typeof i === type || i == null, `${path} must be a ${type}, "${i}" given`)
@@ -70,6 +77,4 @@ export function getTypes(avifors) {
     types[type] = buildBasicType(type, false)
     types.optional[type] = buildBasicType(type, true)
   })
-
-  return types
 }
