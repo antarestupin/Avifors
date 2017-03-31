@@ -21,4 +21,15 @@ module.exports.default = function(avifors) {
       }
     ]
   })
+
+  // Example of a command you can create for your own purposes
+  // Lists the entities having a 'name' property
+  avifors.setCommand(
+    'entitiesHavingName',
+    ({avifors, model}) => avifors.helpers.printYaml(
+      model
+        .filter(i => i.type === 'entity' && i.arguments.properties.some(j => j.name === 'name'))
+        .map(i => i.arguments.name)
+    )
+  )
 }

@@ -2,6 +2,7 @@ import nunjucks from 'nunjucks'
 import glob from 'glob'
 import check from 'check-types'
 import chalk from 'chalk'
+import YamlHelper from './tools/YamlHelper'
 
 export default class Avifors {
   constructor() {
@@ -16,6 +17,10 @@ export default class Avifors {
       trimBlocks: true,
       lstripBlocks: true
     })
+
+    this.helpers = {
+      printYaml: obj => console.log((new YamlHelper()).print(obj))
+    }
   }
 
   /**

@@ -24,6 +24,10 @@ var _chalk = require('chalk');
 
 var _chalk2 = _interopRequireDefault(_chalk);
 
+var _YamlHelper = require('./tools/YamlHelper');
+
+var _YamlHelper2 = _interopRequireDefault(_YamlHelper);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -47,6 +51,12 @@ var Avifors = function () {
       trimBlocks: true,
       lstripBlocks: true
     });
+
+    this.helpers = {
+      printYaml: function printYaml(obj) {
+        return console.log(new _YamlHelper2.default().print(obj));
+      }
+    };
   }
 
   /**

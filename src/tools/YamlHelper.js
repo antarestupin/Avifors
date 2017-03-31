@@ -14,7 +14,7 @@ export default class YamlHelper {
   }
 
   serialize(toSerialize) {
-    return yaml.safeDump(toSerialize, {indent: 2, lineWidth: 120})
+    return yaml.safeDump(toSerialize, {indent: 2, lineWidth: 120, skipInvalid: true})
   }
 
   print(toPrint) {

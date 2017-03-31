@@ -41,7 +41,7 @@ var YamlHelper = function () {
   }, {
     key: 'serialize',
     value: function serialize(toSerialize) {
-      return _jsYaml2.default.safeDump(toSerialize, { indent: 2, lineWidth: 120 });
+      return _jsYaml2.default.safeDump(toSerialize, { indent: 2, lineWidth: 120, skipInvalid: true });
     }
   }, {
     key: 'print',
