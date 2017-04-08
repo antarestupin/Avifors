@@ -45,6 +45,7 @@ var Avifors = function () {
     emptyDicts.forEach(function (i) {
       return _this._createProperty(i);
     });
+    this._createProperty('query', 'queries');
 
     this.nunjucks = _nunjucks2.default.configure({
       autoescape: false,
@@ -200,8 +201,10 @@ var Avifors = function () {
     value: function _createProperty(field) {
       var _this5 = this;
 
+      var pluralForm = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
       var uppercased = field.charAt(0).toUpperCase() + field.substr(1);
-      var plural = field + 's';
+      var plural = pluralForm ? pluralForm : field + 's';
       this[plural] = {};
       this['set' + uppercased] = function (name, value) {
         return _this5[plural][name] = value;

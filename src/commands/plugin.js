@@ -8,6 +8,7 @@ export default function(avifors) {
       const generator = new Generator(avifors, new YamlHelper())
       generator.generate(model)
     },
+
     interface: ({avifors, argv}) => {
       const interfacePrinter = new InterfacePrinter(avifors, new YamlHelper())
       if (argv._[1] !== undefined) {
@@ -15,6 +16,20 @@ export default function(avifors) {
       } else {
         console.log(interfacePrinter.print())
       }
+    },
+
+    query: ({avifors, model, argv}) => {
+      const queryName = argv._[1]
+      if (queryName === undefined) {
+        avifors.helpers.printYaml(Object.keys(avifors.queries))
+        return
+      }
+
+      avifors.helpers.printYaml(avifors.getQuery(queryName)({
+        model: model,
+        argv: argv._.slice(2),
+        avifors: avifors
+      }))
     }
   }
 

@@ -5,5 +5,6 @@ node_js:
 script:
   - yarn run main
   - yarn run interface
+  - yarn run query
   - yarn run help
   - yarn run test

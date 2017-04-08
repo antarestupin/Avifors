@@ -13,6 +13,7 @@ exports.default = function (avifors) {
       var generator = new _Generator2.default(avifors, new _YamlHelper2.default());
       generator.generate(model);
     },
+
     interface: function _interface(_ref2) {
       var avifors = _ref2.avifors,
           argv = _ref2.argv;
@@ -23,6 +24,24 @@ exports.default = function (avifors) {
       } else {
         console.log(interfacePrinter.print());
       }
+    },
+
+    query: function query(_ref3) {
+      var avifors = _ref3.avifors,
+          model = _ref3.model,
+          argv = _ref3.argv;
+
+      var queryName = argv._[1];
+      if (queryName === undefined) {
+        avifors.helpers.printYaml(Object.keys(avifors.queries));
+        return;
+      }
+
+      avifors.helpers.printYaml(avifors.getQuery(queryName)({
+        model: model,
+        argv: argv._.slice(2),
+        avifors: avifors
+      }));
     }
   };
 

@@ -11,6 +11,7 @@ export default class Avifors {
 
     const emptyDicts = ['command', 'type', 'validator', 'builder']
     emptyDicts.forEach(i => this._createProperty(i))
+    this._createProperty('query', 'queries')
 
     this.nunjucks = nunjucks.configure({
       autoescape: false,
@@ -115,9 +116,9 @@ export default class Avifors {
    * Create an empty dict property with its getter, setter and hasser
    * Example: _createProperty('command') => this.commands = {}; this.getCommand(name); this.setCommand(name, command); this.hasCommand(name)
    */
-  _createProperty(field) {
+  _createProperty(field, pluralForm = null) {
     const uppercased = field.charAt(0).toUpperCase() + field.substr(1)
-    const plural = field + 's'
+    const plural = pluralForm ? pluralForm: field + 's'
     this[plural] = {}
     this['set' + uppercased] = (name, value) => this[plural][name] = value
     this['get' + uppercased] = name => {

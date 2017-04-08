@@ -3,6 +3,10 @@ entity:
   resource: /bunny
   properties:
     -
+      name: name
+      type: string
+      description: Name of the bunny
+    -
       name: weight
       type: number
       description: Weight of the bunny
