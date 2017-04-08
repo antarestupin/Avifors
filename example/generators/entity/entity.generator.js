@@ -6,11 +6,34 @@ module.exports.default = function(avifors) {
     arguments: {
       name: avifors.types.string(),
       properties: avifors.types.list(
-        avifors.types.map({
-          "name": avifors.types.string(),
-          "type": avifors.types.string({validators: [avifors.validators.enum(['string', 'number', 'boolean'])]}),
-          "description": avifors.types.optional.string()
-        }, { builders: [avifors.builders.mapDefaultValues(() => ({ description: "@inheritdoc" }))] })
+        avifors.types.map(
+          {
+            "name": avifors.types.string(),
+            "type": avifors.types.string({validators: [avifors.validators.enum(['string', 'number', 'boolean'])]}),
+            "description": avifors.types.optional.string()
+          },
+          {
+            builders: [
+              avifors.builders.mapDefaultValues(() => ({
+                "description": "@inheritdoc"
+              }))
+            ]
+          }
+        )
+      ),
+      resource: avifors.types.valueOrMap(
+        "url",
+        {
+          "url": avifors.types.string(),
+          "acl-role": avifors.types.string()
+        },
+        {
+          builders: [
+            avifors.builders.mapDefaultValues(() => ({
+              "acl-role": "none"
+            }))
+          ]
+        }
       )
     },
 

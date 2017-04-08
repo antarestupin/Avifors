@@ -7,6 +7,9 @@ Object.defineProperty(exports, "__esModule", {
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 exports.getTypes = getTypes;
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 /**
  * Core types
  */
@@ -34,7 +37,7 @@ function getTypes(avifors) {
           return [children.normalize()];
         },
         validate: function validate(i, path) {
-          avifors.assert(Array.isArray(i), path + ' must be a list, ' + i + ' given');
+          avifors.assert(i == null || Array.isArray(i), path + ' must be a list, ' + i + ' given');
           avifors.validate(validators, i, path);
           i.forEach(function (v, j) {
             return children.validate(v, path + '[' + j + ']');
@@ -43,61 +46,98 @@ function getTypes(avifors) {
       };
     },
 
-    map: function map(keys) {
-      var _ref2 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-          _ref2$validators = _ref2.validators,
-          validators = _ref2$validators === undefined ? [] : _ref2$validators,
-          _ref2$builders = _ref2.builders,
-          builders = _ref2$builders === undefined ? [] : _ref2$builders;
-
-      return {
-        type: 'map',
-        build: function build(value) {
-          var result = {};
-          for (var i in keys) {
-            result[i] = keys[i].build(value[i]);
-          }
-          builders.forEach(function (builder) {
-            return result = builder(result);
-          });
-          return result;
-        },
-        normalize: function normalize() {
-          var result = {};
-          for (var i in keys) {
-            result[i] = keys[i].normalize();
-          }
-          return result;
-        },
-        validate: function validate(i, path) {
-          avifors.assert((typeof i === 'undefined' ? 'undefined' : _typeof(i)) === 'object' && !Array.isArray(i), path + ' must be a map, ' + i + ' given');
-          avifors.validate(validators, i, path);
-          for (var j in i) {
-            avifors.assert(j in keys, 'Unexpected key "' + j + '" in ' + path);
-          }for (var _j in keys) {
-            keys[_j].validate(i[_j], path + '.' + _j);
-          }
-        }
-      };
-    },
-
     optional: {}
   };
 
+  setMapTypes(types, avifors);
   setBasicTypes(types, avifors);
 
   return types;
+}
+
+function setMapTypes(types, avifors) {
+  var _build = function _build(keys, builders) {
+    return function (value) {
+      var result = {};
+      for (var i in keys) {
+        result[i] = keys[i].build(value[i]);
+      }
+      builders.forEach(function (builder) {
+        return result = builder(result);
+      });
+      return result;
+    };
+  };
+
+  var normalize = function normalize(keys) {
+    return function () {
+      var result = {};
+      for (var i in keys) {
+        result[i] = keys[i].normalize();
+      }
+      return result;
+    };
+  };
+
+  var _validate = function _validate(keys, validators) {
+    return function (i, path) {
+      avifors.assert(i == null || (typeof i === 'undefined' ? 'undefined' : _typeof(i)) === 'object' && !Array.isArray(i), path + ' must be a map, ' + i + ' given');
+      avifors.validate(validators, i, path);
+      for (var j in i) {
+        avifors.assert(j in keys, 'Unexpected key "' + j + '" in ' + path);
+        keys[j].validate(i[j], path + '.' + j);
+      }
+    };
+  };
+
+  types.map = function (keys) {
+    var _ref2 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+        _ref2$validators = _ref2.validators,
+        validators = _ref2$validators === undefined ? [] : _ref2$validators,
+        _ref2$builders = _ref2.builders,
+        builders = _ref2$builders === undefined ? [] : _ref2$builders;
+
+    return {
+      type: 'map',
+      build: _build(keys, builders),
+      normalize: normalize(keys),
+      validate: _validate(keys, validators)
+    };
+  };
+
+  var buildMethod = function buildMethod(value, defaultKey, fn) {
+    return ['string', 'number', 'boolean'].indexOf(typeof value === 'undefined' ? 'undefined' : _typeof(value)) > -1 ? fn(_defineProperty({}, defaultKey, value)) : fn(value);
+  };
+
+  types.valueOrMap = function (defaultKey, keys) {
+    var _ref3 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+        _ref3$validators = _ref3.validators,
+        validators = _ref3$validators === undefined ? [] : _ref3$validators,
+        _ref3$builders = _ref3.builders,
+        builders = _ref3$builders === undefined ? [] : _ref3$builders;
+
+    return {
+      type: 'value-or-map',
+      build: function build(value) {
+        return buildMethod(value, defaultKey, _build(keys, builders));
+      },
+      normalize: normalize(keys),
+      validate: function validate(value) {
+        return buildMethod(value, defaultKey, _validate(keys, validators));
+      }
+    };
+  };
 }
 
 function setBasicTypes(types, avifors) {
   var basicTypes = ['string', 'number', 'boolean'];
   var buildBasicType = function buildBasicType(type, optional) {
     return function () {
-      var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-          _ref3$validators = _ref3.validators,
-          validators = _ref3$validators === undefined ? [] : _ref3$validators,
-          _ref3$builders = _ref3.builders,
-          builders = _ref3$builders === undefined ? [] : _ref3$builders;
+      var _ref4 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+          _ref4$validators = _ref4.validators,
+          validators = _ref4$validators === undefined ? [] : _ref4$validators,
+          _ref4$builders = _ref4.builders,
+          builders = _ref4$builders === undefined ? [] : _ref4$builders;
 
       if (!optional) {
         validators.push(avifors.validators.required());

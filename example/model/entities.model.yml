@@ -1,6 +1,9 @@
 entities:
 
   User:
+    resource:
+      url: /user
+      acl-role: admin
     properties:
       -
         name: email_address
@@ -10,6 +13,7 @@ entities:
         type: string
 
   Article:
+    resource: /article
     properties:
       -
         name: name

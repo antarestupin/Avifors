@@ -23,7 +23,11 @@ describe('# Avifors', function () {
           name: 'string (required)',
           type: 'string (enum[string, number, boolean], required)',
           description: 'string'
-        }]
+        }],
+        resource: {
+          'url': 'string (required)',
+          'acl-role': 'string (required)'
+        }
       }, avifors.getGenerator('entity')[0].arguments.normalize());
     });
   });

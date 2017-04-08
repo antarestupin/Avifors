@@ -6,6 +6,7 @@ namespace Acme\Entity;
 
 class {{ name | pascalcase }} {
     private $id;
+    private $url = '{{ resource.url }}';
 
     {% for attr in propertiesNames %}
     private ${{ attr | camelcase }};

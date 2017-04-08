@@ -12,43 +12,63 @@ export function getTypes(avifors) {
       },
       normalize: () => [children.normalize()],
       validate: (i, path) => {
-        avifors.assert(Array.isArray(i), `${path} must be a list, ${i} given`)
+        avifors.assert(i == null || Array.isArray(i), `${path} must be a list, ${i} given`)
         avifors.validate(validators, i, path)
         i.forEach((v,j) => children.validate(v, `${path}[${j}]`))
-      }
-    }),
-
-    map: (keys, { validators = [], builders = [] } = {}) => ({
-      type: 'map',
-      build: value => {
-        let result = {}
-        for (let i in keys) {
-          result[i] = keys[i].build(value[i])
-        }
-        builders.forEach(builder => result = builder(result))
-        return result
-      },
-      normalize: () => {
-        let result = {}
-        for (let i in keys) {
-          result[i] = keys[i].normalize()
-        }
-        return result
-      },
-      validate: (i, path) => {
-        avifors.assert(typeof i === 'object' && !Array.isArray(i), `${path} must be a map, ${i} given`)
-        avifors.validate(validators, i, path)
-        for (let j in i)    avifors.assert(j in keys, `Unexpected key "${j}" in ${path}`)
-        for (let j in keys) keys[j].validate(i[j], `${path}.${j}`)
       }
     }),
 
     optional: {}
   }
 
+  setMapTypes(types, avifors)
   setBasicTypes(types, avifors)
 
   return types
+}
+
+function setMapTypes(types, avifors) {
+  const build = (keys, builders) => value => {
+    let result = {}
+    for (let i in keys) {
+      result[i] = keys[i].build(value[i])
+    }
+    builders.forEach(builder => result = builder(result))
+    return result
+  }
+
+  const normalize = keys => () => {
+    let result = {}
+    for (let i in keys) {
+      result[i] = keys[i].normalize()
+    }
+    return result
+  }
+
+  const validate = (keys, validators) => (i, path) => {
+    avifors.assert(i == null || (typeof i === 'object' && !Array.isArray(i)), `${path} must be a map, ${i} given`)
+    avifors.validate(validators, i, path)
+    for (let j in i) {
+      avifors.assert(j in keys, `Unexpected key "${j}" in ${path}`)
+      keys[j].validate(i[j], `${path}.${j}`)
+    }
+  }
+
+  types.map = (keys, { validators = [], builders = [] } = {}) => ({
+    type: 'map',
+    build: build(keys, builders),
+    normalize: normalize(keys),
+    validate: validate(keys, validators)
+  })
+
+  const buildMethod = (value, defaultKey, fn) => ['string', 'number', 'boolean'].indexOf(typeof value) > -1 ? fn({ [defaultKey]: value }): fn(value)
+
+  types.valueOrMap = (defaultKey, keys, { validators = [], builders = [] } = {}) => ({
+    type: 'value-or-map',
+    build: value => buildMethod(value, defaultKey,  build(keys, builders)),
+    normalize: normalize(keys),
+    validate: value => buildMethod(value, defaultKey, validate(keys, validators))
+  })
 }
 
 function setBasicTypes(types, avifors) {

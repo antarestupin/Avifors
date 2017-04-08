@@ -1,5 +1,6 @@
 entity:
   name: Bunny
+  resource: /bunny
   properties:
     -
       name: weight
