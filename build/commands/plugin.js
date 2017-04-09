@@ -31,17 +31,8 @@ exports.default = function (avifors) {
           model = _ref3.model,
           argv = _ref3.argv;
 
-      var queryName = argv._[1];
-      if (queryName === undefined) {
-        avifors.helpers.printYaml(Object.keys(avifors.queries));
-        return;
-      }
-
-      avifors.helpers.printYaml(avifors.getQuery(queryName)({
-        model: model,
-        argv: argv._.slice(2),
-        avifors: avifors
-      }));
+      var query = new _Query2.default(avifors, model);
+      query.executeQuery(argv);
     }
   };
 
@@ -57,6 +48,10 @@ var _Generator2 = _interopRequireDefault(_Generator);
 var _InterfacePrinter = require('./InterfacePrinter');
 
 var _InterfacePrinter2 = _interopRequireDefault(_InterfacePrinter);
+
+var _Query = require('./Query');
+
+var _Query2 = _interopRequireDefault(_Query);
 
 var _YamlHelper = require('../tools/YamlHelper');
 

@@ -7,6 +7,7 @@
     "main": "node build/main.js --config='./example/.avifors.yml' generate",
     "interface": "node build/main.js --config='./example/.avifors.yml' interface",
     "query": "node build/main.js --config='./example/.avifors.yml' query entity:with-name",
+    "queries": "node build/main.js --config='./example/.avifors.yml' query",
     "help": "node build/main.js help",
     "test": "./node_modules/mocha/bin/mocha build/*/_test build/_test"
   },

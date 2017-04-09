@@ -1,5 +1,6 @@
 import Generator from './Generator'
 import InterfacePrinter from './InterfacePrinter'
+import Query from './Query'
 import YamlHelper from '../tools/YamlHelper'
 
 export default function(avifors) {
@@ -19,17 +20,8 @@ export default function(avifors) {
     },
 
     query: ({avifors, model, argv}) => {
-      const queryName = argv._[1]
-      if (queryName === undefined) {
-        avifors.helpers.printYaml(Object.keys(avifors.queries))
-        return
-      }
-
-      avifors.helpers.printYaml(avifors.getQuery(queryName)({
-        model: model,
-        argv: argv._.slice(2),
-        avifors: avifors
-      }))
+      const query = new Query(avifors, model)
+      query.executeQuery(argv)
     }
   }
 

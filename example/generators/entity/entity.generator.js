@@ -45,12 +45,26 @@ module.exports.default = function(avifors) {
     ]
   })
 
-  // Example of a command you can create for your own purposes
   // Lists the entities having a 'name' property
   avifors.setQuery(
     'entity:with-name',
-    ({model}) => model
-        .filter(i => i.type === 'entity' && i.arguments.properties.some(j => j.name === 'name'))
-        .map(i => i.arguments.name)
+    {
+      description: 'List the entities having a name property',
+      resolve: ({model}) => model
+          .filter(i => i.type === 'entity' && i.arguments.properties.some(j => j.name === 'name'))
+          .map(i => i.arguments.name)
+    }
+  )
+
+  // Lists the entities having given property
+  avifors.setQuery(
+    'entity:with-prop',
+    {
+      description: 'List the entities having given property',
+      arguments: ['propName'],
+      resolve: ({model}, {propName}) => model
+          .filter(i => i.type === 'entity' && i.arguments.properties.some(j => j.name === propName))
+          .map(i => i.arguments.name)
+    }
   )
 }
