@@ -1,0 +1,7 @@
+events:
+  -
+    name: user_registered
+    attributes: [user_id, email_address, encrypted_password]
+  -
+    name: password_changed
+    attributes: [user_id, encrypted_new_password]

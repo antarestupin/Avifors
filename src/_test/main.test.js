@@ -28,7 +28,7 @@ class MyNamespacePasswordChanged extends BaseEvent {
     }
 }
 `,
-        fs.readFileSync('./example/output/Event/MyNamespacePasswordChanged.php', 'utf8')
+        fs.readFileSync('./test/output/Event/MyNamespacePasswordChanged.php', 'utf8')
       )
     })
   })

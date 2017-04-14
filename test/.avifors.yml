@@ -1,0 +1,6 @@
+plugins:
+  - "./test/**/*.generator.js"
+  - "./test/**/*.plugin.js"
+
+model:
+  - "./test/model/**/*.model.yml"

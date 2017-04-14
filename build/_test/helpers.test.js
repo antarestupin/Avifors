@@ -37,7 +37,7 @@ var _InterfacePrinter2 = _interopRequireDefault(_InterfacePrinter);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function getConfiguration() {
-  return new _Configuration2.default('./example/.avifors.yml', new _YamlHelper2.default());
+  return new _Configuration2.default('./test/.avifors.yml', new _YamlHelper2.default());
 }
 
 function getAvifors() {

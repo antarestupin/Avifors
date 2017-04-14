@@ -4,7 +4,7 @@ module.exports.default = function(avifors) {
     key: "name",
 
     arguments: {
-      name: avifors.types.string(),
+      name: avifors.types.string({builders: [value => 'my_namespace_'+value]}),
       attributes: avifors.types.list(
         avifors.types.string()
       )
@@ -12,8 +12,8 @@ module.exports.default = function(avifors) {
 
     outputs: [
       {
-        path: "example/output/Event/{{ name | pascalcase }}.php",
-        template: "example/generators/event/event.template.php"
+        path: "test/output/Event/{{ name | pascalcase }}.php",
+        template: "test/generators/event/event.template.php"
       }
     ]
   })

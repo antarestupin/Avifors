@@ -6,7 +6,7 @@ import Generator from '../commands/Generator'
 import InterfacePrinter from '../commands/InterfacePrinter'
 
 export function getConfiguration() {
-  return new Configuration('./example/.avifors.yml', new YamlHelper())
+  return new Configuration('./test/.avifors.yml', new YamlHelper())
 }
 
 export function getAvifors() {

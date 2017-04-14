@@ -20,19 +20,33 @@ module.exports.default = function(avifors) {
             ]
           }
         )
+      ),
+      resource: avifors.types.valueOrMap(
+        "url",
+        {
+          "url": avifors.types.string(),
+          "acl-role": avifors.types.string()
+        },
+        {
+          builders: [
+            avifors.builders.mapDefaultValues(() => ({
+              "acl-role": "none"
+            }))
+          ]
+        }
       )
     },
 
     outputs: [
       {
-        path: "example/output/Entity/{{ name | pascalcase }}.php",
-        template: "example/generators/entity/entity.template.php"
+        path: "test/output/Entity/{{ name | pascalcase }}.php",
+        template: "test/generators/entity/entity.template.php"
       }
     ]
   })
 
   // Lists the entities having a 'name' property
-  // Can be used with: avifors query entity:with-name
+  // Tests a query without arguments
   avifors.setQuery(
     'entity:with-name',
     {
@@ -44,7 +58,7 @@ module.exports.default = function(avifors) {
   )
 
   // Lists the entities having given property
-  // Can be used with: avifors query entity:with-prop <propName>
+  // Tests a query using arguments
   avifors.setQuery(
     'entity:with-prop',
     {

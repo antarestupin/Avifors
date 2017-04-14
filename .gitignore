@@ -3,5 +3,4 @@ old_test/
 node_modules/
 npm-debug.log
 example/output/
-example/interface/
-model.html
+test/output/
