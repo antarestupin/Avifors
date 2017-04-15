@@ -51,3 +51,5 @@ events:
   password_changed:
     attributes: [user_id, encrypted_new_password]
 ```
+
+Next: [Define a generator](https://github.com/antarestupin/Avifors/tree/master/doc/generator.md)

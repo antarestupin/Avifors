@@ -2,7 +2,7 @@
 
 ## Install Avifors
 
-If not already done, first install Avifors:
+Of course, the first step is to install Avifors:
 
 ```bash
 yarn global add avifors
@@ -134,3 +134,5 @@ class UserRegistered extends BaseEvent {
     }
 }
 ```
+
+Next: [Commands and options](https://github.com/antarestupin/Avifors/tree/master/doc/commands.md)
