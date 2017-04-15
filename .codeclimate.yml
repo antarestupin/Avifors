@@ -20,4 +20,5 @@ exclude_paths:
   - doc/
   - example/
   - src/**/*.test.js
+  - test/
   - README.md
