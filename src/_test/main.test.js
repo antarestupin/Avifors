@@ -31,5 +31,22 @@ class MyNamespacePasswordChanged extends BaseEvent {
         fs.readFileSync('./test/output/Event/MyNamespacePasswordChanged.php', 'utf8')
       )
     })
+
+    it("should generate from auto generators", () => {
+      assert.equal(
+        `<?php
+
+namespace Acme;
+
+class Events {
+    public $events = [
+        'my_namespace_user_registered',
+        'my_namespace_password_changed'
+    ];
+}
+`,
+        fs.readFileSync('./test/output/Events.php', 'utf8')
+      )
+    })
   })
 })

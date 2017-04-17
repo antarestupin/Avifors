@@ -17,4 +17,14 @@ module.exports.default = function(avifors) {
       }
     ]
   })
+
+  avifors.addAutoGenerator(model => [
+    {
+      path: "example/output/Events.php",
+      template: "example/generators/event/events.template.php",
+      variables: {
+        events: model.filter(i => i.type === 'event').map(i => i.arguments)
+      }
+    }
+  ])
 }

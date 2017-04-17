@@ -39,6 +39,8 @@ var Avifors = function () {
     _classCallCheck(this, Avifors);
 
     this.generators = [];
+    this.autoGenerators = [];
+    this.autoGeneratorBuilders = [];
     this.model = null; // will be defined by the model builder
 
     var emptyDicts = ['command', 'type', 'validator', 'builder'];
@@ -137,6 +139,17 @@ var Avifors = function () {
     }
 
     /**
+     * Add a generator that will be executed without model definition
+     * @param builder: model => [{path: string, template: string, variables: {}}]
+     */
+
+  }, {
+    key: 'addAutoGenerator',
+    value: function addAutoGenerator(builder) {
+      this.autoGeneratorBuilders.push(builder);
+    }
+
+    /**
      * Set the model once it's built
      */
 
@@ -145,6 +158,9 @@ var Avifors = function () {
     value: function setModel(model) {
       this.model = model;
       this.nunjucks.addGlobal('model', model);
+      this.autoGenerators = this.autoGeneratorBuilders.map(function (i) {
+        return i(model);
+      });
     }
 
     /**

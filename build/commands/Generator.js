@@ -39,6 +39,12 @@ var Generator = function () {
   _createClass(Generator, [{
     key: 'generate',
     value: function generate(model) {
+      this._writeGenerators(model);
+      this._writeAutoGenerators(model);
+    }
+  }, {
+    key: '_writeGenerators',
+    value: function _writeGenerators(model) {
       var _this = this;
 
       model.forEach(function (item) {
@@ -51,6 +57,21 @@ var Generator = function () {
           }, i);
         }).forEach(function (i) {
           return _this._writeFile(i.path, i.contents);
+        });
+      });
+    }
+  }, {
+    key: '_writeAutoGenerators',
+    value: function _writeAutoGenerators(model) {
+      var _this2 = this;
+
+      this.avifors.autoGenerators.forEach(function (autoGenerator) {
+        return autoGenerator.map(function (i) {
+          return _extends({
+            contents: _this2.avifors.nunjucks.render(i.template, i.variables)
+          }, i);
+        }).forEach(function (i) {
+          return _this2._writeFile(i.path, i.contents);
         });
       });
     }

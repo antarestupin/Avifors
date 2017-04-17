@@ -7,6 +7,8 @@ import YamlHelper from './tools/YamlHelper'
 export default class Avifors {
   constructor() {
     this.generators = []
+    this.autoGenerators = []
+    this.autoGeneratorBuilders = []
     this.model = null // will be defined by the model builder
 
     const emptyDicts = ['command', 'type', 'validator', 'builder']
@@ -79,11 +81,20 @@ export default class Avifors {
   }
 
   /**
+   * Add a generator that will be executed without model definition
+   * @param builder: model => [{path: string, template: string, variables: {}}]
+   */
+  addAutoGenerator(builder) {
+    this.autoGeneratorBuilders.push(builder)
+  }
+
+  /**
    * Set the model once it's built
    */
   setModel(model) {
     this.model = model
     this.nunjucks.addGlobal('model', model)
+    this.autoGenerators = this.autoGeneratorBuilders.map(i => i(model))
   }
 
   /**

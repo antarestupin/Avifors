@@ -10,6 +10,11 @@ export default class Generator {
   }
 
   generate(model) {
+    this._writeGenerators(model)
+    this._writeAutoGenerators(model)
+  }
+
+  _writeGenerators(model) {
     model.forEach(item => {
       const generator = this.avifors.getGenerator(item.type)[0]
       generator.outputs(item.arguments)
@@ -20,6 +25,17 @@ export default class Generator {
         }))
         .forEach(i => this._writeFile(i.path, i.contents))
     })
+  }
+
+  _writeAutoGenerators(model) {
+    this.avifors.autoGenerators
+      .forEach(autoGenerator => autoGenerator
+        .map(i => ({
+          contents: this.avifors.nunjucks.render(i.template, i.variables),
+          ...i
+        }))
+        .forEach(i => this._writeFile(i.path, i.contents))
+      )
   }
 
   _writeFile(filePath, contents) {
