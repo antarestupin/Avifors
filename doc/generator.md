@@ -115,4 +115,4 @@ avifors.setBuilder(
 avifors.type.string({ builders: [avifors.builders.addNamespace('my_namespace')] })
 ```
 
-Next: [Avifors plugins](https://github.com/antarestupin/Avifors/tree/master/doc/plugins.md)
+Next: [Define an automatic generator](https://github.com/antarestupin/Avifors/tree/master/doc/auto-generators.md)

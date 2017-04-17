@@ -20,4 +20,5 @@ Avifors is a MDE ([Model-Driven Engineering](https://en.wikipedia.org/wiki/Model
 - [Commands and options](https://github.com/antarestupin/Avifors/tree/master/doc/commands.md)
 - [Define the model](https://github.com/antarestupin/Avifors/tree/master/doc/model.md)
 - [Define a generator](https://github.com/antarestupin/Avifors/tree/master/doc/generator.md)
+- [Define an automatic generator](https://github.com/antarestupin/Avifors/tree/master/doc/auto-generators.md)
 - [Avifors plugins](https://github.com/antarestupin/Avifors/tree/master/doc/plugins.md)
