@@ -72,6 +72,10 @@ describe('# template/filters', function() {
         it("should give an object's values", () => assert.deepEqual(['bar'], filters.values({ foo: 'bar' })))
     })
 
+    describe('toArray', function() {
+        it("should transform a dict to an array of dicts", () => assert.deepEqual([{id: 'a', b: 'c'}], filters.toArray({a: {b: 'c'}}, 'id')))
+    })
+
     describe('findbycolumn', function() {
         it("should filter an object by the value of one of its columns", () => assert.deepEqual([{ foo: 'bar' }], filters.findbycolumn([{ foo: 'bar' }, { test: 'ok' }], 'foo', 'bar')))
     })

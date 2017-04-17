@@ -127,6 +127,12 @@ describe('# template/filters', function () {
         });
     });
 
+    describe('toArray', function () {
+        it("should transform a dict to an array of dicts", function () {
+            return _assert2.default.deepEqual([{ id: 'a', b: 'c' }], _filters.filters.toArray({ a: { b: 'c' } }, 'id'));
+        });
+    });
+
     describe('findbycolumn', function () {
         it("should filter an object by the value of one of its columns", function () {
             return _assert2.default.deepEqual([{ foo: 'bar' }], _filters.filters.findbycolumn([{ foo: 'bar' }, { test: 'ok' }], 'foo', 'bar'));

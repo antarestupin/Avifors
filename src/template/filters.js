@@ -35,6 +35,16 @@ const surround = scalableOrArrayFunction((str, toAdd) => toAdd + str + toAdd) //
 // collection manipulation
 const keys = dict => Object.keys(dict) // get object keys
 const values = dict => Object.values(dict) // get object values
+const toArray = (dict, key) => { // toArray({a: {b: 'c'}}, 'id') => [{id: 'a', b: 'c'}]
+  let res = []
+  for (let i in dict) {
+    res.push({
+      [key]: i,
+      ...dict[i]
+    })
+  }
+  return res
+}
 const findByColumn = (list, column, value) => list.filter(i => i[column] === value) // filter an object by the value of one of its columns
 const findOneByColumn = (list, column, value) => findByColumn(list, column, value)[0]
 const map = (collection, fn) => collection.map(eval(fn)) // apply a map to the collection with a JS function
@@ -65,6 +75,7 @@ export const filters = {
 
   keys: keys,
   values: values,
+  toArray: toArray,
   findbycolumn: findByColumn,
   findonebycolumn: findOneByColumn,
   map: map,

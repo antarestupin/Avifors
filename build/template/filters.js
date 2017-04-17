@@ -5,11 +5,15 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.filters = undefined;
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _jsYaml = require('js-yaml');
 
 var _jsYaml2 = _interopRequireDefault(_jsYaml);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 // 'camelCase' => ['camel', 'case']
 function splitVariableName(varName) {
@@ -84,6 +88,14 @@ var keys = function keys(dict) {
 var values = function values(dict) {
   return Object.values(dict);
 }; // get object values
+var toArray = function toArray(dict, key) {
+  // toArray({a: {b: 'c'}}, 'id') => [{id: 'a', b: 'c'}]
+  var res = [];
+  for (var i in dict) {
+    res.push(_extends(_defineProperty({}, key, i), dict[i]));
+  }
+  return res;
+};
 var findByColumn = function findByColumn(list, column, value) {
   return list.filter(function (i) {
     return i[column] === value;
@@ -134,6 +146,7 @@ var filters = exports.filters = {
 
   keys: keys,
   values: values,
+  toArray: toArray,
   findbycolumn: findByColumn,
   findonebycolumn: findOneByColumn,
   map: map,
