@@ -50,6 +50,7 @@ export default class YamlModelBuilder {
         modelConfig[name] = argsList
       }
 
+      modelConfig[name] = modelConfig[name].map(args => this._executeFunctions(args))
       modelConfig[name].forEach(args => this._validateItem(args, generator))
 
       return modelConfig[name].map(args => ({
@@ -58,12 +59,33 @@ export default class YamlModelBuilder {
       }))
     }
 
+    modelConfig[name] = this._executeFunctions(modelConfig[name])
     this._validateItem(modelConfig[name], generator)
 
     return [{
       type: name,
       arguments: generator.arguments.build(modelConfig[name])
     }]
+  }
+
+  _executeFunctions(item) {
+    if (typeof item === 'string' && item.match(/^\s*(\.\w+)+(\(.*\))?\s*$/)) {
+      return eval("(this.avifors.constructors" + item + ")")
+    }
+
+    if (Array.isArray(item)) {
+      return item.map(i => this._executeFunctions(i))
+    }
+
+    if (typeof item === 'object' && item !== null) {
+      let res = {}
+      for (let i in item) {
+        res[i] = this._executeFunctions(item[i])
+      }
+      return res
+    }
+
+    return item
   }
 
   _validateItem(args, generator) {

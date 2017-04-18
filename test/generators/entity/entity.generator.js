@@ -6,25 +6,32 @@ module.exports.default = function(avifors) {
     arguments: {
       name: avifors.types.string(),
       properties: avifors.types.list(
-        avifors.types.map(
-          {
-            "name": avifors.types.string(),
-            "type": avifors.types.string({validators: [avifors.validators.enum(['string', 'number', 'boolean'])]}),
-            "description": avifors.types.optional.string()
-          },
-          () => ({
-            "description": "@inheritdoc"
+        avifors.types.map({
+          "name": avifors.types.string(),
+          "type": avifors.types.string({validators: [avifors.validators.enum(['string', 'number', 'boolean'])]}),
+          "description": avifors.types.optional.string(),
+          "constraints": avifors.types.list(
+            avifors.types.map({
+              "type": avifors.types.string()
+            }, { strict: false })
+          )
+        }, {
+          defaults: () => ({
+            "description": "@inheritdoc",
+            "constraints": []
           })
-        )
+        })
       ),
       resource: avifors.types.oneOf([
         avifors.types.string(),
         avifors.types.map({
           "url": avifors.types.string(),
           "acl-role": avifors.types.string()
-        }, () => ({
-          "acl-role": "none"
-        }))
+        }, {
+          defaults: () => ({
+            "acl-role": "none"
+          })
+        })
       ], (value, typeIndex) => typeIndex ? value: { url: value })
     },
 
@@ -35,6 +42,14 @@ module.exports.default = function(avifors) {
       }
     ]
   })
+
+  avifors.constructors.constraints = {
+    between: (min, max) => ({
+      type: 'between',
+      min: min,
+      max: max
+    })
+  }
 
   // Lists the entities having a 'name' property
   // Tests a query without arguments

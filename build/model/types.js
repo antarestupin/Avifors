@@ -33,7 +33,9 @@ function setListType(types, avifors) {
 
     return {
       type: 'list',
-      build: function build(value) {
+      build: function build() {
+        var value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+
         var result = value.map(function (i) {
           return children.build(i);
         });
@@ -48,6 +50,9 @@ function setListType(types, avifors) {
       validate: function validate(i, path) {
         avifors.assert(i == null || Array.isArray(i), path + ' must be a list, ' + i + ' given');
         avifors.validate(validators, i, path);
+        if (i == null) {
+          return;
+        }
         i.forEach(function (v, j) {
           return children.validate(v, path + '[' + j + ']');
         });
@@ -58,24 +63,28 @@ function setListType(types, avifors) {
 
 function setMapType(types, avifors) {
   types.map = function (keys) {
-    var defaultFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function (value) {
-      return {};
-    };
-
-    var _ref2 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+    var _ref2 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
         _ref2$validators = _ref2.validators,
         validators = _ref2$validators === undefined ? [] : _ref2$validators,
         _ref2$builders = _ref2.builders,
-        builders = _ref2$builders === undefined ? [] : _ref2$builders;
+        builders = _ref2$builders === undefined ? [] : _ref2$builders,
+        _ref2$defaults = _ref2.defaults,
+        defaults = _ref2$defaults === undefined ? function () {
+      return {};
+    } : _ref2$defaults,
+        _ref2$strict = _ref2.strict,
+        strict = _ref2$strict === undefined ? true : _ref2$strict;
 
     return {
       type: 'map',
-      build: function build(value) {
+      build: function build() {
+        var value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
         var result = {};
         for (var i in keys) {
           result[i] = keys[i].build(value[i]);
         }
-        result = Object.assign(defaultFn(result), result);
+        result = Object.assign(defaults(result), result);
         builders.forEach(function (builder) {
           return result = builder(result);
         });
@@ -91,9 +100,16 @@ function setMapType(types, avifors) {
       validate: function validate(i, path) {
         avifors.assert(i == null || (typeof i === 'undefined' ? 'undefined' : _typeof(i)) === 'object' && !Array.isArray(i), path + ' must be a map, ' + i + ' given');
         avifors.validate(validators, i, path);
+        if (i == null) {
+          return;
+        }
         for (var j in i) {
-          avifors.assert(j in keys, 'Unexpected key "' + j + '" in ' + path);
-          keys[j].validate(i[j], path + '.' + j);
+          if (strict) {
+            avifors.assert(j in keys, 'Unexpected key "' + j + '" in ' + path);
+          }
+          if (j in keys) {
+            keys[j].validate(i[j], path + '.' + j);
+          }
         }
       }
     };

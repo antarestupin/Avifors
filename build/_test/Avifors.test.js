@@ -22,7 +22,10 @@ describe('# Avifors', function () {
         properties: [{
           name: 'string (required)',
           type: 'string (enum[string, number, boolean], required)',
-          description: 'string'
+          description: 'string',
+          constraints: [{
+            type: 'string (required)'
+          }]
         }],
         resource: {
           'one of': ['string (required)', {

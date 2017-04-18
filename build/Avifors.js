@@ -41,6 +41,7 @@ var Avifors = function () {
     this.generators = [];
     this.autoGenerators = [];
     this.autoGeneratorBuilders = [];
+    this.constructors = {};
     this.model = null; // will be defined by the model builder
 
     var emptyDicts = ['command', 'type', 'validator', 'builder'];

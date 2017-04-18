@@ -6,16 +6,15 @@ module.exports.default = function(avifors) {
     arguments: {
       name: avifors.types.string(),
       properties: avifors.types.list(
-        avifors.types.map(
-          {
-            "name": avifors.types.string(),
-            "type": avifors.types.string({validators: [avifors.validators.enum(['string', 'number', 'boolean'])]}),
-            "description": avifors.types.optional.string()
-          },
-          () => ({
+        avifors.types.map({
+          "name": avifors.types.string(),
+          "type": avifors.types.string({validators: [avifors.validators.enum(['string', 'number', 'boolean'])]}),
+          "description": avifors.types.optional.string()
+        }, {
+          defaults: () => ({
             "description": "@inheritdoc"
           })
-        )
+        })
       )
     },
 

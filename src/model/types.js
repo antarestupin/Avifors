@@ -17,7 +17,7 @@ export function getTypes(avifors) {
 function setListType(types, avifors) {
   types.list = (children, { validators = [], builders = [] } = {}) => ({
     type: 'list',
-    build: value => {
+    build: (value = []) => {
       let result = value.map(i => children.build(i))
       builders.forEach(builder => result = builder(result))
       return result
@@ -26,20 +26,23 @@ function setListType(types, avifors) {
     validate: (i, path) => {
       avifors.assert(i == null || Array.isArray(i), `${path} must be a list, ${i} given`)
       avifors.validate(validators, i, path)
+      if (i == null) {
+        return
+      }
       i.forEach((v,j) => children.validate(v, `${path}[${j}]`))
     }
   })
 }
 
 function setMapType(types, avifors) {
-  types.map = (keys, defaultFn = value => ({}), { validators = [], builders = [] } = {}) => ({
+  types.map = (keys, { validators = [], builders = [], defaults = () => ({}), strict = true } = {}) => ({
     type: 'map',
-    build: value => {
+    build: (value = {}) => {
       let result = {}
       for (let i in keys) {
         result[i] = keys[i].build(value[i])
       }
-      result = Object.assign(defaultFn(result), result)
+      result = Object.assign(defaults(result), result)
       builders.forEach(builder => result = builder(result))
       return result
     },
@@ -53,9 +56,16 @@ function setMapType(types, avifors) {
     validate: (i, path) => {
       avifors.assert(i == null || (typeof i === 'object' && !Array.isArray(i)), `${path} must be a map, ${i} given`)
       avifors.validate(validators, i, path)
+      if (i == null) {
+        return
+      }
       for (let j in i) {
-        avifors.assert(j in keys, `Unexpected key "${j}" in ${path}`)
-        keys[j].validate(i[j], `${path}.${j}`)
+        if (strict) {
+          avifors.assert(j in keys, `Unexpected key "${j}" in ${path}`)
+        }
+        if (j in keys) {
+          keys[j].validate(i[j], `${path}.${j}`)
+        }
       }
     }
   })
