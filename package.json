@@ -9,7 +9,11 @@
     "query": "node build/main.js --config='./example/.avifors.yml' query entity:with-name",
     "queries": "node build/main.js --config='./example/.avifors.yml' query",
     "help": "node build/main.js help",
-    "test": "node build/main.js --config='./test/.avifors.yml' generate && ./node_modules/mocha/bin/mocha build/*/_test build/_test"
+    "test": "node build/main.js --config='./test/.avifors.yml' generate && ./node_modules/mocha/bin/mocha build/*/_test build/_test",
+    "test-main": "node build/main.js --config='./test/.avifors.yml' generate",
+    "test-interface": "node build/main.js --config='./test/.avifors.yml' interface",
+    "test-query": "node build/main.js --config='./test/.avifors.yml' query entity:with-name",
+    "test-queries": "node build/main.js --config='./test/.avifors.yml' query"
   },
   "author": "Antarès Tupin",
   "license": "MIT",

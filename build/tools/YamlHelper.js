@@ -46,7 +46,7 @@ var YamlHelper = function () {
   }, {
     key: 'print',
     value: function print(toPrint) {
-      return this.serialize(toPrint).replace(/(\w+):/g, _chalk2.default.cyan('$1') + ':');
+      return this.serialize(toPrint).replace(/([\w\s\-]+):/g, _chalk2.default.cyan('$1') + ':');
     }
   }]);
 

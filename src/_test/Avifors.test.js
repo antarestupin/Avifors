@@ -16,8 +16,13 @@ describe('# Avifors', function() {
             description: 'string'
           }],
           resource: {
-            'url': 'string (required)',
-            'acl-role': 'string (required)'
+            'one of': [
+              'string (required)',
+              {
+                'url': 'string (required)',
+                'acl-role': 'string (required)'
+              }
+            ]
           }
         },
         avifors.getGenerator('entity')[0].arguments.normalize()

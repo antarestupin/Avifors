@@ -18,6 +18,6 @@ export default class YamlHelper {
   }
 
   print(toPrint) {
-    return this.serialize(toPrint).replace(/(\w+):/g, chalk.cyan('$1') + ':')
+    return this.serialize(toPrint).replace(/([\w\s\-]+):/g, chalk.cyan('$1') + ':')
   }
 }

@@ -21,20 +21,19 @@ module.exports.default = function(avifors) {
           }
         )
       ),
-      resource: avifors.types.valueOrMap(
-        "url",
-        {
+      resource: avifors.types.oneOf([
+        avifors.types.string(),
+        avifors.types.map({
           "url": avifors.types.string(),
           "acl-role": avifors.types.string()
-        },
-        {
+        }, {
           builders: [
             avifors.builders.mapDefaultValues(() => ({
               "acl-role": "none"
             }))
           ]
-        }
-      )
+        })
+      ], (value, typeIndex) => typeIndex ? value: { url: value })
     },
 
     outputs: [
