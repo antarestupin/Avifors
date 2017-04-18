@@ -12,13 +12,9 @@ module.exports.default = function(avifors) {
             "type": avifors.types.string({validators: [avifors.validators.enum(['string', 'number', 'boolean'])]}),
             "description": avifors.types.optional.string()
           },
-          {
-            builders: [
-              avifors.builders.mapDefaultValues(() => ({
-                "description": "@inheritdoc"
-              }))
-            ]
-          }
+          () => ({
+            "description": "@inheritdoc"
+          })
         )
       )
     },

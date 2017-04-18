@@ -32,13 +32,14 @@ function setListType(types, avifors) {
 }
 
 function setMapType(types, avifors) {
-  types.map = (keys, { validators = [], builders = [] } = {}) => ({
+  types.map = (keys, defaultFn = value => ({}), { validators = [], builders = [] } = {}) => ({
     type: 'map',
     build: value => {
       let result = {}
       for (let i in keys) {
         result[i] = keys[i].build(value[i])
       }
+      result = Object.assign(defaultFn(result), result)
       builders.forEach(builder => result = builder(result))
       return result
     },

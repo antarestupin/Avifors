@@ -12,13 +12,9 @@ module.exports.default = function(avifors) {
             "type": avifors.types.string({validators: [avifors.validators.enum(['string', 'number', 'boolean'])]}),
             "description": avifors.types.optional.string()
           },
-          {
-            builders: [
-              avifors.builders.mapDefaultValues(() => ({
-                "description": "@inheritdoc"
-              }))
-            ]
-          }
+          () => ({
+            "description": "@inheritdoc"
+          })
         )
       ),
       resource: avifors.types.oneOf([
@@ -26,13 +22,9 @@ module.exports.default = function(avifors) {
         avifors.types.map({
           "url": avifors.types.string(),
           "acl-role": avifors.types.string()
-        }, {
-          builders: [
-            avifors.builders.mapDefaultValues(() => ({
-              "acl-role": "none"
-            }))
-          ]
-        })
+        }, () => ({
+          "acl-role": "none"
+        }))
       ], (value, typeIndex) => typeIndex ? value: { url: value })
     },
 

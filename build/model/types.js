@@ -58,7 +58,11 @@ function setListType(types, avifors) {
 
 function setMapType(types, avifors) {
   types.map = function (keys) {
-    var _ref2 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+    var defaultFn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function (value) {
+      return {};
+    };
+
+    var _ref2 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
         _ref2$validators = _ref2.validators,
         validators = _ref2$validators === undefined ? [] : _ref2$validators,
         _ref2$builders = _ref2.builders,
@@ -71,6 +75,7 @@ function setMapType(types, avifors) {
         for (var i in keys) {
           result[i] = keys[i].build(value[i]);
         }
+        result = Object.assign(defaultFn(result), result);
         builders.forEach(function (builder) {
           return result = builder(result);
         });

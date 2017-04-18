@@ -36,7 +36,7 @@ Here are the types included in Avifors out of the box:
 - `number({ validators, builders } optional)`
 - `boolean({ validators, builders } optional)`
 - `list(children array, { validators, builders } optional)`
-- `map(keys object, { validators, builders } optional)`
+- `map(keys object, defaultFn value => object optional, { validators, builders } optional)`: defaultFn will return an object with the default values of the map
 - `oneOf(types array, builder (value, typeIndex) => mixed)`: the model value can be of one of given types; the builder function takes the value and the index of which type it is and returns the final value
 - `optional.string`, `optional.number`, `optional.boolean`: these fields may not be provided in the model
 
