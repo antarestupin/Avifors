@@ -12,7 +12,8 @@ Avifors is a MDE ([Model-Driven Engineering](https://en.wikipedia.org/wiki/Model
 - Create your own validators, builders and types to ease the model definition
 - Query the model to answer most questions you could have about the model
 - Create your own commands to do more
-- Use the plugins system to extend Avifors, e.g to add global variables
+- Use constructors functions to reduce the size of complex definitions
+- Use the plugins system to extend Avifors, e.g to add global variables, use libraries...
 
 ## Documentation
 
