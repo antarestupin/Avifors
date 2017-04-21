@@ -6,7 +6,7 @@
 
 A [Model-Driven Engineering](https://en.wikipedia.org/wiki/Model-driven_engineering) tool that generates code from a YAML definition of your app domain model.
 
-[![Example](https://github.com/antarestupin/Avifors/tree/master/doc/example.gif)](https://raw.githubusercontent.com/antarestupin/Avifors/master/doc/example.gif)
+[![Example](https://raw.githubusercontent.com/antarestupin/Avifors/master/doc/example.gif)](https://github.com/antarestupin/Avifors/tree/master/doc/example.gif)
 
 ## How to use it
 
