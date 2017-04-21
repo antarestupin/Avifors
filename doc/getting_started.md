@@ -95,7 +95,7 @@ model:
 
 ## Generate the code
 
-Run the following contents:
+Run the following command:
 
 ```
 avifors generate

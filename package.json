@@ -1,7 +1,10 @@
 {
   "name": "avifors",
-  "version": "1.0.0-dev",
-  "description": "A CLI tool to generate code from templates.",
+  "version": "0.0.1-dev",
+  "description": "A MDE tool that generates code from a YAML definition of your app domain model.",
+  "keywords": ["MDE", "code generation", "generation", "yaml", "nunjucks"],
+  "author": "Antarès Tupin",
+  "license": "MIT",
   "scripts": {
     "build": "babel src -d build",
     "main": "node build/main.js --config='./example/.avifors.yml' generate",
@@ -15,8 +18,6 @@
     "test-query": "node build/main.js --config='./test/.avifors.yml' query entity:with-name",
     "test-queries": "node build/main.js --config='./test/.avifors.yml' query"
   },
-  "author": "Antarès Tupin",
-  "license": "MIT",
   "bin": {
     "avifors": "build/main.js"
   },

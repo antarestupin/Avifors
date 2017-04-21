@@ -1,0 +1,40 @@
+Avifors:
+  build/: Result of Babel build
+
+  doc/: Doc of the project
+
+  example/:
+    generators/:
+      .:                   Generators definition
+      "**/*.generator.js": Avifors plugin adding the generator
+      "**/*.template.php": Template for generating PHP code
+    model/:                Model definition
+    output/:               Generated code (.gitignored)
+    .avifors.yml:          Avifors configuration
+    globals.plugin.js:     Adds global variables into Nunjucks
+
+  src/:
+    "**/_test/":    Test files
+    "**/plugin.js": Avifors core plugins; modify the Avifors object using the plugin system
+
+    commands/:
+      .:                   Adds Avifors commands
+      Generator.js:        `avifors generate`
+      InterfacePrinter.js: `avifors interface [generator]`
+      Query.js:            `avifors query [queryName]`
+
+    model/:
+      .:                   Adds everything related to model building (types, validators...)
+      YamlModelBuilder.js: Builds the model by reading YAML files
+
+    template/: Adds Nunjucks filters and functions
+
+    tools/:
+      YamlHelper.js: Helper for YAML operations, like parsing, printing...
+
+    Avifors.js:       The Avifors class, which instance passed as an argument in every plugin so that generators, types, validators, commands... can be added
+    Configuration.js: Object containing the configuration
+    help.js:          Helper message, displayed with `avifors help` or simply `avifors`
+    main.js:          ~
+
+  test/: Model and generators for test purposes; same structure as example/

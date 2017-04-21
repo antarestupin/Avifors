@@ -2,18 +2,45 @@
 
 [![Build Status](https://travis-ci.org/antarestupin/Avifors.svg?branch=master)](https://travis-ci.org/antarestupin/Avifors)
 [![Code Climate](https://codeclimate.com/github/antarestupin/Avifors/badges/gpa.svg)](https://codeclimate.com/github/antarestupin/Avifors)
+[![MIT License](https://poser.pugx.org/antares/accessible/license)](https://github.com/antarestupin/Avifors/blob/master/LICENSE)
 
-Avifors is a MDE ([Model-Driven Engineering](https://en.wikipedia.org/wiki/Model-driven_engineering)) tool to define the business model of your app in a declarative and readable way using YAML, and associate generators to this model, that will generate the code needed from the model by using [Nunchuks](https://mozilla.github.io/nunjucks) templates. It also provides commands allowing you to make the model easier to understand - you can for example query it to get interesting parts of it depending on your needs -, and allows you to create more commands to play with the model.
+A [Model-Driven Engineering](https://en.wikipedia.org/wiki/Model-driven_engineering) tool that generates code from a YAML definition of your app domain model.
+
+TODO: gif example
+
+## How to use it
+
+1. Define you app domain model declaratively using YAML
+2. Define generators to make sense of the model and [Nunjucks](https://mozilla.github.io/nunjucks) templates to generate code from it
+3. `avifors generate`: your code is generated ✨
+
+## Motivation
+
+TODO
+
+Here are examples of what is possible to do with Avifors:
+
+- Generate the domain part of an application source code
+- Generate code from the model in different languages to share it between frontend/backend or between microservices
+- Generate a full REST / GraphQL API
 
 ## Features
 
-- Generate code from model using [Nunchuks](https://mozilla.github.io/nunjucks) templates
+- Can be used to generate code in any language - your domain model becomes independent of your app language
+- Use builders and constructors functions to ease the model definition
 - Use validators to avoid wrong definitions in the model
-- Create your own validators, builders and types to ease the model definition
-- Query the model to answer most questions you could have about the model
-- Create your own commands to do more
-- Use constructors functions to reduce the size of complex definitions
-- Use the plugins system to extend Avifors, e.g to add global variables, use libraries...
+- Query the model to answer most questions (even complex ones) you could have about the model using [Avifors queries](https://github.com/antarestupin/Avifors/blob/master/doc/commands.md#query-the-model)
+- Use the plugins system to extend Avifors: add Nunjucks global variables, create your own validators, builders, types or even commands 🚀
+
+## Installation
+
+You can install Avifors using [Yarn](https://yarnpkg.com) or [npm](https://www.npmjs.com):
+
+```bash
+yarn global add avifors
+# or
+npm install -g avifors
+```
 
 ## Documentation
 
