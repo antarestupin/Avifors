@@ -41,6 +41,7 @@ var Generator = function () {
     value: function generate(model) {
       this._writeGenerators(model);
       this._writeAutoGenerators(model);
+      console.log(_chalk2.default.bold.green("Generation completed."));
     }
   }, {
     key: '_writeGenerators',

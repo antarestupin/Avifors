@@ -1,8 +1,14 @@
 {
   "name": "avifors",
-  "version": "0.0.1-dev",
+  "version": "1.0.1-dev",
   "description": "A MDE tool that generates code from a YAML definition of your app domain model.",
-  "keywords": ["MDE", "code generation", "generation", "yaml", "nunjucks"],
+  "keywords": [
+    "MDE",
+    "code generation",
+    "generation",
+    "yaml",
+    "nunjucks"
+  ],
   "author": "Antarès Tupin",
   "license": "MIT",
   "scripts": {

@@ -12,6 +12,7 @@ export default class Generator {
   generate(model) {
     this._writeGenerators(model)
     this._writeAutoGenerators(model)
+    console.log(chalk.bold.green("Generation completed."))
   }
 
   _writeGenerators(model) {
