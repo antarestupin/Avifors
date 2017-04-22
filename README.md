@@ -8,21 +8,23 @@ A [Model-Driven Engineering](https://en.wikipedia.org/wiki/Model-driven_engineer
 
 [![Example](https://raw.githubusercontent.com/antarestupin/Avifors/master/doc/example.gif)](https://github.com/antarestupin/Avifors/tree/master/doc/example.gif)
 
-## How to use it
+## Motivation / Objectives
 
-1. Define you app domain model declaratively using YAML
-2. Define generators to make sense of the model and [Nunjucks](https://mozilla.github.io/nunjucks) templates to generate code from it
-3. `avifors generate`: your code is generated ✨
+I want the domain model of my application to be simple to understand. To achieve this goal, I want it to be written in a declarative way, and the actual code generated consistently. I also don't want to use an heavy software like Rational Rose to do it, I want it to be included as code in my project.
 
-## Motivation
-
-TODO
+When Avifors will be stable I'd like to develop libraries allowing to make more complex work based on standards, like generating a full REST API with filtering, pagination, hypermedia links... with only the resources definition.
 
 Here are examples of what is possible to do with Avifors:
 
 - Generate the domain part of an application source code
 - Generate code from the model in different languages to share it between frontend/backend or between microservices
 - Generate a full REST / GraphQL API
+
+## How to use it
+
+1. Define you app domain model declaratively using YAML
+2. Define generators to make sense of the model and [Nunjucks](https://mozilla.github.io/nunjucks) templates to generate code from it
+3. `avifors generate`: your code is generated ✨
 
 ## Features
 
