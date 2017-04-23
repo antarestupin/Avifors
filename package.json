@@ -12,7 +12,7 @@
   "author": "Antarès Tupin",
   "license": "MIT",
   "scripts": {
-    "build": "babel src -d build",
+    "build": "./node_modules/.bin/babel src -d build",
     "main": "node build/main.js --config='./example/.avifors.yml' generate",
     "interface": "node build/main.js --config='./example/.avifors.yml' interface",
     "query": "node build/main.js --config='./example/.avifors.yml' query entity:with-name",
@@ -28,6 +28,7 @@
     "avifors": "build/main.js"
   },
   "dependencies": {
+    "babel-preset-es2015": "^6.24.1",
     "chalk": "^1.1.3",
     "check-types": "^7.1.5",
     "glob": "^7.1.1",
@@ -35,12 +36,10 @@
     "lodash": "^4.17.4",
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
-    "nunjucks": "^2.5.2",
-    "prompt-sync": "^4.1.4",
-    "vis": "^4.17.0"
+    "nunjucks": "^2.5.2"
   },
   "devDependencies": {
-    "babel-cli": "^6.23.0",
+    "babel-cli": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "babel-preset-env": "^1.2.1",
     "mocha": "^3.2.0"

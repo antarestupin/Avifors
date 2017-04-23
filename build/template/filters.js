@@ -100,7 +100,7 @@ var findByColumn = function findByColumn(list, column, value) {
   return list.filter(function (i) {
     return i[column] === value;
   });
-}; // filter an object by the value of one of its columns
+}; // filter a list of objects by the value of one of its columns
 var findOneByColumn = function findOneByColumn(list, column, value) {
   return findByColumn(list, column, value)[0];
 };

@@ -1,8 +1,12 @@
 # Getting started
 
+In this example, we want to express in our model the events that can happen in our application, and generate PHP code to manipulate them as objects.
+
+Create a folder in which we will do this work, and let's start.
+
 ## Install Avifors
 
-Of course, the first step is to install Avifors:
+Of course, the first step is to install Avifors. You can do it with [Yarn](https://yarnpkg.com) or [npm](https://www.npmjs.com):
 
 ```bash
 yarn global add avifors
@@ -10,7 +14,21 @@ yarn global add avifors
 npm install -g avifors
 ```
 
+## Define your model
+
+Create a folder `model` in which we will put the domain model of our app. In our case, we will first create an event for a user registration. To do this, create in `model` a folder `events` and add in it a file named `user_registered.model.yml` and with the following contents:
+
+```yaml
+event:
+  name: user_registered
+  attributes: [user_id, email_address, password]
+```
+
+Now we have a clear definition of our event, but nothing to generate the code.
+
 ## Define a first generator
+
+We must first create the generator that will define what an event is and how to handle it.
 
 Create a folder `generators` and create in it a file named `event.generator.js` with the following contents:
 
@@ -20,7 +38,7 @@ module.exports.default = function(avifors) {
     list: "events",                   // 'events' is the name to use when listing events in a model file
     key: "name",                      // When using a list of events, the key used to identify an event will then be set as its 'name'
 
-    arguments: {                      // Here we define the interface of the model definition, i.e. how to define an event
+    arguments: {                       // Here we define the interface of the model definition, i.e. how to define an event
       name: avifors.types.string(),    // The name of the event is a string
       attributes: avifors.types.list(  // Here we want a list of strings as attributes
         avifors.types.string()
@@ -37,7 +55,11 @@ module.exports.default = function(avifors) {
 }
 ```
 
+As you may guess, the last piece to add is the template.
+
 ## Define a template
+
+The template will receive the definition of our event as arguments.
 
 In `generators/event`, create a file named `event.template.php` with the following contents:
 
@@ -63,37 +85,33 @@ class {{ name | pascalcase }} extends BaseEvent {
     }
 
     {# Getters #}
-    {% for attr in attributes %}
+    {% for attr in camelCasedAttributes %}
     public function get{{ attr | pascalcase }}() {
-        return $this->{{ attr | camelcase }};
+        return $this->{{ attr }};
     }
     {% endfor %}
 }
 ```
 
-## Define your model
-
-Create a folder `model` and put in it a create called `event.model.yml` and with the following contents:
-
-```yaml
-event:
-  name: user_registered
-  attributes: [user_id, email_address, encrypted_password]
-```
+Here you can see that custom filters have added to help creating code templates, like `camelcase`. The list of Avifors Nunjucks filters and functions is [here](https://github.com/antarestupin/Avifors/tree/master/doc/templates.md). You can also create you own [filters and functions](https://github.com/antarestupin/Avifors/blob/master/doc/plugins.md#change-environment-of-templates).
 
 ## Add configuration
+
+The last step is to create the Avifors configuration file. By default Avifors will look for a `.avifors.yml` file in current directory, but you can override this behavior by adding `--config='path/to/your/config.yml'` to the commands you run.
 
 Create the file `.avifors.yml` with the following contents:
 
 ```yaml
-plugins:
+plugins:                              # Avifors will load these files as plugins...
   - "./generators/**/*.generator.js"
 
-model:
+model:                                # ... and these ones as the model
   - "./model/**/*.model.yml"
 ```
 
 ## Generate the code
+
+Now we have everything in place, let's run Avifors!
 
 Run the following command:
 
@@ -135,4 +153,4 @@ class UserRegistered extends BaseEvent {
 }
 ```
 
-Next: [Commands and options](https://github.com/antarestupin/Avifors/tree/master/doc/commands.md)
+Next: [Define lists of items](https://github.com/antarestupin/Avifors/tree/master/doc/lists.md)

@@ -31,7 +31,7 @@ Here are examples of what is possible to do with Avifors:
 - Can be used to generate code in any language - your domain model becomes independent of your app language
 - Use builders and constructors functions to ease the model definition
 - Use validators to avoid wrong definitions in the model
-- Query the model to answer most questions (even complex ones) you could have about the model using [Avifors queries](https://github.com/antarestupin/Avifors/blob/master/doc/commands.md#query-the-model)
+- Query the model to answer most questions (even complex ones) you could have about the model using [Avifors queries](https://github.com/antarestupin/Avifors/blob/master/doc/queries.md)
 - Use the plugins system to extend Avifors: add Nunjucks global variables, create your own validators, builders, types or even commands 🚀
 
 ## Installation
@@ -47,8 +47,17 @@ npm install -g avifors
 ## Documentation
 
 - [Getting started](https://github.com/antarestupin/Avifors/tree/master/doc/getting_started.md)
-- [Commands and options](https://github.com/antarestupin/Avifors/tree/master/doc/commands.md)
-- [Define the model](https://github.com/antarestupin/Avifors/tree/master/doc/model.md)
-- [Define a generator](https://github.com/antarestupin/Avifors/tree/master/doc/generator.md)
-- [Define an automatic generator](https://github.com/antarestupin/Avifors/tree/master/doc/auto-generators.md)
+- [Define lists of items](https://github.com/antarestupin/Avifors/tree/master/doc/lists.md)
+- [Use automatic generators](https://github.com/antarestupin/Avifors/tree/master/doc/auto-generators.md)
+- [Use constructors](https://github.com/antarestupin/Avifors/tree/master/doc/constructors.md)
+- [Types, validators and builders](https://github.com/antarestupin/Avifors/tree/master/doc/types-validators-builders.md)
+- [Query the model](https://github.com/antarestupin/Avifors/tree/master/doc/queries.md)
+- [Print generators interfaces](https://github.com/antarestupin/Avifors/tree/master/doc/interface.md)
 - [Avifors plugins](https://github.com/antarestupin/Avifors/tree/master/doc/plugins.md)
+- [Nunjucks templates environment](https://github.com/antarestupin/Avifors/tree/master/doc/templates.md)
+
+## Contributions
+
+Contributions are welcome 🙏
+
+Though the codebase is not complex, I've added [this file](https://github.com/antarestupin/Avifors/blob/master/.structure.yml) to describe the files structure of Avifors, to make life easier to newcomers.

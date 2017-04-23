@@ -45,7 +45,7 @@ const toArray = (dict, key) => { // toArray({a: {b: 'c'}}, 'id') => [{id: 'a', b
   }
   return res
 }
-const findByColumn = (list, column, value) => list.filter(i => i[column] === value) // filter an object by the value of one of its columns
+const findByColumn = (list, column, value) => list.filter(i => i[column] === value) // filter a list of objects by the value of one of its columns
 const findOneByColumn = (list, column, value) => findByColumn(list, column, value)[0]
 const map = (collection, fn) => collection.map(eval(fn)) // apply a map to the collection with a JS function
 const filter = (collection, fn) => collection.filter(eval(fn)) // apply a filter to the collection with a JS function

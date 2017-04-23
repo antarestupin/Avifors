@@ -1,14 +1,16 @@
-# Define an automatic generator
+# Use automatic generators
+
+Now that we have our lists of events, let's say we want a class listing them in PHP. To achieve this we will use an automatic generator.
 
 Automatic generators are generators that are executed during the code generation without any definition in the model. They can be used to generate code depending on several model items.
 
-Let's say we want a class listing the name of every event; here is how to define the automatic generator:
+Here is how to define the automatic generator:
 
-```js
+```javascript
 avifors.addAutoGenerator(model => [                                       // the method takes a builder function taking the model as an argument and returning a list of outputs
   {
-    path: "example/output/Events.php",                                    // the path of the output
-    template: "example/generators/event/events.template.php",             // the path of the template to use
+    path: "src/Events.php",                                               // the path of the output
+    template: "generators/events.template.php",                           // the path of the template to use
     variables: {                                                          // these variables will be added to the template
       events: model.filter(i => i.type === 'event').map(i => i.arguments) // here we want every event of the model
     }
@@ -16,7 +18,9 @@ avifors.addAutoGenerator(model => [                                       // the
 ])
 ```
 
-And this the template:
+Add this piece of code in `generators/event.generator.js`.
+
+Create also the following template at `generators/events.template.php`:
 
 ```php
 <?php
@@ -30,7 +34,7 @@ class Events {
 }
 ```
 
-The following file will be generated:
+At next code generation, the following file will be generated:
 
 ```php
 <?php
@@ -45,4 +49,4 @@ class Events {
 }
 ```
 
-Next: [Avifors plugins](https://github.com/antarestupin/Avifors/tree/master/doc/plugins.md)
+Next: [Use constructors](https://github.com/antarestupin/Avifors/tree/master/doc/constructors.md)
