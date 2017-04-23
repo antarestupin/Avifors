@@ -10,9 +10,9 @@ A [Model-Driven Engineering](https://en.wikipedia.org/wiki/Model-driven_engineer
 
 ## Motivation / Objectives
 
-I want the domain model of my application to be simple to understand. To achieve this goal, I want it to be written in a declarative way, and the actual code generated consistently. I also don't want to use an heavy software like Rational Rose to do it, I want it to be included as code in my project.
+I want the domain model of my application to be simple to understand. To achieve this goal, I want it to be written in a declarative way, and the actual code generated consistently. I also don't want to use an heavy software like Rational Rose to create it, I want it to be included as code in my project.
 
-When Avifors will be stable I'd like to develop libraries allowing to make more complex work based on standards, like generating a full REST API with filtering, pagination, hypermedia links... with only the resources definition.
+When Avifors will be stable I'd like to develop libraries allowing to make more complex work based on standards, like generating a full REST API with filtering, pagination, hypermedia links... with only the resources definition. I also plan to write a tool to visualize the model, like in an UML software.
 
 Here are examples of what is possible to do with Avifors:
 
