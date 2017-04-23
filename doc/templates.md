@@ -34,8 +34,8 @@ Filter | Description | Example
 
 Filter | Description | Example
 ------ | ----------- | -------
-`flower(str: string \| array)` | Returns `str` with the first character uppercased | `{{ 'AVIFORS' \| flower }}` → `aVIFORS`
-`fupper(str: string \| array)` | Returns `str` kebab-cased | `{{ 'avifors' \| fupper }}` → `Avifors`
+`flower(str: string \| array)` | Returns `str` with the first character lowercased | `{{ 'AVIFORS' \| flower }}` → `aVIFORS`
+`fupper(str: string \| array)` | Returns `str` with the first character uppercased | `{{ 'avifors' \| fupper }}` → `Avifors`
 `prepend(str: string \| array, toPrepend: string)` | Returns `str` + `toPrepend` | `{{ 'avifors' \| prepend('awesome-') }}` → `awesome-avifors`
 `append(str: string \| array, toAppend: string)` | Returns `toAppend` + `str` | `{{ 'avifors' \| append('-awesome') }}` → `avifors-awesome`
 `surround(str: string \| array, toAdd: string)` | Returns `toAdd` + `str` + `toAdd`  | `{{ 'avifors' \| surround('✨') }}` → `✨avifors✨`
@@ -65,4 +65,4 @@ Filter | Description | Example
 
 Filter | Description | Example
 ------ | ----------- | -------
-`apply(val: any, fn: string)` | Applies given function to `val` (`fn` is an `eval`ed string) | `{{ 'avifors' | apply("i => i.repeat(3)") }}` → `aviforsaviforsavifors`
+`apply(val: any, fn: string)` | Applies given function to `val` (`fn` is an `eval`ed string) | `{{ 'avifors' \| apply("i => i.repeat(3)") }}` → `aviforsaviforsavifors`
