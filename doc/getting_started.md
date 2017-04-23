@@ -14,6 +14,18 @@ yarn global add avifors
 npm install -g avifors
 ```
 
+For a project, you should install Avifors locally and call it via `node_modules/.bin/avifors`:
+
+```bash
+yarn add avifors
+# or
+npm install avifors
+
+# ...
+
+node_modules/.bin/avifors generate
+```
+
 ## Define your model
 
 Create a folder `model` in which we will put the domain model of our app. In our case, we will first create an event for a user registration. To do this, create in `model` a folder `events` and add in it a file named `user_registered.model.yml` and with the following contents:
