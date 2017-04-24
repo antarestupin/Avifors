@@ -18,19 +18,19 @@ describe('# Avifors', function () {
       var avifors = (0, _helpers.getAvifors)();
 
       _assert2.default.deepEqual({
-        name: 'string (required)',
+        name: 'string',
         properties: [{
-          name: 'string (required)',
-          type: 'string (enum[string, number, boolean], required)',
+          name: 'string',
+          type: 'string (enum[string, number, boolean])',
           description: 'string',
           constraints: [{
-            type: 'string (required)'
+            type: 'string'
           }]
         }],
         resource: {
-          'one of': ['string (required)', {
-            'url': 'string (required)',
-            'acl-role': 'string (required)'
+          'one of': ['string', {
+            'url': 'string',
+            'acl-role': 'string'
           }]
         }
       }, avifors.getGenerator('entity')[0].arguments.normalize());

@@ -20,12 +20,10 @@ if (userCommand === undefined || userCommand === 'help') {
   const config = new Configuration(argv.config, yamlHelper)
 
   avifors.loadPlugins(config.plugins)
-  // console.log(avifors.generators)
 
   const modelBuilder = new YamlModelBuilder(avifors, yamlHelper)
   const model = modelBuilder.build(config.modelFiles)
   avifors.setModel(model)
-  // console.log(model)
 
   avifors.getCommand(userCommand)({
     avifors: avifors,

@@ -9,21 +9,21 @@ describe('# Avifors', function() {
 
       assert.deepEqual(
         {
-          name: 'string (required)',
+          name: 'string',
           properties: [{
-            name: 'string (required)',
-            type: 'string (enum[string, number, boolean], required)',
+            name: 'string',
+            type: 'string (enum[string, number, boolean])',
             description: 'string',
             constraints: [{
-              type: 'string (required)'
+              type: 'string'
             }]
           }],
           resource: {
             'one of': [
-              'string (required)',
+              'string',
               {
-                'url': 'string (required)',
-                'acl-role': 'string (required)'
+                'url': 'string',
+                'acl-role': 'string'
               }
             ]
           }

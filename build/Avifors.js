@@ -44,11 +44,22 @@ var Avifors = function () {
     this.constructors = {};
     this.model = null; // will be defined by the model builder
 
+    var assertArg = function assertArg(value, cond, fnName, msg) {
+      return _this.assert(cond, 'avifors.' + fnName + '(): ' + msg + ', ' + value + ' provided');
+    };
     var emptyDicts = ['command', 'type', 'validator', 'builder'];
     emptyDicts.forEach(function (i) {
-      return _this._createProperty(i);
+      return _this._createProperty(i, function (commandName, value) {
+        return assertArg(value, _checkTypes2.default.function(value), commandName, 'the ' + i + ' must be a function');
+      });
     });
-    this._createProperty('query', 'queries');
+
+    this._createProperty('query', function (commandName, value) {
+      assertArg(value, _checkTypes2.default.nonEmptyObject(value), commandName, 'the query must be an object');
+      assertArg(value, _checkTypes2.default.maybe.string(value.description), commandName, 'query.description must be a string');
+      assertArg(value, _checkTypes2.default.maybe.array(value.arguments), commandName, 'query.arguments must be an array');
+      assertArg(value, _checkTypes2.default.function(value.resolve), commandName, 'query.resolve must be a function');
+    }, 'queries');
 
     this.nunjucks = _nunjucks2.default.configure({
       autoescape: false,
@@ -147,6 +158,7 @@ var Avifors = function () {
   }, {
     key: 'addAutoGenerator',
     value: function addAutoGenerator(builder) {
+      this.assert(_checkTypes2.default.function(builder), 'avifors.addAutoGenerator(builder): builder must be a function, ' + builder + ' provided');
       this.autoGeneratorBuilders.push(builder);
     }
 
@@ -197,6 +209,11 @@ var Avifors = function () {
     value: function loadPlugins(paths) {
       var _this4 = this;
 
+      this.assert(_checkTypes2.default.array(paths), 'loadPlugins(paths): paths must be an array of strings, ' + paths + ' provided');
+      paths.forEach(function (i, index) {
+        return _this4.assert(_checkTypes2.default.string(i), 'loadPlugins(paths): every path must be a string, ' + i + ' provided');
+      });
+
       paths.map(function (path) {
         return _glob2.default.sync(path, { nodir: true, absolute: true });
       }) // get the list of files matching given pattern
@@ -218,13 +235,15 @@ var Avifors = function () {
     value: function _createProperty(field) {
       var _this5 = this;
 
-      var pluralForm = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+      var validator = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+      var pluralForm = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
 
       var uppercased = field.charAt(0).toUpperCase() + field.substr(1);
       var plural = pluralForm ? pluralForm : field + 's';
       this[plural] = {};
       this['set' + uppercased] = function (name, value) {
-        return _this5[plural][name] = value;
+        validator('set' + uppercased, value);
+        _this5[plural][name] = value;
       };
       this['get' + uppercased] = function (name) {
         if (!_this5['has' + uppercased](name)) {

@@ -2,9 +2,7 @@
  * Core types
  */
 export function getTypes(avifors) {
-  const types = {
-    optional: {}
-  }
+  const types = {}
 
   setListType(types, avifors)
   setMapType(types, avifors)
@@ -98,11 +96,7 @@ function setOneOfType(aTypes, avifors) {
 
 function setBasicTypes(types, avifors) {
   const basicTypes = ['string', 'number', 'boolean']
-  const buildBasicType = (type, optional) => ({ validators = [], builders = [] } = {}) => {
-    if (!optional) {
-      validators.push(avifors.validators.required())
-    }
-
+  const buildBasicType = type => ({ validators = [], builders = [] } = {}) => {
     return {
       type: type,
       build: value => {
@@ -118,8 +112,5 @@ function setBasicTypes(types, avifors) {
     }
   }
 
-  basicTypes.forEach(type => {
-    types[type] = buildBasicType(type, false)
-    types.optional[type] = buildBasicType(type, true)
-  })
+  basicTypes.forEach(type => types[type] = buildBasicType(type))
 }

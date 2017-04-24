@@ -11,9 +11,7 @@ exports.getTypes = getTypes;
  * Core types
  */
 function getTypes(avifors) {
-  var types = {
-    optional: {}
-  };
+  var types = {};
 
   setListType(types, avifors);
   setMapType(types, avifors);
@@ -153,17 +151,13 @@ function setOneOfType(aTypes, avifors) {
 
 function setBasicTypes(types, avifors) {
   var basicTypes = ['string', 'number', 'boolean'];
-  var buildBasicType = function buildBasicType(type, optional) {
+  var buildBasicType = function buildBasicType(type) {
     return function () {
       var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
           _ref3$validators = _ref3.validators,
           validators = _ref3$validators === undefined ? [] : _ref3$validators,
           _ref3$builders = _ref3.builders,
           builders = _ref3$builders === undefined ? [] : _ref3$builders;
-
-      if (!optional) {
-        validators.push(avifors.validators.required());
-      }
 
       return {
         type: type,
@@ -188,7 +182,6 @@ function setBasicTypes(types, avifors) {
   };
 
   basicTypes.forEach(function (type) {
-    types[type] = buildBasicType(type, false);
-    types.optional[type] = buildBasicType(type, true);
+    return types[type] = buildBasicType(type);
   });
 }

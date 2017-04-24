@@ -12,9 +12,16 @@ export default class Avifors {
     this.constructors = {}
     this.model = null // will be defined by the model builder
 
+    const assertArg = (value, cond, fnName, msg) => this.assert(cond, `avifors.${fnName}(): ${msg}, ${value} provided`)
     const emptyDicts = ['command', 'type', 'validator', 'builder']
-    emptyDicts.forEach(i => this._createProperty(i))
-    this._createProperty('query', 'queries')
+    emptyDicts.forEach(i => this._createProperty(i, (commandName, value) => assertArg(value, check.function(value), commandName, `the ${i} must be a function`)))
+
+    this._createProperty('query', (commandName, value) => {
+      assertArg(value, check.nonEmptyObject(value), commandName, 'the query must be an object')
+      assertArg(value, check.maybe.string(value.description), commandName, 'query.description must be a string')
+      assertArg(value, check.maybe.array(value.arguments), commandName, 'query.arguments must be an array')
+      assertArg(value, check.function(value.resolve), commandName, 'query.resolve must be a function')
+    }, 'queries')
 
     this.nunjucks = nunjucks.configure({
       autoescape: false,
@@ -86,6 +93,7 @@ export default class Avifors {
    * @param builder: model => [{path: string, template: string, variables: {}}]
    */
   addAutoGenerator(builder) {
+    this.assert(check.function(builder), `avifors.addAutoGenerator(builder): builder must be a function, ${builder} provided`)
     this.autoGeneratorBuilders.push(builder)
   }
 
@@ -118,6 +126,9 @@ export default class Avifors {
    * Load plugins at given paths
    */
   loadPlugins(paths) {
+    this.assert(check.array(paths), `loadPlugins(paths): paths must be an array of strings, ${paths} provided`)
+    paths.forEach((i,index) => this.assert(check.string(i), `loadPlugins(paths): every path must be a string, ${i} provided`))
+
     paths
       .map(path => glob.sync(path, { nodir: true, absolute: true })) // get the list of files matching given pattern
       .reduce((a,b) => a.concat(b)) // flatten it to one list
@@ -128,11 +139,14 @@ export default class Avifors {
    * Create an empty dict property with its getter, setter and hasser
    * Example: _createProperty('command') => this.commands = {}; this.getCommand(name); this.setCommand(name, command); this.hasCommand(name)
    */
-  _createProperty(field, pluralForm = null) {
+  _createProperty(field, validator = null, pluralForm = null) {
     const uppercased = field.charAt(0).toUpperCase() + field.substr(1)
     const plural = pluralForm ? pluralForm: field + 's'
     this[plural] = {}
-    this['set' + uppercased] = (name, value) => this[plural][name] = value
+    this['set' + uppercased] = (name, value) => {
+      validator('set' + uppercased, value)
+      this[plural][name] = value
+    }
     this['get' + uppercased] = name => {
       if (!this['has' + uppercased](name)) {
         throw `${uppercased} ${name} does not exist.`
