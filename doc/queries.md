@@ -1,6 +1,6 @@
 # Query the model
 
-Your model can quickly become complex. To mitigate the issues of this fact, Avifors allows you to query the model you have defined.
+Your model can quickly become complex. To mitigate it, Avifors allows you to query the model you have defined.
 
 To do this, you can create queries: they are simple Javascript function taking the model as an argument and returning a part of it. For example, let's say we want to be able, given an attribute, to list every event having this attribute. We will define our query this way:
 
