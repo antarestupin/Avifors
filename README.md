@@ -19,6 +19,7 @@ Here are examples of what is possible to do with Avifors:
 - Generate the domain part of an application source code
 - Generate code from the model in different languages to share it between frontend/backend or between microservices
 - Generate a full REST / GraphQL API
+- Or simply simplify a repetitive part of your code by generating it from a single template
 
 ## How to use it
 
