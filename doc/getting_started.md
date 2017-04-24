@@ -142,14 +142,14 @@ class UserRegistered extends BaseEvent {
     private $name;
     private $userId;
     private $emailAddress;
-    private $encryptedPassword;
+    private $password;
 
 
-    public function __construct($userId, $emailAddress, $encryptedPassword) {
+    public function __construct($userId, $emailAddress, $password) {
         $this->name = 'user-registered';
         $this->userId = $userId;
         $this->emailAddress = $emailAddress;
-        $this->encryptedPassword = $encryptedPassword;
+        $this->password = $password;
     }
 
 
@@ -159,8 +159,8 @@ class UserRegistered extends BaseEvent {
     public function getEmailAddress() {
         return $this->emailAddress;
     }
-    public function getEncryptedPassword() {
-        return $this->encryptedPassword;
+    public function getPassword() {
+        return $this->password;
     }
 }
 ```
