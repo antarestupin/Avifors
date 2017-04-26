@@ -1,6 +1,6 @@
 {
   "name": "avifors",
-  "version": "1.0.2-dev",
+  "version": "0.0.1",
   "description": "A MDE tool that generates code from a YAML definition of your app domain model.",
   "keywords": [
     "MDE",
