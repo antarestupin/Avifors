@@ -101,7 +101,7 @@ var YamlModelBuilder = function () {
         }
 
         modelConfig[name] = modelConfig[name].map(function (args) {
-          return _this2._executeFunctions(args);
+          return _this2._executeConstructors(args);
         });
         modelConfig[name].forEach(function (args) {
           return _this2._validateItem(args, generator);
@@ -115,7 +115,7 @@ var YamlModelBuilder = function () {
         });
       }
 
-      modelConfig[name] = this._executeFunctions(modelConfig[name]);
+      modelConfig[name] = this._executeConstructors(modelConfig[name]);
       this._validateItem(modelConfig[name], generator);
 
       return [{
@@ -124,24 +124,31 @@ var YamlModelBuilder = function () {
       }];
     }
   }, {
-    key: '_executeFunctions',
-    value: function _executeFunctions(item) {
+    key: '_executeConstructors',
+    value: function _executeConstructors(item) {
       var _this3 = this;
 
-      if (typeof item === 'string' && item.match(/^\s*(\.\w+)+(\(.*\))?\s*$/)) {
-        return eval("(this.avifors.constructors" + item + ")");
+      if (typeof item === 'string') {
+        var _constructor = item.match(/^\s*(\.\w+)+(\(.*\))?\s*$/);
+        if (_constructor !== null) {
+          try {
+            return eval("(this.avifors.constructors" + item + ")");
+          } catch (exception) {
+            throw _chalk2.default.bold.red('Error during constructor exectution') + ' - ' + item + '.\n\n' + exception.message;
+          }
+        }
       }
 
       if (Array.isArray(item)) {
         return item.map(function (i) {
-          return _this3._executeFunctions(i);
+          return _this3._executeConstructors(i);
         });
       }
 
       if ((typeof item === 'undefined' ? 'undefined' : _typeof(item)) === 'object' && item !== null) {
         var res = {};
         for (var i in item) {
-          res[i] = this._executeFunctions(item[i]);
+          res[i] = this._executeConstructors(item[i]);
         }
         return res;
       }

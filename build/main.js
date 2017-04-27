@@ -23,10 +23,6 @@ var _YamlHelper = require('./tools/YamlHelper');
 
 var _YamlHelper2 = _interopRequireDefault(_YamlHelper);
 
-var _chalk = require('chalk');
-
-var _chalk2 = _interopRequireDefault(_chalk);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var avifors = new _Avifors2.default();
@@ -40,7 +36,6 @@ var userCommand = argv._[0];
 if (userCommand === undefined || userCommand === 'help') {
   console.log(_help.helpMessage);
 } else {
-  // try {
   var yamlHelper = new _YamlHelper2.default();
   var config = new _Configuration2.default(argv.config, yamlHelper);
 
@@ -55,12 +50,4 @@ if (userCommand === undefined || userCommand === 'help') {
     model: model,
     argv: argv
   });
-  // } catch (exception) {
-  //   console.log(
-  //     chalk.bold.red('An error occurred.\n\n') +
-  //     exception + '\n\n' +
-  //     chalk.bold.red('Operation failed.\n')
-  //   )
-  //   process.exit(1)
-  // }
 }

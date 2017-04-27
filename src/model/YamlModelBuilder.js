@@ -50,7 +50,7 @@ export default class YamlModelBuilder {
         modelConfig[name] = argsList
       }
 
-      modelConfig[name] = modelConfig[name].map(args => this._executeFunctions(args))
+      modelConfig[name] = modelConfig[name].map(args => this._executeConstructors(args))
       modelConfig[name].forEach(args => this._validateItem(args, generator))
 
       return modelConfig[name].map(args => ({
@@ -59,7 +59,7 @@ export default class YamlModelBuilder {
       }))
     }
 
-    modelConfig[name] = this._executeFunctions(modelConfig[name])
+    modelConfig[name] = this._executeConstructors(modelConfig[name])
     this._validateItem(modelConfig[name], generator)
 
     return [{
@@ -68,19 +68,26 @@ export default class YamlModelBuilder {
     }]
   }
 
-  _executeFunctions(item) {
-    if (typeof item === 'string' && item.match(/^\s*(\.\w+)+(\(.*\))?\s*$/)) {
-      return eval("(this.avifors.constructors" + item + ")")
+  _executeConstructors(item) {
+    if (typeof item === 'string') {
+      const constructor = item.match(/^\s*(\.\w+)+(\(.*\))?\s*$/)
+      if (constructor !== null) {
+        try {
+          return eval("(this.avifors.constructors" + item + ")")
+        } catch (exception) {
+          throw `${chalk.bold.red('Error during constructor exectution')} - ${item}.\n\n${exception.message}`
+        }
+      }
     }
 
     if (Array.isArray(item)) {
-      return item.map(i => this._executeFunctions(i))
+      return item.map(i => this._executeConstructors(i))
     }
 
     if (typeof item === 'object' && item !== null) {
       let res = {}
       for (let i in item) {
-        res[i] = this._executeFunctions(item[i])
+        res[i] = this._executeConstructors(item[i])
       }
       return res
     }
@@ -92,7 +99,7 @@ export default class YamlModelBuilder {
     try {
       generator.arguments.validate(args, '')
     } catch(e) {
-      throw `${chalk.bold.red(`Error during model item validation:`)} ${e}\n\n`
+      throw `${chalk.bold.red('Error during model item validation:')} ${e}\n\n`
         + `Item generating this error:\n\n`
         + this.yamlHelper.print(args)
     }
